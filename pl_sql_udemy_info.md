@@ -13,4 +13,9 @@ Pluggable database name: orclpdb
 * Path: C:\app\DatabaseOracle\product\12.2.0\dbhome_1\network\admin
 * tnsnames.ora
 * As usual: connection name, same as Database name
+* Connection name= Capital letters
+* Service name = lower letters
+
+### Configuring the connectyon tipe
+* using Connection type = TNS, you have to select a Network alias, which is declared in the tnsames.ora file.
 * 

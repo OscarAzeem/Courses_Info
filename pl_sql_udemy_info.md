@@ -43,7 +43,7 @@ alter user hr identified by hr account unlock;
 ### Open the pluggable database after a reboot
 
 * with the sys user: 
-** alter pluggable database all open;
+* alter pluggable database all open;
 
 
 ## PL/SQL BLOCK STRUCTURE
@@ -55,6 +55,26 @@ alter user hr identified by hr account unlock;
 ### Exception (optional)
 * Actions to perform when errors occur
 ### END; (mandatory)
+
+
+
+
+
+# Block Types
+## Anonymous
+* Bloc with no name
+
+## Subpograms
+* Has a name, you define a name
+
+### Procedure
+* A pl/sql block that perform an action 
+
+
+### Function 
+* * A pl/sql block that retain a value 
+
+
 
 
 

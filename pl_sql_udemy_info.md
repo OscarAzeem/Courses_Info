@@ -1,12 +1,12 @@
 # Oracle PL/SQL COURSE
 
-Oracle - Windows
-Usuario: DatabaseOracle
-Pass: databaseoracle
-Global database name: orcl
-Master user: sys as sysdba
-Password (SYS-USER): masterdatabaseoracle
-Pluggable database name: orclpdb
+* Oracle - Windows
+* Usuario: DatabaseOracle
+* Pass: databaseoracle
+* Global database name: orcl
+* Master user: sys as sysdba
+* Password (SYS-USER): masterdatabaseoracle
+* Pluggable database name: orclpdb
 
 
 ## configuration file to make the configurations
@@ -62,17 +62,27 @@ alter user hr identified by hr account unlock;
 
 # Block Types
 ## Anonymous
-* Bloc with no name
+* Block with no name
+* Compiled every time
+* Not stored in the database
+* Cannot be invoked by other applications
+* Do not return values
+* Cannot take parameters
 
 ## Subpograms
-* Has a name, you define a name
+* Has a block name, you define a name
+* Compiled only once
+* Stored in the database
+* Named and, therefore, can be invoked by other applications
+* Subprograms called functions must return values
+* Can take parameters 
 
 ### Procedure
 * A pl/sql block that perform an action 
 
 
 ### Function 
-* * A pl/sql block that retain a value 
+* A pl/sql block that retain a value 
 
 
 

@@ -45,15 +45,25 @@ alter user hr identified by hr account unlock;
 * with the sys user: 
 * alter pluggable database all open;
 
+### Show the sqlplus console output
+* set serveroutput on;
+
+### Executing a .sql query
+* @C:\ruta\filename.sql
+
+
 
 ## PL/SQL BLOCK STRUCTURE
 ### Declare (optional)
 * Variables, cursors, user-defined exceptions
+
 ### Begin (mandatori)
 * Sql statements
 * PL/SQL statements
+
 ### Exception (optional)
 * Actions to perform when errors occur
+
 ### END; (mandatory)
 
 
@@ -82,10 +92,16 @@ alter user hr identified by hr account unlock;
 
 
 ### Function 
-* A pl/sql block that retain a value 
+* A pl/sql block that return a value 
+
+
+# Open a user connection from sqlplus terminal
+* 
 
 
 
+# Declaring a PL/SQL variables
+	They are declared between the Declare sentence and the Begin sentence. 
 
 
 
@@ -93,7 +109,11 @@ alter user hr identified by hr account unlock;
 # Commands
 ## show con_name
 	* Shows the database you are connected currently
-## 
+## dbms_output
+
+### dbms_output.put_line (imprime una linea)
+* ejemplo: 
+	dbms_output.put_line('anonymous block');
 
 
 # Tables and Views

@@ -66,6 +66,41 @@ alter user hr identified by hr account unlock;
 
 ### END; (mandatory)
 
+## Inside a PL/SQL block
+* Identifiers: are the names given to a PL/SQL object. 
+* Delimiters: symbols that have special meaning. I.E. ;+*
+* Literals: Any value that is assigned to a variable is a literal
+* comments: between, /* comment * / 
+
+
+## SQL Statements in PL/SQL
+* Retrieve a row from the database by using the SELECT command
+* Make changes to rows in the database by using DML commands
+* Control a transaction with the COMMIT, ROLLBACK or SAVEPOINT command
+* PL/SQL doesn't directly support data definition language (DDL) statements;
+* PL/SQL deos not directly support data control language (DCL) statements, such as GRANT or REVOKE. You can use dynamic SQL to execute them. 
+
+
+
+
+## SQL Functions in PL/SQL
+* Available in procedural statements: single-row functions
+    * ex: v_ename:=substr(ename,1,5);
+    * v_lname:=length(first_name);
+* Not available in procedural statements.
+* 
+
+## Data Type Conversion
+* Converts data to comparable data types
+* Is of two types:
+    * implicit conversion
+    * explicit conversion
+* Functions:
+    * TO_CHAR
+    * TO_DATE
+    * TO_NUMBER
+    * TO_TIMESTAMP
+
 
 
 
@@ -93,6 +128,8 @@ alter user hr identified by hr account unlock;
 
 ### Function 
 * A pl/sql block that return a value 
+
+
 
 
 # Open a user connection from sqlplus terminal
@@ -132,12 +169,16 @@ alter user hr identified by hr account unlock;
 * 
 
 ## Bind variables
+* When declaring a bind number variable, you shouldn't define a size. 
+* When declaring a bind varchar2 variable you should define a size. 
 * Created in the environment
 * Also called host variables
-* Created with the VARIABLE keyword
+* Created with the VARIABLE (also just: VAR) keyword
 * Used in SQL statemetns and PL/SQL blocks
 * Accesed even after the PL/SQL block is executed
 * Referenced with a preceding colon
+* It'll remain until the end of the session
+* 
 
 
 

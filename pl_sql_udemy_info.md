@@ -102,7 +102,20 @@ alter user hr identified by hr account unlock;
 
 # Declaring a PL/SQL variables
 	They are declared between the Declare sentence and the Begin sentence. 
+## Variables info:
+* Declared and initialized in the declarative section (between declare & begin)
+* Used and assigned new valeus in the executable section (between begin & end)
+* Passed as parameters to PL/SQL subprograms (like procedure and function)
+* Used to hold the output of a PL/SQL subprogram V_sal=get_emp_sal(100)
 
+* When Giving a variable the not null or constant restriction, you should inicialize that variable. 
+* A variable could be assigned with the operator := or DEFAULT
+
+## Tipes of variables
+* Scalar
+* Composite
+* Reference
+* Large obect (LOB)
 
 
 

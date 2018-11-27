@@ -118,6 +118,44 @@ alter user hr identified by hr account unlock;
 * Large obect (LOB)
 
 
+## %Type Atribute
+* Is used to declara a variable according to
+    * A database column definitio
+    * Another declared variable
+* Is prefixed with:
+    * The database table and column 
+    * The name of the declared variable
+
+
+## Exceptions
+* You'll have an exception when the select statement returns none or more than a single record
+* 
+
+## Bind variables
+* Created in the environment
+* Also called host variables
+* Created with the VARIABLE keyword
+* Used in SQL statemetns and PL/SQL blocks
+* Accesed even after the PL/SQL block is executed
+* Referenced with a preceding colon
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Commands
 ## show con_name

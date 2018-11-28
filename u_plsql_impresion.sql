@@ -202,6 +202,97 @@ select * from employees;
 
 select * from DEPARTMENTS;
 
+---------------
+-- SQL CURSORS
+--------------
+
+
+select * from employees
+where department_id=20;
+
+
+declare
+v_rows_updated number:=0;
+begin
+    update employees
+    set salary=salary+100
+    where department_id=20;
+    
+v_rows_updated:=sql%rowcount;
+
+
+
+dbms_output.put_line('REcords updated: ' || v_rows_updated);
+dbms_output.put_line('');
+/*
+dbms_output.put_line('SQL%notfound' || TO_char(SQL%notfound));
+dbms_output.put_line('SQL%found' || to_char(SQL%found));
+dbms_output.put_line('SQL%rowcount' || to_char(SQL%rowcount));
+*/
+END;
+
+----------------
+-- save in a variable the tree sQL oracle values
+
+
+
+CREATE OR REPLACE FUNCTION BOOLEAN_TO_CHAR(STATUS IN BOOLEAN)
+RETURN VARCHAR2 IS
+BEGIN
+  RETURN
+   CASE STATUS
+     WHEN TRUE THEN 'TRUE'
+     WHEN FALSE THEN 'FALSE'
+     ELSE 'NULL'
+   END;
+END BOOLEAN_TO_CHAR;
+
+
+
+
+-- you should declare the anonnimous block that calls a function
+DECLARE
+v_sql_notfound BOOLEAN; 
+v_sql_found BOOLEAN;
+v_recordsfound number:=0;
+
+
+FUNCTION BOOLEAN_TO_CHAR(STATUS IN BOOLEAN)
+RETURN VARCHAR2 IS
+BEGIN
+  RETURN
+   CASE STATUS
+     WHEN TRUE THEN 'TRUE'
+     WHEN FALSE THEN 'FALSE'
+     ELSE 'NULL'
+   END;
+END BOOLEAN_TO_CHAR;
+
+
+
+BEGIN
+    update employees
+    set salary=salary+100
+    where department_id=999;
+    
+    v_sql_notfound:=sql%notfound;
+    v_sql_found:=sql%found;
+    v_recordsfound:=sql%rowcount;
+    
+    dbms_output.put_line('SQLnotfound: ' ||BOOLEAN_TO_CHAR(v_sql_notfound));
+    dbms_output.put_line('SQLfound: ' ||BOOLEAN_TO_CHAR(v_sql_found));
+    dbms_output.put_line('SQLrowcount: ' || v_recordsfound);
+    
+  
+    if v_sql_notfound=False then
+    dbms_output.put_line('Ive found some records: ' || BOOLEAN_TO_CHAR(v_recordsfound) || ' because:  v_sql_notfound = ' || BOOLEAN_TO_CHAR(v_sql_notfound));
+    
+    else
+    dbms_output.put_line('I couldnt find any record ' || BOOLEAN_TO_CHAR(v_sql_found));
+    end if;
+    
+END;
+-- ending the annonimous block
 
 
 

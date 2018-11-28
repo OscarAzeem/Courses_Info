@@ -187,8 +187,19 @@ alter user hr identified by hr account unlock;
 * It'll remain until the end of the session
 * 
 
-## Cursor (area in the memory)
-* 
+# Implicit Cursor (area in the memory)
+* Everytime you declare a sql sentence, oracle will open a cursor, such cursor will point to an area in memory called context area. (implicit cursor)
+* Implicit cursor: you dont have direct acces to it (belongs to oracle) , but cursor attribute
+* Cursor attribute (oracle cursors)
+    * SQL%notfound -false/true
+    * SQL%found - false/true
+    * SQL%rowcount
+
+
+# Flow Execution
+## IF STATEMENT
+* IF <condition> THEN <sentences> End IF;
+	
 
 
 

@@ -163,10 +163,44 @@ begin
 end;
 end outer;
 
+---------------- EXCERSICE
+/* 
+Write a block that retrieve the salary for employee 100 in variable v_sal
+Raise the salary by 100 in variable v_new_sal
+Update the employee 100 with this new salary
+Insert new department called test with ID=1
+*/
+
+DECLARE
+
+v_salary employees.salary%TYPE;
+v_new_sal employees.salary%TYPE;
+BEGIN
+
+select salary into v_salary from employees e where e.employee_id=100;
+
+dbms_output.put_line('The old salary is: ' || v_salary);
+
+v_new_sal:=v_salary+100;
+
+UPDATE employees e
+SET e.salary=v_new_sal
+WHERE e.employee_id=100;
 
 
+select salary into v_salary from employees e where e.employee_id=100;
+dbms_output.put_line('The new salary is: ' || v_salary);
 
+INSERT INTO DEPARTMENTS d  
+(DEPARTMENT_ID, DEPARTMENT_NAME) 
+values
+(1,'Test')
+;
+END;
 
+select * from employees;
+
+select * from DEPARTMENTS;
 
 
 

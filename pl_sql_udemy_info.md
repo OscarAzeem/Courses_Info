@@ -63,6 +63,7 @@ alter user hr identified by hr account unlock;
 
 ### Exception (optional)
 * Actions to perform when errors occur
+* The SELECT statement will lead to exceptions if no rows are selected or return more than one row. 
 
 ### END; (mandatory)
 
@@ -79,6 +80,12 @@ alter user hr identified by hr account unlock;
 * Control a transaction with the COMMIT, ROLLBACK or SAVEPOINT command
 * PL/SQL doesn't directly support data definition language (DDL) statements;
 * PL/SQL deos not directly support data control language (DCL) statements, such as GRANT or REVOKE. You can use dynamic SQL to execute them. 
+* Could make changes to the database tables by using DML commands such as:
+    * INSERT
+    * UPDATE
+    * DELETE
+    * MERGE
+* 
 
 
 
@@ -180,7 +187,8 @@ alter user hr identified by hr account unlock;
 * It'll remain until the end of the session
 * 
 
-
+## Cursor (area in the memory)
+* 
 
 
 

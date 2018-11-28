@@ -176,18 +176,7 @@ alter user hr identified by hr account unlock;
 * The oracle server will receive this value by a prompt window
 * 
 
-## Case expression != Case statement
-* Case statement:
-    * Start with CASE statement
-    * Ends with END CASE statement
-    * After When you can put statements 
-    * You can do actions due to conditions
-    * 
 
-
-* Case Expression
-	* Contains the CASE statement withouth the END CASE just the END statement.
-	* after when you cant put statements
 
 
 
@@ -230,8 +219,23 @@ alter user hr identified by hr account unlock;
 * IF -condition- THEN -sentences- ELSIF -condition- -sentences- ELSIF -condition- -sentences-  END IF; 
 * 
 
+## Case expression != Case statement
+* Case statement:
+    * Start with CASE statement
+    * Ends with END CASE statement
+    * After When you can put statements 
+    * You can do actions due to conditions
+    * 
 
 
+* Case Expression
+	* Contains the CASE statement withouth the END CASE just the END statement.
+	* after when you cant put statements
+
+# Loops
+* Sintaxis:
+    * LOOP -sentences- EXIT WHEN -condition- ; END LOOP;
+* 
 
 
 

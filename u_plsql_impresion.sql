@@ -411,6 +411,35 @@ BEGIN
     dbms_output.put_line(v_desc);
 END;
 
+---- loop example
+
+DECLARE
+v_counter number :=0;
+BEGIN
+LOOP
+    v_counter:=v_counter+1;
+    dbms_output.put_line(v_counter);
+    exit when v_counter=30;
+END LOOP;
+END;
+
+-- print the employee first name for employees 100,101,102
+-- using basic loop
+
+DECLARE
+v_first_name varchar2(100);
+v_last_name varchar2(100);
+v_var_id number:=100;
+BEGIN
+    LOOP 
+    select e.last_name, e.first_name into v_first_name,v_last_name from employees e
+    where E.employee_id=v_var_id;
+    dbms_output.put_line('Last name: ' || v_last_name || ' First Name: ' || v_first_name || ' ID: ' || v_var_id);
+        
+    v_var_id:=v_var_id+1;
+    EXIT WHEN v_var_id=103;
+    END LOOP;
+END;
 
 
 

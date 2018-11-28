@@ -294,6 +294,129 @@ BEGIN
 END;
 -- ending the annonimous block
 
+-- -- -- -- -- -- -
 
+
+DECLARE
+v_no NUMBER:=&v;
+BEGIN
+    IF v_no>=10 THEN
+    dbms_output.put_line('The number is >=10');
+    ELSIF v_no<10 THEN
+    dbms_output.put_line('The number is <10');
+    
+    END if;
+END;
+
+------------------------------
+DECLARE
+v_grade NUMBER:=&v;
+BEGIN
+    IF v_grade between 90 and 100 THEN
+    dbms_output.put_line('A');
+    ELSIF v_grade between 80 and 90 THEN
+    dbms_output.put_line('B');
+    ELSIF v_grade between 70 and 80 THEN
+    dbms_output.put_line('C');
+    ELSE
+    dbms_output.put_line('NONNE');
+    END IF;
+END;
+
+-----------------------
+/* Write a block that take the employee id as substitue variable. 
+if salary >=1500 print >1500
+else <1500 print <1500
+*/
+
+DECLARE
+v_salary employees.salary%TYPE:=0;
+v_in_id number:=&emp_id;
+BEGIN
+SELECT salary INTO v_salary from employees e where e.employee_id=v_in_id;
+IF v_salary >=5000 THEN
+    dbms_output.put_line('the salary >=5000');
+    ELSIF v_salary<5000 THEN
+    dbms_output.put_line('the salary <5000');
+    END IF;
+END;
+
+
+-------------
+-- EXAMPLE IF AND NULL VALUES
+----------
+
+DECLARE
+x number:=10;
+y number;
+BEGIN
+if x<>y THEN
+    dbms_output.put_line('this row will never be print because you are comparing a null value');
+    ELSE
+    dbms_output.put_line('Entering the else because failing to compare the null value');
+    END IF;
+END;
+
+
+--- fixing the null values
+DECLARE
+x number:=10;
+y number;
+--z number:=&int_z;
+BEGIN
+if nvl(x,0)<>nvl(y,0) THEN
+    dbms_output.put_line('The values are different');
+    ELSE
+    dbms_output.put_line('The value its the same');
+    END IF;
+END;
+
+
+-- dealing with null in both values
+DECLARE
+x number;
+y number;
+
+
+BEGIN
+if x is null and y is null THEN
+    dbms_output.put_line('The value its the same');
+    
+    ELSE
+    dbms_output.put_line('The values are different');
+    END IF;
+END;
+
+
+--------------------------
+--- CASE EXAMPLE ---------
+-------------------------
+
+
+DECLARE 
+v_sal number;
+v_desc varchar2(100);
+BEGIN
+    select salary into v_sal
+    from employees e
+    where e.employee_id=&emp_id;
+    
+    v_desc:= CASE
+    when v_sal is null then 'the salary value is null'
+    when v_sal between 1000 and 3000 then 'the salary is low'
+    when v_sal between 3001 and 5000 then 'salary is medium'
+    when v_sal >=5001 then 'salary very high'
+    end; 
+    
+    dbms_output.put_line(v_desc);
+END;
+
+
+
+
+
+
+
+select * from employees;
 
 

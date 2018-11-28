@@ -148,6 +148,8 @@ alter user hr identified by hr account unlock;
 	They are declared between the Declare sentence and the Begin sentence. 
 ## Variables info:
 * Declared and initialized in the declarative section (between declare & begin)
+* When a variable its initialized but not assigned the oracle server will give it a NULL value. 
+* When using an operator. Operators with null value always return a null value.
 * Used and assigned new valeus in the executable section (between begin & end)
 * Passed as parameters to PL/SQL subprograms (like procedure and function)
 * Used to hold the output of a PL/SQL subprogram V_sal=get_emp_sal(100)
@@ -170,12 +172,36 @@ alter user hr identified by hr account unlock;
     * The database table and column 
     * The name of the declared variable
 
+## & Operator
+* The oracle server will receive this value by a prompt window
+* 
+
+## Case expression != Case statement
+* Case statement:
+    * Start with CASE statement
+    * Ends with END CASE statement
+    * After When you can put statements 
+    * You can do actions due to conditions
+    * 
+
+
+* Case Expression
+	* Contains the CASE statement withouth the END CASE just the END statement.
+	* after when you cant put statements
+
+
+
+
+
+
+
+
 
 ## Exceptions
 * You'll have an exception when the select statement returns none or more than a single record
 * 
 
-## Bind variables
+## Bind variables (VARIABLE statement)
 * When declaring a bind number variable, you shouldn't define a size. 
 * When declaring a bind varchar2 variable you should define a size. 
 * Created in the environment
@@ -198,8 +224,12 @@ alter user hr identified by hr account unlock;
 
 # Flow Execution
 ## IF STATEMENT
-* IF <condition> THEN <sentences> End IF;
-	
+* IF -condition- THEN -sentences- ELSE -else sentences - END IF;
+
+## ELIF STATEMENT
+* IF -condition- THEN -sentences- ELSIF -condition- -sentences- ELSIF -condition- -sentences-  END IF; 
+* 
+
 
 
 

@@ -442,6 +442,82 @@ BEGIN
 END;
 
 
+------------
+-- FOR LOOP EXAMPLE
+------------
+
+BEGIN
+ for i in 1..10
+ LOOP
+  dbms_output.put_line(i);
+  END LOOP;
+END;
+
+
+--------
+-- NESTED FOR EXAMPLE
+--------
+DECLARE
+v_s varchar2(100):='';
+BEGIN
+for i in 1..10
+LOOP
+    for j in 1..i
+    LOOP
+    v_s:=v_s||'*';
+    END LOOP;
+    dbms_output.put_line(v_s);
+    v_s:='';
+END LOOP;
+END;
+
+
+---------
+------ LABELED LOOOPS ------
+----------
+
+
+DECLARE
+v_s varchar2(100):='';
+BEGIN
+<<outer_loop>>
+for i in 1..10
+LOOP
+    <<iner_loop>>
+    for j in 1..i
+    LOOP
+    v_s:=v_s||'*';
+    exit;
+    END LOOP inner_loop;
+    dbms_output.put_line(v_s);
+    v_s:='';
+END LOOP outer_loop;
+END;
+
+---------
+------ LABELED LOOOPS ------
+-- exiting an outer loop from a inner loop
+----------
+
+
+DECLARE
+v_s varchar2(100):='';
+BEGIN
+<<outer_loop>>
+for i in 1..10
+LOOP
+    <<iner_loop>>
+    for j in 1..i
+    LOOP
+    v_s:=v_s||'*';
+    exit outer_loop when i=3;
+    END LOOP inner_loop;
+    dbms_output.put_line(v_s);
+    v_s:='';
+END LOOP outer_loop;
+END;
+
+
 
 
 

@@ -233,16 +233,27 @@ alter user hr identified by hr account unlock;
 	* after when you cant put statements
 
 # Loops
-* Sintaxis:
-    * LOOP -sentences- EXIT WHEN -condition- ; END LOOP;
-* 
+## LOOP
+* LOOP -sentences- EXIT WHEN -condition- ; END LOOP;
 
+## WHILE - LOOP 
+* WHILE -condition- LOOP -statement- END LOOP;
 
+## FOR - LOOP
+* oracle will round the [INICIO_VARIABLE]..[FIN_VARIABLE] if fractions;
+* FOR i IN [INICIO_VARIABLE]..[FIN_VARIABLE] LOOP -sentences- END LOOP;
 
+## FOR IN REVERSE - LOOP
+* oracle will round the [INICIO_VARIABLE]..[FIN_VARIABLE] if fractions;
+* FOR i IN REVERSE [INICIO_VARIABLE]..[FIN_VARIABLE] LOOP -sentences- END LOOP;
 
+## LABELED LOOPS
+* They are labeled one line above the FOR statement, with the following sintax:
+* <<FOR_LABEL>>
+* FOR  i IN [INICIO_VARIABLE]..[FIN_VARIABLE]
+* END LOOP FOR_LABEL;
 
-
-
+## 
 
 
 

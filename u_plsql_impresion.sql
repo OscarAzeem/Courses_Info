@@ -518,6 +518,31 @@ END LOOP outer_loop;
 END;
 
 
+--------------------
+declare
+
+x number:=1;
+
+begin
+
+  loop
+
+    x:=x+1;
+
+   exit when x=5;
+
+    DBMS_OUTPUT.PUT_LINE('hi');
+
+  end loop;
+
+end; 
+
+---------- EXAMPLE---------
+--------- RECORDS----------
+---------------
+
+
+
 
 
 

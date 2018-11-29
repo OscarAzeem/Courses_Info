@@ -267,6 +267,14 @@ alter user hr identified by hr account unlock;
 ## PL/SQL RECORDS
 * A PL/SQL record is a composite data structure that is a group of related data stored in fields
 * Each filed in the PL/SQL record has its onw name and tata type. 
+* Is a group of related data items stored in fields, each with its own name and data type.
+* Each record defined can have as many fields as neccesary
+* Records can be assigned initial values and can be defined as not null
+* Fields withouth initial values are initialized to NULL
+* The DEFAULT keyword can also be used when defining fields. 
+* You can define RECORD types and declare user-defined records in the declarative part of any block, subprogram, or package.
+* You can declare and reference nested records. One record can be the component of another record
+* 
 
 ### Declaring a PL/SQL record
 * Programmer-defined records.
@@ -275,18 +283,11 @@ alter user hr identified by hr account unlock;
 
 ## Programmer-defined records
 DECLARE
-
 TYPE -var_record_name- IS RECORD
-
 (
-
  v_name esquema.table%type,
-
  v_name2 number;
-
-
 );
-
 -var_of_record-  -var_record_name-
 
 

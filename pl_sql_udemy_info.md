@@ -253,7 +253,54 @@ alter user hr identified by hr account unlock;
 * FOR  i IN [INICIO_VARIABLE]..[FIN_VARIABLE]
 * END LOOP FOR_LABEL;
 
-## 
+## Continue Statement
+* CONTINUE WHEN -condition- ;
+* Continue statement menas, stop executing the next statement when -condition-
+
+# Composite Data Types
+* Can hold multiple values (unlike scalar types)
+* Are of two types: 
+    * PL/SQL records
+    * PL/SQL collections
+
+
+## PL/SQL RECORDS
+* A PL/SQL record is a composite data structure that is a group of related data stored in fields
+* Each filed in the PL/SQL record has its onw name and tata type. 
+
+### Declaring a PL/SQL record
+* Programmer-defined records.
+* Table-based record. %Rowtype
+* Cursor-based record. 
+
+## Programmer-defined records
+DECLARE
+
+TYPE -var_record_name- IS RECORD
+
+(
+
+ v_name esquema.table%type,
+
+ v_name2 number;
+
+
+);
+
+-var_of_record-  -var_record_name-
+
+
+
+## PL/SQL collections
+* INDEX BY tables or associative arrays
+* Nested table
+* VARRAY
+
+
+
+
+
+
 
 
 

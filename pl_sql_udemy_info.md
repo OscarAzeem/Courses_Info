@@ -283,12 +283,29 @@ alter user hr identified by hr account unlock;
 
 ## Programmer-defined records
 DECLARE
+
 TYPE -var_record_name- IS RECORD
+
 (
+
  v_name esquema.table%type,
+
  v_name2 number;
+
 );
+
 -var_of_record-  -var_record_name-
+
+
+## Table-based record. %Rowtype
+* %ROWTYPE Attibute 
+    * Declare a variable according to a collection of columns in a database Table or view
+    * Prefix %ROWTYPE
+    * Fields in the record take their names and data types from the columns of the table or view
+* Sintax:
+    * DECLARE
+    * identifier -reference-%ROWTYPE;
+    
 
 
 

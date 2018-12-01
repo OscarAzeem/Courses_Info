@@ -19,3 +19,5 @@ WHERE CONDITION='CONDITION';
  GROUP BY (DatabaseName,TableName, CreatorName, CreateTimeStamp, LastAlterName)
  where DatabaseName NOT IN ('DBC','dbcmngr')
  ORDER BY DatabaseName, CreateTimeStamp;
+
+ 

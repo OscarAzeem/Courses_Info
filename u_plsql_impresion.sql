@@ -541,12 +541,158 @@ end;
 --------- RECORDS----------
 ---------------
 
+DECLARE
+
+TYPE t_emp IS RECORD
+( 
+    v_emp_id employees.employee_id%TYPE,
+    v_first_name employees.first_name%TYPE,
+    v_last_name employees.last_name%TYPE
+);
+
+v_r_emp t_emp;
+
+BEGIN
+
+select e.employee_id, e.first_name, e.last_name
+INTO v_r_emp
+FROM employees e
+WHERE e.employee_id=100;
+
+
+dbms_output.put_line('EMP_ID : ' || v_r_emp.v_emp_id || ' LN = ' || v_r_emp.v_last_name || ' FN: ' || v_r_emp.v_first_name);
+END;
 
 
 
 
+---------- ADDING A FOR LOOP IN THE EXAMPLE ABOVE---------
+--------- RECORDS----------
+---------------
+
+DECLARE
+
+TYPE t_emp IS RECORD
+( 
+    v_emp_id employees.employee_id%TYPE,
+    v_first_name employees.first_name%TYPE,
+    v_last_name employees.last_name%TYPE
+);
+
+v_r_emp t_emp;
+
+BEGIN
+
+FOR i IN 100..110
+LOOP
+
+select e.employee_id, e.first_name, e.last_name
+INTO v_r_emp
+FROM employees e
+WHERE e.employee_id=i;
 
 
-select * from employees;
+dbms_output.put_line('EMP_ID : ' || v_r_emp.v_emp_id || ' LN = ' || v_r_emp.v_last_name || ' FN: ' || v_r_emp.v_first_name);
+
+END LOOP;
+END;
+
+-------------------------------------------
+
+----- EXAMPLE RECORDS ----
+-----
 
 
+select * from DEPARTMENTS d
+WHERE d.department_id=10;
+
+
+create table BDPARTMENTS as select * from departments
+where department_id=10;
+
+
+create table BDPARTMENTS as select * from departments
+where 1=2;
+
+select * from BDPARTMENTS where department_id=20;
+
+drop table BDPARTMENTS;
+
+DELETE BDPARTMENTS;
+
+UPDATE BDPARTMENTS
+SET department_name='Azeems Department'
+;
+
+
+DECLARE
+TYPE t_dept is record
+(
+    v_dept_id departments.department_id%Type,
+    v_dept_name departments.department_name%Type,
+    v_dept_manager departments.manager_id%TYPE,
+    v_location_id departments.location_id%TYPE
+
+);
+
+v_dept t_dept; 
+
+BEGIN
+select d.department_id, d.department_name, d.manager_id, d.location_id
+into v_dept
+from departments d
+where department_id=10;
+
+
+insert into BDPARTMENTS values (v_dept.v_dept_id, v_dept.v_dept_name , v_dept.v_dept_manager , v_dept.v_location_id);
+
+END;
+
+
+
+-- EJEMPLO CON %ROWTYPE
+--
+
+DECLARE
+v_dept DEPARTMENTS%rowtype;
+
+
+BEGIN
+
+select d.department_id, d.department_name, d.manager_id, d.location_id
+into v_dept
+from departments d
+where department_id=20;
+
+
+insert into BDPARTMENTS values v_dept;
+
+END;
+
+-- EJEMPLO CON ROWTYPE
+-- UPDATE Y SET
+
+DECLARE
+v_dept DEPARTMENTS%rowtype;
+
+
+BEGIN
+
+select d.department_id, d.department_name, d.manager_id, d.location_id
+into v_dept
+from departments d
+where department_id=10;
+
+v_dept.department_id:=99;
+v_dept.department_name:='azeem';
+
+UPDATE BDPARTMENTS SET row=v_dept
+;
+
+/*
+UPDATE BDPARTMENTS SET row=v_dept
+where department_id=20;
+*/
+END;
+
+select * from BDPARTMENTS

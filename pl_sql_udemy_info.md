@@ -216,7 +216,7 @@ alter user hr identified by hr account unlock;
 * IF -condition- THEN -sentences- ELSE -else sentences - END IF;
 
 ## ELIF STATEMENT
-* IF -condition- THEN -sentences- ELSIF -condition- -sentences- ELSIF -condition- -sentences-  END IF; 
+* IF -condition- THEN -sentences- ELSIF -condition- THEN -sentences- ELSIF -condition- THEN -sentences-  END IF; 
 * 
 
 ## Case expression != Case statement
@@ -281,7 +281,7 @@ alter user hr identified by hr account unlock;
 * Table-based record. %Rowtype
 * Cursor-based record. 
 
-## Programmer-defined records
+## Programmer-defined records *RECORD*
 DECLARE
 
 TYPE -var_record_name- IS RECORD
@@ -315,10 +315,70 @@ TYPE -var_record_name- IS RECORD
 * VARRAY
 
 
+# Cursors
+* Every SQL statement executed by the Oracle server has an associated individual cursor: 
+    * *Implicit cursors:* Declared and managed by PL/SQL for all DML and PL/SQL statements.
+        * .
+    * *Explicit cursors:* Declared and managed by the programmer
+        * You declare explicit cursors in PL/SQL when you have a SELECT statement that returns multiple rows. You can process each row returned by the SELECT statement. 
+        * Functions: 
+            * Can perform row-by-row processing beyond the first row returned by a a query
+            * Keep track of the row that is currently being procesed
+            * Enable the programmer to manually control explicit cursors in the PL/SQL block. 
+        * Controlling Explicit Cursors:
+            * Declare: 
+                * Created a named SQL area.
+            * Open: 
+                * Identify the active set
+            * FETCH:
+                * Load the current row into variables. 
+            * EMPTY?:
+                * Test for existing rows. Return to FETCH if rows are found. 
+            * CLOSE:
+                * Relase the active set. 
+        * Explicit Cursor Attributes: 
+            * %ISOPEN - boolean. 
+                * Evaluates to TRUE if the cursor is OPEN.
+            * %NOTFOUND - boolean
+                * Evaluates to TRUE if the most recent fetch does not return a row
+            * %FOUND - boolean
+            	* Evaluates to TRUE if the most recent fetch returns a row; complement of %NOTFOUND
+        	* %ROWCOUNT - Number
+        		* Evaluates to the total number of rows returned so far. 
+		* Hints when declaring a cursor: 
+		    * Do not include the INTO clause in the cursor declaration because it appears later in the FETCH statement. 
+		    * If processing rows in a speific sequence is requered, use the ORDER BY clause in the query. 
+		    * The cursor can be any valid SELECT statement, including joins, subquerys and so on.
+	    * Hints when Opening a Cursor:
+	    	* The OPEN statement executes the query associated with the cursor, identifies the active set, and positions the cursor pointer at ther first row. The OPEN statement is included in the executable section of the PL/SQL block.
+	    	* Open is an executable statement that performs the folowwing operations: 
+	    	    1. Dynamically allocates memory for a context area
+	    	    2. Parsers the SELECT statement
+	    	    3. Binds the input variables (sets the alues for the input variables by obtaining their memory addresses)
+	    	    4. Identifies the active set (the set of rows that satisfy the serach criteria). Rows in the active set are not retrieved into variables when the OPEN statement is executed. Rather, the FETCH statement retrieves the rows from the cursor to the variables. 
+	    	    5. Positions the pointer to the first row in the active set. 
+    	    * Note: if a query returns no rows when the cursor is opened. PL/SQL does not raise an exception. YOu can find out the number of rows returned with an explicit cursor by using the -cursor_name-%ROWCOUNT attribute. 
+	    * Hints when fetching data from a cursor:
+	    	* The FETCH statement retrieves the rows from the cursor one at a time. After each fetch, the cursor adavances to the next row in the active set. You can use the %NOTFOUND attribute to determine wheter the entire active set has been retrieved.
+	    	* The FETCH statement performs the following operations: 
+	    	    1. Reads the data for the current row into the output PL/SQL variables
+	    	    2. Advances the pointer to the next row in the active set. 
+	    * Hints when closing the Cursor. 
+	    	* The CLOSE statement disables the ursor, releases the context area and "undefines" the active set. Close the cursor after completing the processing of the FETCH statement. You can reopen the cursor if requeried. 
+	    	* A cursor can be reopened only if it is closed. If you attempt to fetch data from a cursor after it has been closed, then an INVALID_CURSOR exception will be raised. 
+	    	* Note: Although it is possible to terminate the PL/SQL block withouth closing cursors, there is a maximum limit on the number of open cursors per session, which is determined by the OPEN_CURSORS, paramter in the database parameter file. 
+	    	* Default: OPEN_CURSORS=50.
 
 
 
 
+
+
+
+
+
+
+* Video: 50
 
 
 

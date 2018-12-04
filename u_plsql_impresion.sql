@@ -695,4 +695,136 @@ where department_id=20;
 */
 END;
 
-select * from BDPARTMENTS
+select * from BDPARTMENTS;
+
+
+
+-------------- CURSORS EXAMPLE -------------------------
+
+-- Example 1. cursors. 
+
+DECLARE 
+    CURSOR c_emp_dept30 IS
+    SELECT employee_id, first_name from employees
+    where department_id=30;
+    -- variables
+    v_empno employees.employee_id%TYPE;
+    v_first_name employees.first_name%TYPE;
+    
+BEGIN
+    OPEN c_emp_dept30;
+    LOOP 
+        FETCH   c_emp_dept30 into v_empno, v_first_name;
+        --dbms_output.put_line(c_emp_dept30%notfound);
+        EXIT WHEN c_emp_dept30%notfound;
+        dbms_output.put_line(v_empno || ' ' || v_first_name);
+    end loop;
+CLOSE c_emp_dept30;
+END;
+
+-------------- CURSORS EXAMPLE -------------------------
+
+DECLARE
+    CURSOR c_emp is
+    SELECT employee_id, first_name, last_name FROM employees
+    where department_id=30;
+    
+    v_emp_rec employees%rowtype;
+    
+BEGIN
+    OPEN c_emp;
+    LOOP
+        FETCH c_emp into v_emp_rec.employee_id, v_emp_rec.first_name, v_emp_rec.last_name;
+        EXIT WHEN c_emp%notfound;
+        dbms_output.put_line(v_emp_rec.first_name || ' '  || v_emp_rec.last_name || '  ' || v_emp_rec.employee_id);
+    END LOOP;
+CLOSE c_emp;
+END;
+    
+    
+--+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-+
+--------------- CURSOR RECORDS--------------------
+
+
+DECLARE
+    CURSOR cur IS
+        SELECT * FROM employees
+        where department_id=30;
+        
+        rcur cur%ROWTYPE;
+BEGIN
+    OPEN cur;
+    loop
+        FETCH cur into rcur;
+        EXIT WHEN cur%notfound;
+        dbms_output.put_line(rcur.first_name || ' ' || rcur.last_name || ' ' || rcur.employee_id || ' ' || rcur.hire_date);
+        END LOOP;
+    CLOSE cur;
+end;
+
+
+-----------------------------------------------------
+-- update the salaries for employees in dept30 using cursor (+100 for each one)
+
+------
+DECLARE
+
+CURSOR cur IS
+    select * from employees where DEPARTMENT_ID=30;
+    
+    rcur cur%ROWTYPE;
+    vsal employees.salary%TYPE;
+    
+BEGIN
+    OPEN cur;
+    LOOP 
+    FETCH cur into rcur; 
+    dbms_output.put_line(rcur.first_name || ' ' || rcur.last_name || ' ' || rcur.employee_id || ' ' || rcur.salary);
+    update employees e set e.salary=e.salary+100 where e.employee_id=rcur.employee_id;
+    select salary into vsal from employees e where e.employee_id=rcur.employee_id;
+    dbms_output.put_line('New salary: ' || vsal);
+    EXIT WHEN cur%notfound;
+    END LOOP;
+    CLOSE cur;
+END; 
+    
+select * from employees e  where e.department_id=30;
+
+update employees e set salary=salary+100 where e.department_id=30;
+
+--------------------------
+--------- using the cursor variables: %notfound, %isopen, %rowcount
+
+DECLARE
+    -- beginning cursor. 
+    CURSOR cur is
+    select employee_id, first_name from employees; 
+    -- end cursor
+    vemp employees.employee_id%TYPE;
+    vfir employees.first_name%TYPE;
+    
+BEGIN
+    if cur%isopen then
+    dbms_output.put_line('The Cursor is already open');
+    elsif NOT cur%isopen then
+    dbms_output.put_line('Openning the cursors');
+    OPEN cur;
+    END IF;
+    dbms_output.put_line('Original counter cursor: ' || cur%rowcount);
+    dbms_output.put_line('');
+    LOOP
+    FETCH cur into vemp, vfir;
+    exit when cur%notfound or cur%rowcount>10;
+    dbms_output.put_line('ID: ' || vemp || ' First name: ' || vfir);
+    dbms_output.put_line('Iteration counter cursor: ' || cur%rowcount);
+    END LOOP;
+    dbms_output.put_line('Final counter cursor: ' || cur%rowcount);
+    CLOSE cur; 
+END;
+    
+    
+    
+    
+    
+
+

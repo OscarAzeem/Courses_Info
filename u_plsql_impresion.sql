@@ -818,13 +818,172 @@ BEGIN
     dbms_output.put_line('ID: ' || vemp || ' First name: ' || vfir);
     dbms_output.put_line('Iteration counter cursor: ' || cur%rowcount);
     END LOOP;
+    dbms_output.put_line('');
     dbms_output.put_line('Final counter cursor: ' || cur%rowcount);
     CLOSE cur; 
 END;
     
     
     
+--------------------------------------------------------------
+-- EXAMPLE WITH THE FOOR LOOP
+-- AND EXPLICIT CURSOR DECLARATION
+--------------------------------------------------------------
+DECLARE
+    CURSOR cur is
+    SELECT * FROM  employees where department_id=30;
+
+BEGIN
+--dbms_output.put_line('Iteration counter cursor: ' || cur%rowcount);
+dbms_output.put_line('');
+FOR elemento in cur
+    LOOP
+    dbms_output.put_line('Iteration counter cursor: ' || cur%rowcount);
+    dbms_output.put_line(elemento.employee_id || ' ' || elemento.first_name);
+    END LOOP;
+END; 
+
+
+--------------------------------------------------------------
+-- EXAMPLE WITH THE FOOR LOOP
+-- AND NO EXPLICIT CURSOR DECLARATION
+--------------------------------------------------------------
+
+DECLARE
+
+BEGIN
+
+for i in (select * from employees where DEPARTMENT_id=30)
+    LOOP
+    dbms_output.put_line('Iteration counter cursor: ' || SQL%rowcount);
+    dbms_output.put_line(i.employee_id|| ' ' || i.first_name);
+    END LOOP;
+END; 
     
     
+--------------------------------------------------------------
+-- EXAMPLE: CURSOR WITH PARAMETERS AND TRADICIONAL LOOP
+--------------------------------------------------------------
+    
+DECLARE
+    CURSOR c_emp_dept (v_dept number) --here it's defined the parameter withouth the size
+    IS
+    SELECT employee_id, first_name FROM employees
+    where department_id=v_dept;
+    
+    v_empno employees.employee_id%type;
+    v_first_name employees.first_name%type;
+    v_dep number:=10;
+    
+BEGIN
+OPEN c_emp_dept(v_dep);
+    dbms_output.put_line('Department name: ' || TO_CHAR(v_dep));
+    LOOP
+        FETCH c_emp_dept into v_empno, v_first_name;
+        EXIT WHEN c_emp_dept%notfound;
+        dbms_output.put_line(v_empno||' ' ||v_first_name);
+    END LOOP;
+CLOSE c_emp_dept;
+
+v_dep:=20;
+
+OPEN c_emp_dept(v_dep);
+    dbms_output.put_line('Department name: ' || TO_CHAR(v_dep));
+    LOOP
+        FETCH c_emp_dept into v_empno, v_first_name;
+        EXIT WHEN c_emp_dept%notfound;
+        dbms_output.put_line(v_empno||' ' ||v_first_name);
+    END LOOP;
+CLOSE c_emp_dept;
+
+END;
+
+ --------------------------------------------------------------
+-- EXAMPLE: CURSOR WITH NESTED LOOP AND UPDATE. 
+--------------------------------------------------------------
+    
+DECLARE
+    CURSOR cur (v_dept number) --here it's defined the parameter withouth the size
+    IS
+    SELECT * FROM employees
+    where department_id=v_dept;   
+    
+BEGIN
+
+
+FOR i in 1..100
+LOOP 
+    dbms_output.put_line('');
+    dbms_output.put_line('Working at ID: ' || i);
+    FOR e in cur(i)
+    LOOP
+    dbms_output.put_line(e.employee_id||' ' ||e.first_name || ' Deperatment ID: '|| e.department_id );
+    UPDATE EMPLOYEES SET last_name='FoundAtDepartment: '|| e.department_id where employees.employee_id=e.employee_id; 
+    
+    END LOOP;
+    dbms_output.put_line('');
+END LOOP;
+END;
+
+-- Query Análogo -- 
+
+UPDATE EMPLOYEES SET last_name='FoundAtDepartment: '|| department_id;
+
+
+
+ --------------------------------------------------------------
+-- EXAMPLE: CURRENT OF
+--------------------------------------------------------------
+
+DECLARE
+    CURSOR cur is
+    SELECT employee_id, first_Name, salary FROM employees
+    where department_id=30
+    FOR UPDATE;
+    
+BEGIN 
+
+    FOR i in cur
+    LOOP
+        update employees
+        set salary=salary+1
+        where CURRENT OF cur;
+    END LOOP;
+    commit;
+END;
+
+
+select * from dual; 
+
+
+
+begin
+
+for i in (select first_name fname from employees )
+
+    loop
+
+    DBMS_OUTPUT.PUT_LINE(i.first_name);
+
+    end loop;
+
+end; 
+
+
+
+
+
+
+
+
+select * from employees
+where employee_id in (100,200)
+order by 1
+for update; 
+
+update employees set salary=salary+100;
+
+
+
 
 

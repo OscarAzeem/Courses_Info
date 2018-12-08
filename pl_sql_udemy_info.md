@@ -60,6 +60,7 @@ alter user hr identified by hr account unlock;
 ### Begin (mandatori)
 * Sql statements
 * PL/SQL statements
+* If using a SELECT statement it should return just one row or it will lead to and exception. 
 
 ### Exception (optional)
 * Actions to perform when errors occur
@@ -369,9 +370,66 @@ TYPE -var_record_name- IS RECORD
 	    	* Note: Although it is possible to terminate the PL/SQL block withouth closing cursors, there is a maximum limit on the number of open cursors per session, which is determined by the OPEN_CURSORS, paramter in the database parameter file. 
 	    	* Default: OPEN_CURSORS=50.
 
+## FOR - CURSORS
+* A For loop cursor doesn't need to OPEN, FETCH, and CLOSE
+* Oracle will do all these thing implicity
+* Iterating in a explicit way: 
+    * FOR elemento in CURSOR
+* Iterating in a no explicit way: 
+    * FOR elemento in (SELECT * FROM ---)
+
+## CURSOR WITH PARAMETERS
+* When declaring a cursor you should open parenthesis with the number of parameters and the type of each one, withouth saying the size. 
+    * CURSOR Mycursor (var1 TypeVar1, var2 TypeVar2)
+
+## FOR UPDATE Clause (solution for the WHERE statement whithin the FOR)
+* When you put for update, then no one can do any DML (I, U, D) for these records, until you finish your transaction (commit, update).
+* When you use the for update statement, oracle gives you the option to refer directly to that records selected in the CURSOR statement. It's possible to update inside the FOR the reserved ercords.
+* 
 
 
+# EXCEPTIONS
+* The errors obtained by the BEGIN section in the PL/SQL Block Structure are handled here.
+* They are around 20 predefined exceptions name by ORACLE. 
+* An exception is a PL/SQL error that is raised during program execution. 
+* An exception can be raised: 
+    * Implicitly by the Oracle server
+    * Explicitly by the program
+* AN exception can be handled:
+    * By trapping it with a handler
+    * By propagating it to the calling environment
+* In contrast with the usual PL/SQL program it doesn't end ebruptly, when the exception is raised, the control shifts to the exception section and all the statements in the exception section are executed. The PL/SQL block terminates with normal, successful completion. 
 
+## EXCEPTION TYPES
+1. Predefined Oracle server error: 
+    * One of approximately 20 errors that occur most often in PL/Sql CODE. 
+    * You need not declare these exceptions. They are predefined by the Oracle Server and are raised implicitly. 
+    * Sample predefined exceptions:
+        * NO_DATA_FOUND
+        * TOO_MANY_ROWS
+        + INVALID_CURSOR
+        * ZERO_DIVIDE
+        * DUP_VAL_ON_INDEX
+2. Non-predefined Oracle Server error: 
+    * Any other standard Oracle Server error. 
+    * You need to declre these within the declarative section; the Oracle server will raise the error implicitly, and you can catch for the error in the exception handler. 
+3. User-defined error: 
+    * A condition that a developer determines is abnormal. 
+    * Declare in the declarative section and raise explicitly. 
+
+* Exception Syntax
+WHEN
+
+EXCEPTION_NAME1 [OR EXCEPTION_NAME2...] THEN
+
+    STATEMENT1;
+
+
+* Guidelines for Trapping Exceptions:
+    * The EXCEPTION keyword starts the exception-handling section.
+    * Several exception handers are allowed
+    * Only one handler is processed before leaving the block. 
+    * WHEN OTHERS is the last clause. 
 
 
 

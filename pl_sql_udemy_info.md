@@ -6,7 +6,7 @@
 * Global database name: orcl
 * Master user: sys as sysdba
 * Password (SYS-USER): masterdatabaseoracle
-* Pluggable database name: orclpdb
+* alter pluggable database all open;
 
 
 ## configuration file to make the configurations
@@ -445,7 +445,7 @@ EXCEPTION_NAME1 [OR EXCEPTION_NAME2...] THEN
 * You should declare the oracle number error inside the PRAGMA statement: 
     * PRAGMA exception_init(exception_name,oracle_error_number);
         * ex: PRAGMA exception_init(e_insert,-01400);
-
+* 
 
 
 

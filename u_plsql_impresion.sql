@@ -950,6 +950,7 @@ BEGIN
         where CURRENT OF cur;
     END LOOP;
     commit;
+    
 END;
 
 
@@ -968,6 +969,175 @@ for i in (select first_name fname from employees )
     end loop;
 
 end; 
+
+------------------
+
+------ DEALING WITH EXCEPTIONS-------
+-------------------------------------
+
+--- 1) Executing one block which brings error.
+
+declare
+v_first_name employees.first_name%type;
+
+BEGIN
+    select first_name into v_first_name
+    from
+    employees
+    where employee_id=1; -- theres no emp_id=1
+END;
+
+------------------------------------------
+-- 2) executing the same block but declaring the exception
+
+
+declare
+v_first_name employees.first_name%type;
+
+BEGIN
+    select first_name into v_first_name
+    from
+    employees
+    where employee_id=100; -- theres no emp_id=1
+    dbms_output.put_line(v_first_name);
+    
+    
+EXCEPTION 
+    WHEN no_data_found then
+    dbms_output.put_line('EXCEPTION: no_data_found. The query doesnt retrieve any record');
+    
+    
+
+
+END;
+
+--------------------------------------
+---------
+-- 3) handling many exceptions
+
+DECLARE 
+v_emp_id employees.employee_id%type;
+BEGIN
+
+    SELECT employee_id into v_emp_id
+    FROM
+    employees    
+    where first_name=&name;
+
+    exception
+    when no_data_found then
+    dbms_output.put_line('EX: no_data_found');
+    
+    when too_many_rows then
+    dbms_output.put_line('EX: too_many_rows');
+    
+    when others then
+    dbms_output.put_line('EX: others');
+END;
+
+-----------------------------------------
+-- DEALING WITH EXCEPTIONS
+-- SOLUTION TO AN ENDED BLOCK DUE TO AN EXCEPTION WITH A NESTED PL/SQL BLOCK.
+--
+DECLARE
+v_first_name employees.first_name%type;
+
+BEGIN
+FOR i in 80..102
+    LOOP
+
+    DECLARE
+    v_first_name employees.first_name%type;
+    
+    BEGIN
+    
+    SELECT first_name into v_first_name
+    FROM
+    employees
+    WHERE employee_id=i;
+    
+    dbms_output.put_line(i|| ' ' || v_first_name);
+    
+    
+    EXCEPTION
+    WHEN no_data_found THEN
+    dbms_output.put_line('EXCEPTION: NO DATA FOUND');
+    
+    END;
+    
+    
+    END LOOP; 
+    
+END;
+---------------------------
+
+---DEALING WITH ORACLE SERVER EXCEPTIONS
+-------
+--- Example with the code number: -01400
+
+DECLARE
+e_insert exception;
+pragma exception_init(e_insert,-01400);
+BEGIN
+    INSERT INTO departments(DEPARTMENT_ID, DEPARTMENT_NAME)
+    values (1,null);
+    
+    EXCEPTION
+    WHEN e_insert then
+    dbms_output.put_line('insert failed');
+    dbms_output.put_line(sqlcode);
+    dbms_output.put_line(sqlerrm);
+    
+    when others then
+    dbms_output.put_line('EXCEPTION: OTHERS');
+END; 
+
+
+-----------------------------------------------------
+
+
+--- Example Dealing with exception Oracle Server and update sentence. 
+-- REMEMBER, each DML sentence should be inside a PL/SQL block, due to the exception hadling, otherwise 
+-- at the first exception will end all the PL/SQL block. 
+
+DECLARE 
+e_insert exception;
+PRAGMA exception_init(e_insert,-01400);
+
+BEGIN
+
+    BEGIN
+        INSERT INTO departments (DEPARTMENT_ID, DEPARTMENT_NAME)
+        VALUES (1,null);
+    
+    EXCEPTION
+        WHEN e_insert THEN
+        dbms_output.put_line('EXCEPTION: Insert Failed');
+        dbms_output.put_line(sqlcode);
+        dbms_output.put_line(sqlerrm);
+    
+    
+    END;
+    
+    
+    BEGIN
+        
+        UPDATE employees
+        SET employee_id='ss'
+        WHERE employee_id=100;
+        
+        EXCEPTION
+        WHEN e_insert THEN
+        dbms_output.put_line('EXCEPTION: UPDATE Failed');
+        dbms_output.put_line(sqlcode);
+        dbms_output.put_line(sqlerrm);
+    
+    END;
+    
+    
+END;
+    
+    
 
 
 

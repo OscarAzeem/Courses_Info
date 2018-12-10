@@ -399,6 +399,9 @@ TYPE -var_record_name- IS RECORD
     * By trapping it with a handler
     * By propagating it to the calling environment
 * In contrast with the usual PL/SQL program it doesn't end ebruptly, when the exception is raised, the control shifts to the exception section and all the statements in the exception section are executed. The PL/SQL block terminates with normal, successful completion. 
+* When dealing with exceptions, the 'others' STATEMENT should be declared at the end of EXCEPTION block. 
+
+
 
 ## EXCEPTION TYPES
 1. Predefined Oracle server error: 
@@ -429,8 +432,19 @@ EXCEPTION_NAME1 [OR EXCEPTION_NAME2...] THEN
     * The EXCEPTION keyword starts the exception-handling section.
     * Several exception handers are allowed
     * Only one handler is processed before leaving the block. 
-    * WHEN OTHERS is the last clause. 
+    * WHEN OTHERS is the last clause.
 
+
+## Common mistakes with dealing with EXCEPTIONS:
+* When an error it's encountered, the program goes inmediatly to the EXCEPTION block and then ends such block. 
+* For solving the END of a PL/SQL statement due to and EXCEPTION raised off-time, you can declare a nested PL/SQL block which deals with such exception. 
+
+## Non predefined Oracle Server Error EXCEPTIONS:
+* They are defined in the DECLARE statement
+* the PRAGMA statement specifies how the exception it's triggered. 
+* You should declare the oracle number error inside the PRAGMA statement: 
+    * PRAGMA exception_init(exception_name,oracle_error_number);
+        * ex: PRAGMA exception_init(e_insert,-01400);
 
 
 

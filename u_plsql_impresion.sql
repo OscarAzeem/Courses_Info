@@ -1405,22 +1405,133 @@ dbms_output.put_line(v_sal);
 END;
 
 
+------------------------------------------------------
+-- IN/OUT PARAMETER
+-----------------------------------------------------
+-- asume the lenght for a tel is 12
+-- example 971505914988
+-- we need a produce to format the 971505914988 to 971(50)5914988
+
+CREATE OR REPLACE PROCEDURE format_tel
+(p_tel in out varchar2)
+IS
+BEGIN
+p_tel:=substr(p_tel,1,3)||'('||substr(p_tel,4,2)||')'||substr(p_tel,7);
+end ; 
+
+variable b_telephone varchar2(20);
+execute :b_telephone:='971505914988';
+
+execute format_tel(:b_telephone);
+print b_telephone; 
+
+----------------------------------------------------
+
+--- EXERCISE FOR PASSING PARAMETERS ------
+---
+
+CREATE TABLE products
+(
+    prod_id number,
+    prod_name varchar2(20),
+    prod_type varchar2(20),
+    constraint products_pk primary key (prod_id)
+);
+
+
+CREATE OR REPLACE PROCEDURE add_products
+(p_prod_id number, p_prod_name varchar2, p_prod_type varchar2)
+IS
+BEGIN
+
+INSERT INTO products VALUES (p_prod_id, p_prod_name, p_prod_type);
+commit;
+exception
+when others then
+dbms_output.put_line('error in insert');
+dbms_output.put_line(sqlcode);
+dbms_output.put_line(sqlerrm);
+
+
+END; 
+
+
+
+-----------------
+---- calling the procedure FROM A PL/SQL BLOCK
+----------------
+DECLARE
+v_prod_id number(3);
+v_prod_name varchar2(20);
+v_prod_type varchar(20);
+BEGIN
+add_products(2,'Nombre2','Tipo2');
+
+
+EXCEPTION
+WHEN others then
+dbms_output.put_line('error in insert');
+dbms_output.put_line(sqlcode);
+dbms_output.put_line(sqlerrm);
+
+END; 
+
+----------------------
+------ CALLING THE PROCEDURE FROM A "EXECUTE" BLOCK
+
+execute add_products(3,'Nombre3','Tipo3');
+
+
+
+----------- CALLING THE PROCEDURE FROM AN "ECECUTE" BLOCK
+---- NAMED 
+
+execute add_products(p_prod_id=>4, p_prod_name=>'Nombre4', p_prod_type=>'Tipo4');
+
+
+------------------------------
+-- DECLARING A PROCEDURE WITH DEFAULT PARAMETERS
+------------------------------
+
+CREATE OR REPLACE PROCEDURE add_products
+(p_prod_id number, p_prod_name varchar2:='Uknown Name', p_prod_type varchar2 default 'Uknown Type')
+IS
+
+-- declare section (analogous)
+e_constraint exception;
+PRAGMA exception_init(e_constraint,-1);
+
+BEGIN
+INSERT INTO products (PROD_ID,PROD_NAME,PROD_TYPE) VALUES (p_prod_id, p_prod_name, p_prod_type);
+COMMIT;
+
+EXCEPTION
+WHEN e_constraint then
+dbms_output.put_line('Unique constraint was violated. Exception declared by oracle server');
+dbms_output.put_line(sqlcode);
+dbms_output.put_line(sqlerrm);
+
+WHEN OTHERS THEN
+dbms_output.put_line('OTHERS EXCEPTION');
+dbms_output.put_line(sqlcode);
+dbms_output.put_line(sqlerrm);
+
+END;
 
 
 
 
 
+select * from user_source
+
+where name='ADD_PRODUCTS'
+
+ORDER BY LINE;
 
 
+select * from user_objects
 
-
-
-
-
-
-
-
-
+where object_name='ADD_PRODUCTS';
 
 
 select * from employees;
@@ -1431,9 +1542,13 @@ select * from employees;
 
 
 
+select * from user_source
+
+where name='QUERY_EMP'
+
+ORDER BY LINE;
 
 
 
-
-select * from employees;
+select * from products;
 

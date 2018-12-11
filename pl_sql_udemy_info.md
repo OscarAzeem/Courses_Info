@@ -194,6 +194,9 @@ alter user hr identified by hr account unlock;
 ## Bind variables (VARIABLE statement)
 * When declaring a bind number variable, you shouldn't define a size. 
 * When declaring a bind varchar2 variable you should define a size. 
+* When declaring a bind variable you cant initialized it at the same time. 
+* You can initialize a bind varible with the EXECUTE command. 
+    * execute :b_telephone:='971505914988';
 * Created in the environment
 * Also called host variables
 * Created with the VARIABLE (also just: VAR) keyword
@@ -415,17 +418,18 @@ TYPE -var_record_name- IS RECORD
         * DUP_VAL_ON_INDEX
 2. Non-predefined Oracle Server error: 
     * Any other standard Oracle Server error. 
-    * You need to declre these within the declarative section; the Oracle server will raise the error implicitly, and you can catch for the error in the exception handler. 
+    * You need to declare these within the declarative section; the Oracle server will raise the error implicitly, and you can catch for the error in the exception handler. 
 3. User-defined error: 
     * A condition that a developer determines is abnormal. 
     * Declare in the declarative section and raise explicitly. 
 
 * Exception Syntax
+
 WHEN
 
 EXCEPTION_NAME1 [OR EXCEPTION_NAME2...] THEN
 
-    STATEMENT1;
+STATEMENT1;
 
 
 * Guidelines for Trapping Exceptions:
@@ -544,7 +548,7 @@ EXCEPTION_NAME1 [OR EXCEPTION_NAME2...] THEN
         * PROCEDURE_NAME(PARAMETER1, PARAMETER2);
         * ...
         * END; 
-* After declaring the Procedure Name and parameters, the procedure it's initialized with one of the three reserved words:
+* After declaring the Procedure Name and parameters, the procedure it's initialized with one of the three following reserved words:
     1. IS
     2. OR
     3. AS
@@ -569,8 +573,40 @@ ORDER BY LINE;
 drop procedure 'PROCEDURE_NAME_CREATED'
 
 
+## Comparing the parameter Mode
+* **IN**:
+    * Default mode
+    * Value is passed into subprogram
+    * Formal parameter acts as a constant
+    * Actual parameter can be a literal, expression, constant, or initialized variable.
+    * Can be assigned a default value
+* **OUT**:
+    * Must be specified
+    * Returned to calling environment
+    * Unintialized variable
+    * Cannot be assigned a default value
+* **IN/OUT**:
+    * Must be specified. 
+    * Passed into subprogram; returned to calling environment. 
+    * Initialized variable
+    * Must be a variable
+    * Cannot be assigned a default value
+
+## Available notations for passion actual parameters
+* When calling a subprogram, you can write the actual parameters using the following notations: 
+* Positional: 
+    * List the actual parameters in the sam order as the formal parameters
+* Named: 
+    * Lists the actual parameters in arbitrary order and uses the association operator (=>) to associate a named formal parameter with its actual parameter
+* Mixed: 
+    * Lists some of the actual parameters as positional and some as named. 
 
 
+## Default option for parameters
+* Two ways when specifying the parameter:
+    1. VarName VarType:='VarValue'
+    * VarName VarType DEFAULT 'VarValue'
+* 
 
 
 

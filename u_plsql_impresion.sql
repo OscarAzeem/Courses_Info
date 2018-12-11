@@ -1503,6 +1503,9 @@ PRAGMA exception_init(e_constraint,-1);
 
 BEGIN
 INSERT INTO products (PROD_ID,PROD_NAME,PROD_TYPE) VALUES (p_prod_id, p_prod_name, p_prod_type);
+dbms_output.put_line('Values inserted: ' || p_prod_id || p_prod_name || p_prod_type);
+
+
 COMMIT;
 
 EXCEPTION
@@ -1517,6 +1520,63 @@ dbms_output.put_line(sqlcode);
 dbms_output.put_line(sqlerrm);
 
 END;
+
+------------------------------
+
+-- caling a procedure with the default parameters
+
+execute add_products(p_prod_id=>5);
+
+execute add_products(p_prod_id=>6);
+
+
+-----------------------------
+
+-- HAndling procedure exceptions
+
+BEGIN
+add_products(11,'PC');
+add_products(12,'Lactoc');
+add_products(21,'Keyboard');
+
+--DELETE from products;
+
+
+END;
+
+-----------------------------------
+
+--- USING A BOOLEAN TYPE AS PARAMETER ---
+
+----
+
+CREATE OR REPLACE PROCEDURE bolean_parameter(p boolean default True)
+IS
+---
+BEGIN
+if p then
+    dbms_output.put_line('The p value is True or None value was given');
+    
+    ELSIF NOT P then
+    dbms_output.put_line('The p value fALSE');
+    
+    
+    
+END if;
+
+
+END;
+
+
+---- DELCARING THE PL/SQL BLOCK
+DECLARE
+value_boolean BOOLEAN:=FALSE;
+
+
+BEGIN
+
+bolean_parameter();
+end;
 
 
 
@@ -1551,4 +1611,6 @@ ORDER BY LINE;
 
 
 select * from products;
+
+rollback;
 

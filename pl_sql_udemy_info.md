@@ -521,6 +521,9 @@ STATEMENT1;
 * Are a type of subprogram that perform an action.
 * Can be stored in the database as a schema object. 
 * Promote reusability and maintainability
+* It's necessary to declare the EXCEPTION inside each procedure, besides the EXCEPTION in the PL/SQL block. 
+* If no EXCEPTION is declared inside the procedure, after finding an error the oracle server will end the main PL/SQL block and a ROLLBACK will be executed. 
+* 
 
 ## Understanding Procedure sintax
 * First off all you should have *procedure privilege* in the oracle server user.

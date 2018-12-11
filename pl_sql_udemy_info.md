@@ -530,6 +530,9 @@ EXCEPTION_NAME1 [OR EXCEPTION_NAME2...] THEN
         * The *PARAMETER_MODE* could be one of the tree following: 
             1. IN: the parameter will be sent from the incoming environment.
             2. OUT: returns a value to the caller
+                * When using the OUT *PARAMETER_MODE*, should consider the following:
+                    * The variables returned should be declared before as BIND (Also called host) variables.
+                    * When calling the Stored Procedure, the BIND variables should have an ':'as a prefix.  
             3. IN/OUT: supplies an input value, which may be returned (output) as a modified value
             * Parameter modes are specified in the formal parameter declaration, after the aprameter name and before its data type
             * The IN mode is the dfault if no mode is specified. 

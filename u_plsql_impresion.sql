@@ -1357,6 +1357,71 @@ ORDER BY LINE;
 ----- BEGIN PROCEDURE: OUT - example
 -------------------------------
 
+CREATE OR REPLACE PROCEDURE query_emp
+(p_emp_id IN employees.employee_id%type,
+p_f_name out employees.first_name%type,
+p_sal OUT employees.salary%type)
+IS
+
+BEGIN
+    SELECT first_name,salary
+    INTO p_f_name, p_sal
+    FROM employees
+    where employee_id=p_emp_id;
+    
+    EXCEPTION
+    WHEN OTHERS THEN
+    dbms_output.put_line(sqlcode);
+    dbms_output.put_line(sqlerrm);
+    
+END;
+
+----------------------------------------
+-- DECLARING THE BIND VARIABLES FOR THE OUT EXAMPLE --
+
+variable b_first_name varchar2(100);
+variable b_sal number;
+
+execute query_emp(105,:b_first_name, :b_sal);
+
+
+BEGIN
+dbms_output.put_line(b_first_name);
+dbms_output.put_line(b_sal);
+END;
+
+PRINT b_first_name b_sal;
+
+
+-----------------------------
+-- The other way to call and print the OUT parameter
+DECLARE 
+v_first_name employees.first_name%type;
+v_sal employees.salary%type;
+BEGIN
+query_emp(104,v_first_name,v_sal);
+dbms_output.put_line(v_first_name);
+dbms_output.put_line(v_sal);
+END;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 select * from employees;
 

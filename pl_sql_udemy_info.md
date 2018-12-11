@@ -445,7 +445,128 @@ EXCEPTION_NAME1 [OR EXCEPTION_NAME2...] THEN
 * You should declare the oracle number error inside the PRAGMA statement: 
     * PRAGMA exception_init(exception_name,oracle_error_number);
         * ex: PRAGMA exception_init(e_insert,-01400);
+* Printing the sqlcode error: 
+    * dbms_output.put_line(sqlcode);
+* Printing the error description (sqlerrm):
+    * dbms_output.put_line(sqlerrm);
+
+## USER PREDEFINED EXCEPTIONS:
+* The exception declared should be specified inside the DECLARE section
+    * -exception_variable- exception; 
+* The exception should be raised manually (usually inside an IF block)
+* After raised, the exception it's called by the EXCEPTION block. 
+* The sqlcode for an user predefined exception it's always: 1
+* The sqlerrm for an user predefined exception it's always: "User-Defined Exception"
+
+## Raise Application Error Procedure
+* Sintax: 
+    * raise_application_error(error_number,message[, (TRUE | FALSE)]);
+        * **error_number**: Number between -20000 and -20999
+        * **message**: Is the user-specified message for the exception; is a character string up to 2048 bytes long.
+        * **TRUE|FALSE**: Is an optional Boolean parameter(if TRUE the error is placed on the stack of previous errors. If FALSE, which is the default, the error replaces all previous errors)
+* You can use this procedure to issue user-defined error messages from stored subprograms
+* You can reprot errors to your application and avoid returning unhandled exceptions. 
+* Such errors should be a number between -20000 and -20999
+
+## Group functions and exceptions
+* When using a GROUP BY statement the exception can't be raised with an oracle exception: *no_data_found*, because the GROUP BY clause allways return a value (a NULL value when no data found). 
+* The exception when using GROUP BY could be raised with an user defined exception, if the value returned is NULL.
 * 
+
+# Procedures and subprograms
+* You can give permissons to certain users to execute a Procedure. 
+
+## Anonymous Blocks and Subprograms
+* **Anonymous Blocks**: 
+    * Unnamed PL/SQL blocks. 
+    * Compiled every time
+    * Not stored in the database
+    * Cannot ve invoked by other applications
+    * Cannnot take parameters
+* **Subprograms**: 
+    * Named PL/SQL blocks
+    * **A subprogram can be a procedure or a function**
+    * Compiled only once
+    * Stored in the database
+    * Named and, therefore, can be invoked by other applications. 
+    * Subprograms called funtions must return values
+    * Can take parameters
+    * A PL/SQL subprogram is a named PL/SQL block that can be clled with a set of parameters. 
+    * You can declare and define a subprogram within either a PL/SQL block or another subprogram. 
+    * a subprogram consist of a specification and a body. 
+    * Typically, you use a procedure to perform an action and a function to compute and return a value. 
+* The main idea it's to modularize the code into subprograms   
+    * Locate the code sequences repated more than once
+    * Create subprogram P containing the repetead code
+    * Modify original code to invoke the new subprogram. 
+
+## Modularizing Development with PL/SQL Blocks. 
+* PL/SQL is a block-structured language. The PL/SQL code block helps modularize code by using: 
+    * Anonymous blocks
+    * Procedures and functions
+    * Packages
+    * Database triggers
+* The benefits of using modular program constructs are: 
+    * Easy maintenance
+    * Improved data security and integrity 
+    * Improved performance
+    * Improved code clarity
+
+
+# Procedures
+* Are a type of subprogram that perform an action.
+* Can be stored in the database as a schema object. 
+* Promote reusability and maintainability
+
+## Understanding Procedure sintax
+* First off all you should have *procedure privilege* in the oracle server user.
+* Substitution and host variables are not allowed in procedures.
+* Sintax: 
+    * CREATE OR REPLACE PROCEDURE: 
+        * Optional to override and existing procedure
+    * Parameters: 
+    * (-first_parameter- *PARAMETER_MODE*  TYPE_PARAMETER, -second_parameter- *PARAMETER_MODE* TYPE_PARAMETER): 
+        * Parameters must be declared withouth specifying size. 
+        * The *PARAMETER_MODE* could be one of the tree following: 
+            1. IN: the parameter will be sent from the incoming environment.
+            2. OUT: returns a value to the caller
+            3. IN/OUT: supplies an input value, which may be returned (output) as a modified value
+            * Parameter modes are specified in the formal parameter declaration, after the aprameter name and before its data type
+            * The IN mode is the dfault if no mode is specified. 
+* Calling a procedure:
+    * You can call a procedure by the command: 
+        * *execute* PROCEDURE_NAME(PARAMETER1,PARAMETER2);
+    * You can call a procedure inside any PL/SQL block: 
+        * BEGIN
+        * PROCEDURE_NAME(PARAMETER1, PARAMETER2);
+        * ...
+        * END; 
+* After declaring the Procedure Name and parameters, the procedure it's initialized with one of the three reserved words:
+    1. IS
+    2. OR
+    3. AS
+
+## Metadata Querys Procedures
+* Seeing the metadata Procedure
+
+select * from user_objects
+
+where object_name='PROCEDURE_NAME_CREATED';
+
+* Seeing the text Procedure: 
+
+select * from user_source
+
+where name='PROCEDURE_NAME_CREATED'
+
+ORDER BY LINE;
+
+* Dropping a procedure: 
+
+drop procedure 'PROCEDURE_NAME_CREATED'
+
+
+
 
 
 

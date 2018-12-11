@@ -1131,13 +1131,234 @@ BEGIN
         dbms_output.put_line('EXCEPTION: UPDATE Failed');
         dbms_output.put_line(sqlcode);
         dbms_output.put_line(sqlerrm);
+        
+        
+        WHEN others THEN
+        dbms_output.put_line('EXCEPTION: UPDATE Failed');
+        dbms_output.put_line(sqlcode);
+        dbms_output.put_line(sqlerrm);
+        
     
     END;
     
     
 END;
+
+
+
+------------------exception: user defined error--------------------
+
+select * from employees where employee_id=1;
+
+DECLARE
+v_employee_id number:=1;
+
+BEGIN
+UPDATE employees
+set salary=20000
+WHERE employee_id=v_employee_id;
+
+dbms_output.put_line(sql%rowcount);
+
+END;
+
+    
+--------------------------------------------
+-----------------------------------------
+--------- EXAMPLE: EXCEPTION, USER DEFINED ERROR
+
+DECLARE
+v_employee_id number:=1;
+e_invalid_no exception;
+BEGIN
+    UPDATE employees
+    SET salary=20000
+    WHERE employee_id=v_employee_id;
+    
+    dbms_output.put_line(sqlcode);
+    dbms_output.put_line(sqlerrm);
+    
+    if sql%notfound then
+    dbms_output.put_line('sql%notfound statement. exception raised');
+    raise e_invalid_no;
+    END IF; 
+    
+    EXCEPTION
+    WHEN e_invalid_no then
+    dbms_output.put_line('invalid emp ID: ' || v_employee_id);
+    dbms_output.put_line(sqlcode);
+    dbms_output.put_line(sqlerrm);
+    
+end;
+    
+-------------------------------------------------
+----- RAISE APPLICATION ERROR 
+
+DECLARE 
+v_employee_id number:=1;
+BEGIN
+UPDATE employees
+SET salary=20000
+WHERE employee_id=v_employee_Id;
+
+if sql%notfound then
+raise_application_error(-20000, 'Invalid emp ID');
+END IF;
+
+END; 
+
+--------------------------------------------------
+-------- GROUP FUNCTIONS AND EXCEPTIONS
+--------------------------------------
+
+SELECT * FROM employees
+where EMPLOYEE_ID=15154;
+
+SELECT SUM(SALARY) FROM EMPLOYEES
+WHERE DEPARTMENT_ID=888;
+
+DECLARE
+v_sum_sal number;
+BEGIN
+    SELECT SUM(SALARY) INTO v_sum_sal
+    FROM employees
+    WHERE DEPARTMENT_ID=&dno;
+    dbms_output.put_line('the sum is: ' ||v_sum_sal);
+    dbms_output.put_line('sql%rowcount: ' || sql%rowcount);
     
     
+    EXCEPTION
+    WHEN no_data_found then
+    dbms_output.put_line('no data found');
+    
+END;
+    
+-----------------------
+---- GROUP BY CLAUSE AND EXEPTIONS (REVISITED)-------
+
+DECLARE
+    v_sum_sal number;
+    v_er exception;
+    v_department number:=&dno;
+    
+BEGIN
+    SELECT sum(salary) into v_sum_sal
+    FROM employees
+    WHERE department_id=v_department;
+    
+    if v_sum_sal is not null then
+    dbms_output.put_line('The sum is: ' || v_sum_sal);
+    dbms_output.put_line(sql%rowcount);
+    END IF;
+    
+    if v_sum_sal is null then
+    dbms_output.put_line('There is no department: ' || v_department);
+    dbms_output.put_line(sql%rowcount);
+    raise v_er;
+    END IF;
+    
+    
+    
+    EXCEPTION
+    when v_er then
+    dbms_output.put_line('No data found. It was received a NULL value');
+    
+END;
+
+--------- MANY BLOCKS AND MANY EXCEPTIONS
+
+DECLARE
+v_sum_sal number(2);
+v_er exception;
+BEGIN
+        BEGIN
+        SELECT SUM(salary) into v_sum_sal
+        FROM employees
+        WHERE department_Id=&dno;
+            IF v_sum_sal is not null then
+            dbms_output.put_line('The sum is ' || v_sum_sal);
+            dbms_output.put_line(sql%rowcount);
+            else
+            raise v_er;
+            END IF;
+            
+        EXCEPTION
+        when v_er then
+        dbms_output.put_line('No data found (exception raised due to a null value');
+        END;
+    
+EXCEPTION
+WHEN OTHERS THEN
+dbms_output.put_line(sqlcode);
+dbms_output.put_line(sqlerrm);
+END; 
+
+------------------------------------------------------------------------------------
+
+begin
+
+ update employees
+
+set salary=0
+
+where employee_id=5;
+
+  exception
+
+  when no_data_found then
+
+  dbms_output.put_line('xyz');
+
+end; 
+
+-------------------------------
+----- BEGIN PROCEDURE: IS - example
+-------------------------------
+
+CREATE OR REPLACE PROCEDURE update_sal
+(p_emp_id in number, p_amount in number)
+IS
+--- variable definitions (cursors even) here
+
+BEGIN
+    UPDATE employees
+    set salary=salary+p_amount
+    where employee_id=p_emp_id;
+commit; 
+
+exception
+
+WHEN others then
+dbms_output.put_line(sqlcode);
+dbms_output.put_line(sqlerrm);
+
+END;
+
+-- executing the procedure within a single block: 
+execute update_sal(100,50);
+
+
+-- Seeing the metadata info about some procedure:
+
+select * from user_objects
+where object_name='UPDATE_SAL';
+
+
+select * from user_source
+
+where name='UPDATE_SAL'
+
+ORDER BY LINE;
+
+
+----------------------
+
+-------------------------------
+----- BEGIN PROCEDURE: OUT - example
+-------------------------------
+
+
+select * from employees;
 
 
 
@@ -1146,14 +1367,8 @@ END;
 
 
 
-select * from employees
-where employee_id in (100,200)
-order by 1
-for update; 
-
-update employees set salary=salary+100;
 
 
 
-
+select * from employees;
 

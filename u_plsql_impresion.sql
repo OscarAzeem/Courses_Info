@@ -1578,24 +1578,114 @@ BEGIN
 bolean_parameter();
 end;
 
+-----------------------------------
+
+-- PROCEDURES AND ROWTYPE VARIABLES
+-- NOTICE THIS CODE: THE ROWTYPE DEFINITION AND INSERT
+
+-----------------------------------
+
+CREATE OR REPLACE PROCEDURE test_plsql_records
+( rec in DEPARTMENTS%rowtype)
+IS
+BEGIN
+INSERT INTO DEPARTMENTS VALUES rec;
+
+EXCEPTION
+WHEN OTHERS THEN
+dbms_output.put_line('OTHERS EXCEPTION');
+dbms_output.put_line(sqlcode);
+dbms_output.put_line(sqlerrm);
+
+END; 
+
+
+-- calling the procedure
+
+DECLARE
+v departments%rowtype;
+BEGIN
+FOR i in 1..1000
+LOOP
+dbms_output.put_line('Working on: ' || i);
+v.DEPARTMENT_ID:=i;
+v.department_name:=TO_CHAR(v.DEPARTMENT_ID);
+test_plsql_records(v);
+
+END LOOP; 
+
+END;
+
+-----------------------------------
+
+-- FUNCTIONS EXAMPLE
+-- 
+
+-----------------------------------
+
+-- create a function to return the salary for an employee
+-- so we need one parameter (in) number (employee_id)
+-- the return value should be also a number because it is the salary.
+
+CREATE OR REPLACE FUNCTION get_sal
+(p_emp_id number)
+return number
+IS
+v_sal NUMBER;
+BEGIN
+    SELECT salary into v_sal
+    FROM EMPLOYEES
+    WHERE employee_id=p_emp_id;
+    
+    return v_sal;
+END; 
+
+-- Methods for calling a function:
+-- 1) As a part of an expression: 
+DECLARE
+v_sal number;
+BEGIN
+FOR i in 100..220
+LOOP
+v_sal:=get_sal(i);
+dbms_output.put_line('wORKING on: ' || i ||  ' The sal is: ' || v_sal);
+END LOOP;
+END; 
+
+
+-- 2 as a parameter value
+
+BEGIN
+dbms_output.put_line(get_sal(100));
+END;
+
+execute get_sal(100);
+
+-- Also we can do this:
+
+execute dbms_output.put_line(get_sal(100));
+
+
 
 
 
 
 select * from user_source
 
-where name='ADD_PRODUCTS'
+where name='GET_SAL'
 
 ORDER BY LINE;
 
 
 select * from user_objects
 
-where object_name='ADD_PRODUCTS';
+where object_name='GET_SAL';
 
 
-select * from employees;
+select * from departments;
 
+
+rollback;
 
 
 
@@ -1611,6 +1701,10 @@ ORDER BY LINE;
 
 
 select * from products;
+
+select * from EMPLOYEES;
+
+EMPLOYEES
 
 rollback;
 

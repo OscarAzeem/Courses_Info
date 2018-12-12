@@ -522,7 +522,7 @@ STATEMENT1;
 * Can be stored in the database as a schema object. 
 * Promote reusability and maintainability
 * It's necessary to declare the EXCEPTION inside each procedure, besides the EXCEPTION in the PL/SQL block. 
-* If no EXCEPTION is declared inside the procedure, after finding an error the oracle server will end the main PL/SQL block and a ROLLBACK will be executed. 
+* **If no EXCEPTION is declared inside the procedure, after finding an error the oracle server will end the main PL/SQL block and a ROLLBACK will be executed.**
 * 
 
 ## Understanding Procedure sintax
@@ -613,6 +613,45 @@ drop procedure 'PROCEDURE_NAME_CREATED'
 
 
 
+# Functions
+* PL/SQL that return a value (In general to Compute A Value)
+* The PL/SQL block must have at least one RETURN statement. 
+* Main object it's a SELECT statement. 
+* Can be stored in the database as a schema object for repeated execution
+* Is called as part of an expression or is used to provide a parameter value. 
+* Host (BIND) variables are not Allowed, also substitute variables (reserved character *&*)
+* It should be at least one return expression in executable section
+* Return datatype should be withouth size. 
+* OUT / IN OUT can be used, but it's not a good practice. 
+
+## Methods to invoke a function:
+1. As a part of an expression:
+    * variable:=function(parameters)
+2. As a parameter value: 
+    * execute dbms_output.put_line(get_sal(100));
+3. Using a host varaible
+    * variable b_salary number;
+    * execute dbms_output.put_line(get_sal(100));
+    
+
+## Differences Between Procedures and Functions
+* Procedures:
+    * Execute as a PL/SQL sstatement
+    * Do not contain RETURN clause in the Header
+    * Can pass values (if any) using output parameters
+    * Can contain a RETURN statement without a value
+    * Main reason: To perform an action; can not be used in select
+* Functions: 
+    * Invoke as part of an expression (cant be called by the EXECUTE command)
+    * Can be called as variable:=function(parameters)
+    * Must contain a RETURN clause in the header. 
+    * Must return a single value.
+    * Must contain at least one RETURN statement
+    * Main reason: To return a VALUE; can be used in Select, but it should not include OUT/ IN OUT parameters. 
+* A procedure that have one parameter (OUT) would be better rewritten as a function.
+
+
+
 * Video: 50
 
 
@@ -639,3 +678,11 @@ drop procedure 'PROCEDURE_NAME_CREATED'
 
 ## User tables: user_tables 
 
+# December Path to freedom :)
+1. SQL -- ok
+2. PL/SQL -- 30%
+3. DBA BASICS -- 20% 
+4. Informatica -- 25%
+5. Scala -- pending
+6. scikit book -- pending
+7. AWS -- pending 

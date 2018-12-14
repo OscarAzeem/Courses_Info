@@ -544,7 +544,7 @@ STATEMENT1;
             3. IN/OUT: supplies an input value, which may be returned (output) as a modified value
             * Parameter modes are specified in the formal parameter declaration, after the aprameter name and before its data type
             * The IN mode is the dfault if no mode is specified. 
-* Calling a procedure:
+* **Calling a procedure**:
     * You can call a procedure by the command: 
         * *execute* PROCEDURE_NAME(PARAMETER1,PARAMETER2);
     * You can call a procedure inside any PL/SQL block: 
@@ -710,7 +710,18 @@ where department_id=20;
         * There's no need for the BEGIN clause. 
     2. Package body. 
         * The package body should have the definition of each function declared in the Package specification. 
-        
+* A Package is a schema that groups logically related   PL/SQL types, variables, and subprograms. 
+* Packages usually have two parts: 
+    1. A specification (spec)
+        * The specification is the interface to the package. It declares the types, variables, constants ,exceptions, cursors, and subprograms that can be referenced from outside the package. 
+    2. A body
+        * The body defines the queries for the cursors and the code for the subprograms. 
+        * Enable the Oracle server to read multiple objects into memory at once. 
+* Advantages of using packages: 
+    * Hiding information:
+        * Only the declarations in the package specification are visible and accesible to applications
+        * Private constructs in the package body are hiden and inaccessible
+        * All coding is hidden in the package body. 
 
 * Video: 50
 

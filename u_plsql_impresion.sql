@@ -1846,6 +1846,151 @@ dbms_output.put_line('some test');
 END; 
 
 
+---- calling the package: AREA:------------
+
+
+select area.square_area(20) from dual; 
+
+
+select area.rectangle_area(4,6) from dual; 
+
+-----------
+
+
+
+drop function square_area;
+
+drop function rectangle_area; 
+
+
+
+------------------------
+
+-- EXCERCISE WITH THE STUDENT CREATED TABLE:
+
+-------------------------
+
+drop table student; 
+
+CREATE TABLE STUDENT
+( 
+    student_id number,
+    first_name varchar2(100),
+    birthday date,
+    constraint student_pk primary key (student_id)
+);
+
+--------
+-- BUILDING A PACKAGE WITH THE THREE DML: insert, delete, query a student, 
+
+
+create sequence student_number;
+
+drop sequence student_number;
+
+-- BUILDING SPECIFICATION PACKAGE
+
+CREATE OR REPLACE PACKAGE PSTUDENT
+IS
+    PROCEDURE insert_student(p_est_fname varchar2, p_est_birthday date);
+    
+    PROCEDURE delete_student(p_est_id number);
+    
+    FUNCTION query_student(p_est_id number)
+    RETURN varchar2;
+END;
+
+
+-- BUILDING THE BODY FOR THE SPECIFICATION
+CREATE OR REPLACE PACKAGE BODY PSTUDENT
+IS
+    PROCEDURE  insert_student(p_est_fname varchar2, p_est_birthday date)
+    IS
+    BEGIN
+    INSERT INTO STUDENT VALUES (student_number.nextval, p_est_fname, TO_DATE(p_est_birthday));
+    commit;
+    
+    EXCEPTION
+    WHEN OTHERS THEN
+    dbms_output.put_line('Erorr insertando: ');
+    dbms_output.put_line(sqlcode);
+    dbms_output.put_line(sqlerrm);
+    END;
+
+
+    PROCEDURE delete_student(p_est_id number)
+    IS
+    --
+    BEGIN
+    delete from student where STUDENT_ID=p_est_id;
+    commit;
+    
+    EXCEPTION
+    WHEN OTHERS THEN
+    dbms_output.put_line('Error en el borrado: ');
+    dbms_output.put_line(sqlcode);
+    dbms_output.put_line(sqlerrm);
+    END;
+    
+    
+    FUNCTION query_student(p_est_id number)
+    RETURN varchar2
+    IS
+    --
+    variable_nombre varchar2(100);
+    BEGIN
+    select 'Birthday: ' || student.birthday || ' Name: ' || student.first_name INTO variable_nombre
+    from student where student.student_id=p_est_id;
+    
+    EXCEPTION
+    WHEN OTHERS THEN
+    dbms_output.put_line('Error la búsqueda ');
+    dbms_output.put_line(sqlcode);
+    dbms_output.put_line(sqlerrm);
+    return '0';
+    END;
+    
+BEGIN
+dbms_output.put_line('iNICIO DEL BLOQUE estudiante');
+END;
+
+
+-------------------------------------------
+BEGIN
+PSTUDENT.insert_student('PEDRO',TO_DATE('1992-10-25','YYYY-MM-DD'));
+END;
+
+BEGIN
+PSTUDENT.delete_student(6);
+END;
+
+select PSTUDENT.query_student(1) from dual; 
+
+
+
+BEGIN
+PSTUDENT.query_student(1);
+END;
+
+
+
+
+select * from
+STUDENT
+
+
+
+
+
+
+
+ INSERT INTO STUDENT VALUES (student_number.nextval, 'oscar', date '1972-05-27');
+
+
+
+
+select * from
+STUDENT
 
 
 

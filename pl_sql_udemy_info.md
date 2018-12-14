@@ -518,6 +518,7 @@ STATEMENT1;
 
 
 # Procedures
+* **When using a procedure, the SELECT statement must be declared with an INTO sentence**
 * Are a type of subprogram that perform an action.
 * Can be stored in the database as a schema object. 
 * Promote reusability and maintainability
@@ -699,8 +700,17 @@ where department_id=20;
 * Note: Calls to subprograms that break these restrictions are also not allowed in the function
 * When a function is called from UPDATE/DELETE, then the function can not query or modify database tables modified by that statement. 
     * Error: Mutating table. 
+* 
 
-
+# Packages
+* When having many functions logically similar it's better to use a PACKAGE
+* A package it's divided in two main parts: 
+    1. Package specification (definition). 
+        * Needs just the definition headers withouth the code. 
+        * There's no need for the BEGIN clause. 
+    2. Package body. 
+        * The package body should have the definition of each function declared in the Package specification. 
+        
 
 * Video: 50
 
@@ -730,9 +740,10 @@ where department_id=20;
 
 # December Path to freedom :)
 1. SQL -- ok
-2. PL/SQL -- 30%
+2. PL/SQL -- 36%
 3. DBA BASICS -- 20% 
 4. Informatica -- 25%
 5. Scala -- pending
 6. scikit book -- pending
 7. AWS -- pending 
+8. Hadoop - pending. 

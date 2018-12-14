@@ -1743,6 +1743,109 @@ END;
 select * from DEPARTMENTS
 where department_id=-99;
 
+-------------------------------------------------
+
+
+drop function get_sal_tax;
+
+
+
+create or replace function get_full_name
+
+(p_emp_id number)
+
+return varchar2
+is
+v_full_name varchar2(200);
+begin
+  select first_name||' '||last_name into v_full_name
+  from employees
+  where employee_id=p_emp_id;
+  return v_full_name;
+end; 
+
+
+----------------------------------
+BEGIN
+select get_full_name(-50) FROM DUAL;
+END;
+
+execute dbms_output.put_line(get_full_name(-50));
+
+
+
+-----------------------------------
+
+-- pACKAGES
+
+CREATE OR REPLACE FUNCTION square_area
+(p_side number)
+RETURN NUMBER
+IS
+BEGIN
+RETURN p_side*p_side;
+END;
+
+select square_area(10) from dual; 
+
+
+---------------------
+CREATE OR REPLACE FUNCTION rectangle_area
+(p_a number, p_b number)
+RETURN NUMBER
+IS
+--
+BEGIN
+RETURN p_a*p_b;
+END;
+
+
+select rectangle_area(10,4) from dual; 
+
+
+--------------------------------------------------
+-------- BUILDING A PACKAGE-----------------------
+---------------------------------------------------
+
+CREATE OR REPLACE PACKAGE AREA
+IS
+
+    FUNCTION square_area(p_a number)
+    return number;
+    
+    FUNCTION rectangle_area(p_a number, p_b number)
+    RETURN NUMBER;
+    
+    -- we dont have begin in package specification
+    
+END;
+
+CREATE OR REPLACE PACKAGE BODY AREA
+IS
+    FUNCTION square_area
+    (p_a number)
+    RETURN NUMBER
+    IS
+    BEGIN
+    RETURN p_a*p_a;
+    END;
+
+
+    FUNCTION rectangle_area
+    (p_a number, p_b number)
+    RETURN NUMBER
+    IS
+    --
+    BEGIN
+    RETURN p_a*p_b;
+    END;
+
+BEGIN
+----- SHOULD CONTAIN A BEGIN
+dbms_output.put_line('some test');
+END; 
+
+
 
 
 
@@ -1758,10 +1861,7 @@ select * from user_objects
 where object_name='GET_SAL';
 
 
-select * from departments;
 
-
-rollback;
 
 
 
@@ -1780,7 +1880,4 @@ select * from products;
 
 select * from EMPLOYEES;
 
-EMPLOYEES
-
-rollback;
 

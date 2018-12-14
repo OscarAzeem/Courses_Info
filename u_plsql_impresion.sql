@@ -1667,6 +1667,82 @@ execute dbms_output.put_line(get_sal(100));
 
 
 
+---------------------------------------
+
+-- Restrictions when calling functions from SQL 
+
+CREATE OR REPLACE FUNCTION get_sal_tax
+(p_sal number)
+RETURN NUMBER
+IS
+
+BEGIN
+COMMIT; 
+
+    IF p_sal<5000 then
+    RETURN p_sal*(10/100);
+    ELSE
+    return p_sal*(15/100);
+    END IF;
+    
+END;    
+
+-- You can not use a function in select if the function contain commit/rollback. 
+SELECT employee_id, first_name, salary, get_sal_tax(salary)
+FROM employees
+WHERE get_sal_tax(salary)>2000
+ORDER BY get_sal_tax(salary);
+
+
+-- but it will work like this: 
+DECLARE
+v number;
+BEGIN
+v:=get_sal_tax(5000);
+dbms_output.put_line(v);
+END;
+
+
+-------------------------
+
+CREATE OR REPLACE FUNCTION get_sal_tax
+(p_sal number)
+RETURN NUMBER
+IS
+
+BEGIN
+    INSERT INTO DEPARTMENTS(department_id, department_name)
+    values (-99,'test');
+    
+    IF p_sal<5000 THEN
+    RETURN p_sal*(10/100);
+    ELSE
+    RETURN p_sal*(15/100);
+    END IF;
+END; 
+
+----------------------
+-- You can not use function in select if the function contains DML statements. 
+
+SELECT employee_id, first_name, salary, get_sal_tax(salary)
+FROM employees
+WHERE get_sal_tax(salary)>2000
+ORDER BY get_sal_tax(salary);
+
+---------------
+
+
+--- BUT IT WILL WORK LIKE THIS: 
+DECLARE
+v number;
+BEGIN
+v:=get_sal_tax(5000);
+dbms_output.put_line(v);
+END;
+
+select * from DEPARTMENTS
+where department_id=-99;
+
 
 
 

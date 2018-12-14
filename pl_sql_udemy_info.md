@@ -630,9 +630,23 @@ drop procedure 'PROCEDURE_NAME_CREATED'
 2. As a parameter value: 
     * execute dbms_output.put_line(get_sal(100));
 3. Using a host varaible
-    * variable b_salary number;
-    * execute dbms_output.put_line(get_sal(100));
-    
+
+variable b_salary number;
+
+execute :b_salary:=get_sal(100);
+
+print b_salary;
+
+4. As a part of a select statement 
+    * select funcion_name(parameters) from dual;
+    * Example with a column from the select statement, used as a parameter to a function in another column:
+
+select employee_id, first_name, get_sal(employee_id)
+
+from employees
+
+where department_id=20;
+
 
 ## Differences Between Procedures and Functions
 * Procedures:
@@ -642,6 +656,7 @@ drop procedure 'PROCEDURE_NAME_CREATED'
     * Can contain a RETURN statement without a value
     * Main reason: To perform an action; can not be used in select
 * Functions: 
+    * Can also contain an EXCEPTION block.
     * Invoke as part of an expression (cant be called by the EXECUTE command)
     * Can be called as variable:=function(parameters)
     * Must contain a RETURN clause in the header. 
@@ -649,6 +664,41 @@ drop procedure 'PROCEDURE_NAME_CREATED'
     * Must contain at least one RETURN statement
     * Main reason: To return a VALUE; can be used in Select, but it should not include OUT/ IN OUT parameters. 
 * A procedure that have one parameter (OUT) would be better rewritten as a function.
+
+
+## Advantages of User-Defined Functions in SQL statemetns
+* Can extend SQL where activities are too complex, too awkward, or unavailable in SQL.
+* Can increase efficiency when used in the WHERE clause to filter data, as opposed to filtering the data in the application. 
+* Can manipulate data values. 
+
+## Calling User-Defined Functions in SQL statements. 
+* User-defined functions act like ***built-in-single-row functions*** and can be used in: 
+    * The SELECT list or clause of a query
+    * Conditional expressions of the WHERE and HAVING clauses
+    * The CONNECT BY, START WITH, ORDER BY, and GROUP BY  clauses of a query
+    * The VALUES clause of the INSERT statement
+    * The SET clause of the UPDATE statement. 
+    * 
+
+## Restrictions when calling Functions from SQL expressions
+* User-defined functinos that are callable from sQL expressions must: 
+    * Be stored in the database
+    * Accept only IN parameters with valid SQL data types not ***PL/SQL-specified types (Record, table, Boolean)***
+    * Return valid SQL data types, not PL/SQL-specific types
+* When calling functions in SQL statements: 
+    * Parameters must be specified with positional notation (this before 11g only)
+    * You must own the function or have the EXECUTE privilege
+* Can not be used in CHeck constraint (create table/alter table)
++ Can not be used as default value for a column
+
+## Controlling side effects when calling functinos from SQL Expressions
+* Functions called from:
+    * A SELECT statement cannot contain DML statements
+    * An UPDATE or DELETE statement on a table T cannot query or contain DML on the same table T
+    * SQL statements cannot end transactions (that is, cannot execute COMMIT or ROOLBACK operations)
+* Note: Calls to subprograms that break these restrictions are also not allowed in the function
+* When a function is called from UPDATE/DELETE, then the function can not query or modify database tables modified by that statement. 
+    * Error: Mutating table. 
 
 
 

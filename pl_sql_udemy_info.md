@@ -54,6 +54,8 @@ alter user hr identified by hr account unlock;
 
 
 ## PL/SQL BLOCK STRUCTURE
+* **You can define a procedure or function inside a pl/sql block but this will be used only in this block (in the DECLARE section)**
+
 ### Declare (optional)
 * Variables, cursors, user-defined exceptions
 
@@ -723,7 +725,29 @@ where department_id=20;
         * Private constructs in the package body are hiden and inaccessible
         * All coding is hidden in the package body. 
 
-* Video: 50
+## Package specification without body
+* This is used when we want to define global variables.
+
+## Creating the Package Specification using CREATE PACKAGE Statement.
+* CREATE [OR REPLACE] PACKAGE package_name IS|AS public type and variable declarations subprogram specifications END [package_name]
+* The OR REPLACE option drops and re-creates the package specification.
+* Variables declared in the package specification are initialized to NULL by default;
+* All the constructs declared in a package specification are visible to users who are granted privileges on the package. 
+
+## Creating the Package Body
+* CREATE [OR REPLACE] PACKAGE BODY package_name IS|AS private type and variable declarations. Subprogram bodies. [BEGIN initialization statements] END [package_name];
+* The OR REPLACE option drops and re-creates the package body. 
+* Identifiers defined in the package body are private and not visible outside the package body
+* All private constructs must be declared before they are referenced.
+* Public constructs are visible to the package body. 
+* 
+
+## Guidelines for writing packages. 
+* The package specification should contain as few constructs as possible
+* Package specification: 
+    * Try to keep package specification simple as you can
+* Package body: 
+    * Try to add additional codes you need in package body as private subprograms. 
 
 
 

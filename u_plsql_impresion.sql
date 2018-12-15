@@ -1941,6 +1941,7 @@ IS
     BEGIN
     select 'Birthday: ' || student.birthday || ' Name: ' || student.first_name INTO variable_nombre
     from student where student.student_id=p_est_id;
+    return variable_nombre;
     
     EXCEPTION
     WHEN OTHERS THEN
@@ -1964,13 +1965,94 @@ BEGIN
 PSTUDENT.delete_student(6);
 END;
 
-select PSTUDENT.query_student(1) from dual; 
+select PSTUDENT.query_student(2) from dual; 
 
 
 
 BEGIN
 PSTUDENT.query_student(1);
 END;
+
+--------------------------------------------
+
+---- PACKAGE SPECIFICATION WITHOUTH A BODY
+
+-------------------------------------------
+
+CREATE OR REPLACE PACKAGE global_measurement
+IS
+    c_mile_to_km constant number:=1.6093;
+    c_kilo_to_mile constant number:=0.6214;
+    
+END;
+
+execute dbms_output.put_line('60 mile:= ' || 60*global_measurement.c_mile_to_km || 'KM');
+
+---------------------------------
+-- Now we can create a function that reads from this package.
+
+CREATE OR REPLACE FUNCTION get_mile_to_km
+(p_value number)
+RETURN NUMBER
+IS
+BEGIN
+    RETURN p_value*global_measurement.c_mile_to_km;
+END;
+
+----------------------------
+variable v_miles number;
+execute v_miles:=10;
+execute dbms_output.put_line('Miles: ' || :v_miles || :v_miles*global_measurement.c_mile_to_km || 'KM');
+
+
+--------------------------------------------------------
+-- DEFINITION OF A FUNCTION INSIDE A PL/SQL BLOCK
+-------------------------------------------------------
+
+DECLARE
+    FUNCTION get_sysdate
+    RETURN DATE
+    IS
+    BEGIN
+    RETURN SYSDATE;
+    END;
+BEGIN
+    dbms_output.put_line(get_sysdate);
+end;
+
+
+----------------------------------------------------------
+
+-----------------------------------------------------------
+-------- VISIBILITY OF A PACKAGE'S COMPONENTES
+-----------------------------------------------------------
+
+CREATE OR REPLACE PACKAGE p_test
+IS
+c_var1 constant number:=10;
+c_var2 varchar2(100):='Welcome';
+PROCEDURE imprime;
+END; 
+
+CREATE OR REPLACE PACKAGE BODY p_test
+IS
+c_var3 varchar2(100):='hi there';
+    PROCEDURE imprime
+    IS
+    c_var4 varchar2(100):='c_var4 variable';
+    BEGIN
+    dbms_output.put_line('This variable came from package spec. ' || c_var1);
+    dbms_output.put_line('This variable came from package spec. ' || c_var2);
+    dbms_output.put_line('This variable came from package body ' || c_var3);
+    dbms_output.put_line('This variable came from print Proc ' || c_var4);
+    END;
+END; 
+
+
+EXECUTE p_test.imprime;
+
+
+
 
 
 

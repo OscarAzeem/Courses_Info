@@ -2249,7 +2249,54 @@ END;
 
 -----------------------------------------
 
-CREATE OR REPLACE PACKAGE BODY 
+CREATE OR REPLACE PACKAGE BODY overload_function
+IS
+    FUNCTION f1 (p1 number) return number
+    IS
+    BEGIN
+    RETURN p1;
+    END;
+    
+    FUNCTION f1 (p1 number) return varchar2
+    IS
+    BEGIN
+    RETURN p1||' added string';
+    END;
+END;
+   
+   
+SELECT overload_function.f1(1) from dual;
+
+--------------------------------------------------------
+--------------- FOWARD DECLARATION---------------------
+-------------------------------------------------------
+CREATE OR REPLACE PACKAGE proc_rules_calling
+IS
+    PROCEDURE print_emp_details (p_emp_id_number);
+END;
+
+-----------------------------------------------------
+CREATE OR REPLACE PACKAGE BODY proc_rules_caling
+IS
+    FUNCTION get_no_work_days (p_emp_id number)
+    RETURN NUMBER
+    IS
+    -- VARIABLE DECLARATION
+    v_hiredate date;
+    BEGIN
+        SELECT hire_date into v_hiredate from employees where employee_id=p_emp_id;
+        RETURN round(sysdate-v_hiredate);
+    END;
+    
+    PROCEDURE print_emp_details (p_emp_id number)
+    IS
+    -- VARIABLE DECLARTION
+    -- we will call the function from this procedure
+    -- so it should be defined above in order to invoke it
+    v_details employees&rowtype;
+    BEGIN 
+        --PENDING
+
 
 
 

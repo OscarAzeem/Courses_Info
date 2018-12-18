@@ -174,6 +174,9 @@ alter user hr identified by hr account unlock;
 * Is prefixed with:
     * The database table and column 
     * The name of the declared variable
+    * Definition:
+        * v_salary employees.salary%TYPE;
+        * [var_name] [table].[table_name]%TYPE;
 
 ## & Operator
 * The oracle server will receive this value by a prompt window

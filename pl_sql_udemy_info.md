@@ -748,6 +748,21 @@ where department_id=20;
     * Try to keep package specification simple as you can
 * Package body: 
     * Try to add additional codes you need in package body as private subprograms. 
+* Recompile package: 
+    * When the package body suffers mayor changes (including new functions or procedures) the package specification should be compiled as well. 
+* Dropping package specification and body: 
+    * drop package [package_name];
+* Drop only package body
+    * drop package body [package_name];
+
+# Overloading Subprograms in PL/SQL
+
+* Enables you to create two or mroe subprograms with the same name.
+* Requires that the subprogram's formal parameters ***differ in number, order, or data type familiy***
+* Enables you to build flexible ways for invoiking subprograms with different data.
+* Provides a way to extend functionality without loss of existing code; taht is, ading new parameters to existing subprograms
+* Provies a way to overload local subprograms, package suprograms, and type methods, ***but not stand-alone subprograms.*** 
+* 
 
 
 
@@ -775,7 +790,7 @@ where department_id=20;
 
 # December Path to freedom :)
 1. SQL -- ok
-2. PL/SQL -- 36%
+2. PL/SQL -- 38%
 3. DBA BASICS -- 20% 
 4. Informatica -- 25%
 5. Scala -- pending

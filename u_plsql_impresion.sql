@@ -2006,7 +2006,7 @@ execute dbms_output.put_line('Miles: ' || :v_miles || :v_miles*global_measuremen
 
 
 --------------------------------------------------------
--- DEFINITION OF A FUNCTION INSIDE A PL/SQL BLOCK
+-- DEFINITION OF A FUNCTION INSIDE A PL/SQL BLOCK (in the declare section) 
 -------------------------------------------------------
 
 DECLARE
@@ -2053,13 +2053,203 @@ EXECUTE p_test.imprime;
 
 
 
+---------------------------------------
+create or replace package kh
+
+is
+
+function xx return number;
+
+end;
+
+--------------
+
+create or replace package body kh
+
+is
+
+  function xx return number
+
+  is
+
+  begin
+
+  return 10;
+
+  end;
+
+ 
+
+  begin
+
+  DBMS_OUTPUT.PUT_LINE('welcome');
+
+end;
+
+-------
+
+create or replace package kh
+
+is
+
+v number:=50;
+
+function xx return number;
+
+end; 
 
 
+select kh.v from dual;
+
+BEGIN
+dbms_output.put_line(kh.v);
+END;
+
+------------------------
+
+-------------------------
+-- OVERLOADING SUBPROGRAMS IN PL/SQL
+-------------------------
+
+DROP TABLE customer;
+
+CREATE TABLE customer
+(
+    CUST_ID NUMBER,
+    nombre varchar2(100),
+    birthday date
+);
+
+-- case 1 | 2, procedure differs in number of parameters
+
+CREATE OR REPLACE PACKAGE overload_proc
+IS
+    PROCEDURE add_cust(p_id number, p_name varchar2, p_bd date);
+    PROCEDURE add_cust(p_id number, p_name varchar2);
+END; 
+
+---------------------
+CREATE OR REPLACE PACKAGE BODY overload_proc
+IS
+    PROCEDURE add_cust(p_id number, p_name varchar2, p_bd date)
+    IS
+        BEGIN
+        INSERT INTO customer (cust_id, nombre, birthday) VALUES (p_id, p_name, p_bd);
+        COMMIT;
+    END;
+    
+    PROCEDURE add_cust(p_id number, p_name varchar2)
+    IS  
+        BEGIN
+        INSERT INTO customer (cust_id, nombre) VALUES (p_id, p_name);
+        COMMIT;
+    END;
+END; 
+
+execute overload_proc.add_cust(1,'azeem',date '1992-10-22');
+
+execute overload_proc.add_cust(1,'oscar');
+
+select * from customer;
 
 
-select * from
-STUDENT
+------------------------------------------------------------
+--------------- CASE 2 (2 PROCEDURE SAME NUMBER of parameters, differ in type)
+------------------------------------------------------------
+CREATE OR REPLACE PACKAGE overload_proc
+IS
+    PROCEDURE add_cust(p_id number, p_name varchar2, p_bd date);
+    PROCEDURE add_cust(p_id number, p_name varchar2);
+    PROCEDURE add_cust(p_name varchar2, p_id number);
+END;
 
+-----------------------
+CREATE OR REPLACE PACKAGE BODY overload_proc
+IS
+    PROCEDURE add_cust(p_id number, p_name varchar2, p_bd date)
+    IS
+    BEGIN
+    INSERT INTO customer(cust_id, nombre, birthday) VALUES (p_id,p_name,p_bd);
+    COMMIT;
+    END;
+
+    PROCEDURE add_cust(p_id number, p_name varchar2)
+    IS
+    BEGIN
+    INSERT INTO customer (cust_id, nombre) VALUES (p_id,p_name);
+    COMMIT;
+    END;
+    
+    PROCEDURE add_cust(p_name varchar2, p_id number)
+    IS
+    BEGIN
+    INSERT INTO customer (nombre, cust_id) VALUES (p_name, p_id);
+    COMMIT;
+    END;
+END;
+
+---------------------------------------------------------------
+
+execute overload_proc.add_cust(11,'azeem',date '1992-10-22');
+
+execute overload_proc.add_cust(12,'oscar');
+
+execute overload_proc.add_cust('AZEEM',13);
+
+select * from customer;
+
+
+------------------------------------------------------------
+------------------ CASE 3 (2 PROCEDURE SAME NUMBER OF PARAMETERS, SAME FAMILY)
+------------------------------------------------------------
+
+CREATE OR REPLACE PACKAGE overload_proc
+IS
+    PROCEDURE add_cust(p_id number, p_name varchar2, p_bd date);
+    PROCEDURE add_cust(p_id integer, p_name varchar2, p_bd date);
+END;
+
+-------------------------------------------
+CREATE OR REPLACE PACKAGE BODY overload_proc
+IS
+    PROCEDURE add_cust(p_id number, p_name varchar2, p_bd date)
+    IS
+    BEGIN
+    INSERT INTO customer(cust_id, nombre, birthday) VALUES (p_id,p_name,p_bd);
+    COMMIT;
+    END;
+    
+    PROCEDURE add_cust(p_id integer, p_name varchar2, p_bd date)
+    IS
+    BEGIN
+    INSERT INTO customer(cust_id,nombre,birthday) VALUES (p_id,p_name,p_bd);
+    COMMIT;
+    END;
+END; 
+
+
+execute overload_proc.add_cust(21,'azeem',date '1992-10-22');
+
+
+execute overload_proc.add_cust(22.21,'azeem',date '1992-10-22');
+
+select * from customer;
+
+
+-------------------------------------------------
+----------- OVERLOADING FUNCTIONS
+--------------------------------------------------
+
+-- function case 1
+CREATE OR REPLACE PACKAGE overload_function
+IS
+    FUNCTION f1 (p1 number) return number;
+    FUNCTION f1 (p1 number) return varchar2;
+END;
+
+-----------------------------------------
+
+CREATE OR REPLACE PACKAGE BODY 
 
 
 

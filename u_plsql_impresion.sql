@@ -2272,11 +2272,11 @@ SELECT overload_function.f1(1) from dual;
 -------------------------------------------------------
 CREATE OR REPLACE PACKAGE proc_rules_calling
 IS
-    PROCEDURE print_emp_details (p_emp_id_number);
+    PROCEDURE print_emp_details(p_emp_id number);
 END;
 
 -----------------------------------------------------
-CREATE OR REPLACE PACKAGE BODY proc_rules_caling
+CREATE OR REPLACE PACKAGE BODY proc_rules_calling
 IS
     FUNCTION get_no_work_days (p_emp_id number)
     RETURN NUMBER
@@ -2293,12 +2293,158 @@ IS
     -- VARIABLE DECLARTION
     -- we will call the function from this procedure
     -- so it should be defined above in order to invoke it
-    v_details employees&rowtype;
+    v_details employees%rowtype;
     BEGIN 
-        --PENDING
+        SELECT * INTO v_details FROM employees WHERE employee_id=p_emp_id;
+        dbms_output.put_line('id: ' || v_details.employee_id);
+        dbms_output.put_line('fname: ' || v_details.first_name);
+        dbms_output.put_line('salary: ' || v_details.salary);
+        dbms_output.put_line('hire date: ' || v_details.hire_date);
+        dbms_output.put_line('actual date: ' || sysdate);
+        dbms_output.put_line('no of worked days: ' || get_no_work_days(v_details.employee_id));
+    END;
+END;     
+        
+        
+-----------------------------------------------
+-- calling: proc_rules_calling
+
+
+execute proc_rules_calling.print_emp_details (10);
+
+BEGIN
+proc_rules_calling.print_emp_details (100);
+END;
+
+------------------------------------------------
+
+--- EXAMPLE WITH FORWARD DECLARATION
+
+------------------------------------------------
+
+DROP PACKAGE proc_rules_calling; 
+
+CREATE OR REPLACE PACKAGE proc_rules_calling
+IS
+    PROCEDURE print_emp_details(p_emp_id number);
+END;
+
+
+-----------------------------------------------------
+CREATE OR REPLACE PACKAGE BODY proc_rules_calling
+IS
+    FUNCTION get_no_work_days (p_emp_id number)
+    RETURN NUMBER; -- we can just put the function specification only
+   
+    
+    PROCEDURE print_emp_details (p_emp_id number)
+    IS
+    -- VARIABLE DECLARTION
+    -- we will call the function from this procedure
+    -- so it should be defined above in order to invoke it
+    v_details employees%rowtype;
+    BEGIN 
+        SELECT * INTO v_details FROM employees WHERE employee_id=p_emp_id;
+        dbms_output.put_line('id: ' || v_details.employee_id);
+        dbms_output.put_line('fname: ' || v_details.first_name);
+        dbms_output.put_line('salary: ' || v_details.salary);
+        dbms_output.put_line('hire date: ' || v_details.hire_date);
+        dbms_output.put_line('actual date: ' || sysdate);
+        dbms_output.put_line('no of worked days: ' || get_no_work_days(v_details.employee_id));
+    END;
+    
+    FUNCTION get_no_work_days (p_emp_id number)
+    RETURN NUMBER
+     IS
+    -- VARIABLE DECLARATION
+    v_hiredate date;
+    BEGIN
+        SELECT hire_date into v_hiredate from employees where employee_id=p_emp_id;
+        RETURN round(sysdate-v_hiredate);
+    END;
+    
+    
+    
+END;     
+       
+-------------------------------------------------
+-- calling: proc_rules_calling WITH FOWARD DECLARATION
+
+
+execute proc_rules_calling.print_emp_details (10);
+
+BEGIN
+proc_rules_calling.print_emp_details (100);
+END;
+
+------------------------------------------------
+-----------------------------------------------
+--------- PERSISTENT STATE PACKAGE---------------
+-------
+
+DROP PACKAGE persistent_state;
+
+-- PACKAGE DEFINITION--
+CREATE OR REPLACE PACKAGE persistent_state
+IS
+    -- declaring the global variable
+    g_var number:=10;
+    PROCEDURE update_g_var (p_no number);
+END;
 
 
 
+
+CREATE OR REPLACE PACKAGE BODY persistent_state
+IS
+    PROCEDURE update_g_var (p_no number)
+    IS
+    BEGIN
+    g_var:=p_no;
+    dbms_output.put_line(g_var);
+    END;
+END;
+
+--------------------------------------------
+----- EXECUTING PERSISTENT STATE -----------
+--------------------------------------------
+
+
+
+
+EXECUTE persistent_state.update_g_var(80);
+
+variable test number;
+
+execute :test:=persistent_state.g_var;
+
+print test;
+
+---------------
+DECLARE
+x number;
+BEGIN
+x:=persistent_state.g_var;
+dbms_output.put_line(x);
+END; 
+
+
+
+
+
+--------------------------------------------
+
+----------------------------------------------
+----------- Persistent State of Packages USING PRAGMA SERIALLY_REUSABLE;
+----------------------------------------------
+
+CREATE OR REPLACE PACKAGE 
+
+
+
+
+
+select * from employees; 
 
 
 

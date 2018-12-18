@@ -767,7 +767,16 @@ where department_id=20;
 * Provies a way to overload local subprograms, package suprograms, and type methods, ***but not stand-alone subprograms.*** 
 * 
 
-
+# Persistent State of Packages
+* The collection of package variables and the values define the package state. The package state is: 
+    * Initialized when the package is first loaded
+    * Persistent (by default) for the life of the session:
+        * Stored in the User Global Area (UGA)
+        * **Unique to each session**
+        * Subject to change when packge subprograms are called or public variables are modified.
+        * 
+    * Not persistent for the session but persistent for the life of a subprogram call when using *PRAGMA SERIALLY_REUSABLE* in the package specification. 
+* 
 
 
 

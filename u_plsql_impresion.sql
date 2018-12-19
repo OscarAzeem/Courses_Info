@@ -2438,10 +2438,155 @@ END;
 ----------- Persistent State of Packages USING PRAGMA SERIALLY_REUSABLE;
 ----------------------------------------------
 
-CREATE OR REPLACE PACKAGE 
+-- package definition
+
+CREATE OR REPLACE PACKAGE persistent_state
+IS
+PRAGMA SERIALLY_REUSABLE;
+g_var number:=10;
+PROCEDURE update_g_var(p_no number);
+END; 
 
 
+-- package body
 
+CREATE OR REPLACE PACKAGE BODY persistent_state
+IS
+    PRAGMA SERIALLY_REUSABLE;
+    PROCEDURE update_g_var(p_no number)
+    IS
+        BEGIN
+        g_var:=p_no;
+        dbms_output.put_line(g_var);
+        END;
+END; 
+        
+-------------------------------------
+
+--- executing persistent state pragma serially_reusable
+
+execute persistent_state.update_g_var(90);
+
+variable test number;
+
+execute :test:=persistent_state.g_var;
+
+print test
+
+
+-----
+
+DECLARE
+x number;
+BEGIN
+x:=persistent_state.g_var;
+dbms_output.put_line(x);
+END; 
+
+--------------------------------------------
+--------------------------
+----------------- PERSISTENT STATE AND CURSORS -----------
+------------------------
+
+--- package definition
+CREATE OR REPLACE PACKAGE cur_pkg
+IS
+    -- global cursor declared
+    CURSOR c_emp IS
+    SELECT employee_id FROM EMPLOYEES;
+    
+    PROCEDURE abierto;
+    PROCEDURE cerrado;
+    PROCEDURE printnext_20;
+END; 
+
+--- package body
+CREATE OR REPLACE PACKAGE BODY cur_pkg IS
+    PROCEDURE abierto
+    IS
+        BEGIN
+        IF NOT c_emp%isopen THEN
+        open c_emp;
+        end if;
+        --END abierto;
+    END; 
+        -----------------
+        
+    PROCEDURE cerrado
+    IS
+        BEGIN
+        IF c_emp%isopen THEN
+        close c_emp;
+        END IF;
+        --END cerrado;
+    END; 
+    
+    PROCEDURE printnext_20
+    IS
+        v_emp_id number;
+        BEGIN
+            FOR i in 1..20
+            LOOP
+                FETCH c_emp INTO v_emp_id;
+                dbms_output.put_line(v_emp_id);
+                    IF c_emp%notfound then dbms_output.put_line('baby dont hurt me, no more');
+                        close c_emp;
+                    EXIT;
+                    END IF;
+            END LOOP;
+        END; --END printnext_20
+        
+END; 
+-----------------------
+-- EXECUTING: cur_pkg  
+-----------------------
+
+BEGIN
+cur_pkg.abierto;
+cur_pkg.printnext_20;
+end;
+
+BEGIN
+cur_pkg.cerrado;
+END; 
+
+----------------------------------------------------
+
+
+--using pl/sql tables in packages
+create or replace package emp_pkg
+is
+type emp_table_type is table of employees%rowtype
+index by binary_integer;
+
+procedure get_employees(p_emps out emp_table_type );
+
+end;
+-------------------------------
+create or replace package body emp_pkg
+is
+  procedure get_employees(p_emps out emp_table_type )
+  is
+  begin
+    for emp_record in (select * from employees)
+    loop
+   p_emps( emp_record.employee_id):=emp_record;
+    end loop;
+
+  end;
+end;
+-----------------------------------
+declare
+v_employees emp_pkg.emp_table_type;
+begin
+emp_pkg.get_employees(v_employees);
+dbms_output.put_line(v_employees(101).first_name);
+dbms_output.put_line(v_employees(200).last_name);
+end;
+
+-----------------------------------
+
+select standard.to_char(100) from dual; 
 
 
 select * from employees; 

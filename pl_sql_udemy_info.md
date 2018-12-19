@@ -776,8 +776,51 @@ where department_id=20;
         * Subject to change when packge subprograms are called or public variables are modified.
         * 
     * Not persistent for the session but persistent for the life of a subprogram call when using *PRAGMA SERIALLY_REUSABLE* in the package specification. 
-* 
+        * PRAGMA SERIALLY_REUSABLE:
+            * The value of the persistent variable will be reseted after executing again the persistent code
+            * The life of the persistent variable will be only the life of the SERIALLY_REUSABLE procedure;
+            * 
 
+## PERSISTENT STATE AND CURSORS (Real application)
+* They are declared in the body of the package: 
+
+--- package definition
+
+CREATE OR REPLACE PACKAGE cur_pkg
+
+IS
+
+-- global cursor declared
+
+CURSOR c_emp IS
+
+SELECT employee_id FROM EMPLOYEES;
+
+# Oracle Supplied Packages
+* Are provided with the Oracle server
+* Extend the functionality of the database
+* Enable access to certain SQL features that are normally restricted for PL/SQL 
+* Abbreviated list of some Oracle-supplied packages:
+    * DBMS_OUTPUT
+    * UTL_FILE
+    * UTL_MAIL
+    * DBMS_ALERT
+    * DBMS_LOCK
+    * DBMS_SESSION
+    * HTP
+    * DBMS_SCHEDULER
+
+## DBMS_OUTPUT
+* The DBMS_OUTPUT package enables you to send messages from stored subprograms and triggers 
+* PUT and PUT_LINE place text in the buffer
+* GET_LINE and GET_LINES read the buffer
+* Messages are not send until the sending subprogram or trigger completes
+* Use SET SERVEROUTPUT ON to display messages in SQL Developer and SQL * Plus
+* PUT appends text from the procedure to the current line of the line otput buffer.
+* NEW_LINE places an end-of-line marker in the output buffer. 
+* PUT_LINE combines the action of PUT and NEW_LINE (to trim leading spaces).
++ GET_LINE retrieves the current lien from the buffer into a procedure variable. 
+* GET_LINES retrieves 
 
 
 

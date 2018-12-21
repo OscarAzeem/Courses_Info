@@ -822,6 +822,16 @@ SELECT employee_id FROM EMPLOYEES;
 + GET_LINE retrieves the current lien from the buffer into a procedure variable. 
 * GET_LINES retrieves 
 
+## UTL_FILE
+* The UTL_FILE package extends PL/SQL programs to read and write operating system text files:
+    * Provides a restricted version of operating system stream file I/O for text files
+    * can acces files in operarating system directories defined by a CREATE DIRECTORY statement. 
+* To READ/WRITE a file we need to craete a directory. 
+* The directory can be created only by sys and system users;
+* Steps to create a directory:
+    1. Open sqlplus
+    2. Connection with sysdba
+    +. asd
 
 
 

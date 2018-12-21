@@ -2586,6 +2586,54 @@ end;
 
 -----------------------------------
 
+--- DBMS output
+
+------------------
+
+-- Excersise buffer ---
+
+DECLARE
+BUFFER varchar2(100);
+status INTEGER;
+v varchar2(3000);
+BEGIN
+    dbms_output.put_line('Linea 1');
+    dbms_output.put_line('Linea 2');
+    dbms_output.put_line('Linea 3');
+    FOR i in 1..3
+    LOOP
+    dbms_output.get_line(buffer,status);
+    v:=v||buffer||chr(10);
+    END LOOP;
+    dbms_output.put_line(v);
+END;
+
+
+------------------------------------------
+
+-- EXAMPLE DBMS_OUTPUT AND CHARARR;
+------------------------------------------
+DECLARE
+BUFFER  dbms_output.chararr;
+-- type chararr is table of varchar2(32767) index by binary_integer
+v_line INTEGER;
+BEGIN
+v_line:=10;
+    dbms_output.put_line('Line 1');
+    dbms_output.put_line('Line 2');
+    dbms_output.put_line('Line 3');
+    dbms_output.put_line('Line 4');
+    dbms_output.get_lines(buffer, v_line);
+    dbms_output.put_line(buffer(4));
+    dbms_output.put_line(buffer(3));
+    dbms_output.put_line(buffer(2));
+    dbms_output.put_line(buffer(1));
+END;
+
+
+
+
+
 select standard.to_char(100) from dual; 
 
 

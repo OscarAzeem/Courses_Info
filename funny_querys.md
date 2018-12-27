@@ -20,4 +20,12 @@ WHERE CONDITION='CONDITION';
  where DatabaseName NOT IN ('DBC','dbcmngr')
  ORDER BY DatabaseName, CreateTimeStamp;
 
- 
+# ORACLE
+* Querys para el servidor Oracle
+
+## General Querys
+* Show all directories:
+    * select * from ALL_DIRECTORIES;
+* Show permissions for tables, squemas: 
+    * SELECT * FROM all_tab_privs
+* 

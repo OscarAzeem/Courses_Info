@@ -831,7 +831,14 @@ SELECT employee_id FROM EMPLOYEES;
 * Steps to create a directory:
     1. Open sqlplus
     2. Connection with sysdba
-    +. asd
+    3. Alter session set container=orclpdb (the plug db name)
+    4. Create directory mydir as 'F:\TEST'
+    5. grant READ, WRITE on DIRECTORY mydir to public;
+    6. CREATE THE DIRECTORY ON your computer (the server)
+    7. Put empty file sample.txt
+
+
+
 
 
 
@@ -862,3 +869,8 @@ SELECT employee_id FROM EMPLOYEES;
 6. scikit book -- pending
 7. AWS -- pending 
 8. Hadoop - pending. 
+
+
+----
+----
+

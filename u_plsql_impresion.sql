@@ -2630,6 +2630,81 @@ v_line:=10;
     dbms_output.put_line(buffer(1));
 END;
 
+----------------------------------------------
+
+---------------------------------------------
+--------- UTL_FILE---------------------
+---------------------------------------------
+
+/*
+
+*/
+-- in the sqlplus
+alter session set container=orclpdb;
+---
+ create directory midirectorio as 'C:\Users\xmy9080\Desktop\test';
+--
+grant read, write on DIRECTORY midirectorio to public; 
+
+---------------------------------
+------ READING A FILE WITH THE: UTL_FILE
+---------------------------------
+
+DECLARE
+l_file UTL_FILE.file_type;
+l_location  VARCHAR(100):='MIDIRECTORIO'; ---CAPITAL LETTERS
+l_filename  VARCHAR(100):='sample.txt';
+l_text      VARCHAR2(32767);
+
+BEGIN
+--open file
+    l_file :=UTL_FILE.fopen(l_location, l_filename,'r');
+-- Read and output the first line
+UTL_FILE.get_line(l_file,l_text);
+DBMS_OUTPUT.put_line('First line' || l_text);
+UTL_FILE.get_line(l_file,l_text);
+DBMS_OUTPUT.put_line('Second line' || l_text);
+-- Close the file
+UTL_FILE.fclose(l_file);
+END;
+
+--- Show all directories ---
+select * from ALL_DIRECTORIES;
+
+--- 
+
+-------------------------------------
+---------- PUT LINE (CREATING A TEXT FILE IN THE OPERATING SYSTEM) ----------
+-------------------------------------
+
+DECLARE
+l_file UTL_FILE.file_type;
+l_location  VARCHAR(100):='MIDIRECTORIO'; ---CAPITAL LETTERS
+l_filename  VARCHAR(100):='sample2.txt';
+l_text      VARCHAR2(32767);
+
+BEGIN
+--open file for writting
+    l_file :=UTL_FILE.fopen(l_location, l_filename,'w');
+    FOR i IN (select * from DEPARTMENTS)
+    LOOP
+    UTL_FILE.put_line(l_file,i.DEPARTMENT_name);
+    END LOOP;
+
+    UTL_FILE.fclose(l_file);
+    
+    
+    -- open file for append
+    l_file:=UTL_FILE.fopen(l_location, l_filename, 'A');
+    UTL_FILE.put_line(l_file, 'Additional lines');
+    UTL_FILE.fclose(lfile);
+    
+    
+END; 
+
+------------------------------------------
+
+
 
 
 

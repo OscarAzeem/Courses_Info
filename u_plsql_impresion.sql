@@ -2702,7 +2702,52 @@ BEGIN
     
 END; 
 
+-------------------------------------------------------------------------------
+------ EXAMPLE UTL_FILE PROCEDURE
+
 ------------------------------------------
+
+CREATE OR REPLACE PROCEDURE read_any_file
+(P_dir in varchar2, p_file_name in varchar2)
+IS
+-- variable declaration section
+l_file  UTL_FILE.file_type;
+l_text  VARCHAR2(32767);
+BEGIN
+    l_file:=UTL_FILE.fopen(P_dir,p_file_name,'r');
+    BEGIN
+        LOOP
+        UTL_FILE.get_line(l_file,l_text);
+        DBMS_OUTPUT.put_line(l_text);
+        END LOOP;
+        
+        EXCEPTION
+        WHEN no_data_found THEN
+        DBMS_OUTPUT.PUT_LINE('END FILE');
+        UTL_FILE.fclose(l_file);
+    END;
+    
+    EXCEPTION
+    WHEN UTL_FILE.invalid_operation THEN
+    dbms_output.put_line('can not open the file, invalid file name');
+    WHEN UTL_FILE.read_error THEN
+    dmbs_output.put_line('can not be read');
+
+END read_any_file;
+
+--- executing---
+execute read_any_file('MIDIRECTORIO', 'sample2.txt');
+
+execute read_any_file('MIDIRECTORIO','sample3.txt');
+
+-------------------------------------------------------
+
+------------ 
+
+
+
+
+
 
 
 

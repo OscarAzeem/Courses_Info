@@ -837,6 +837,66 @@ SELECT employee_id FROM EMPLOYEES;
     6. CREATE THE DIRECTORY ON your computer (the server)
     7. Put empty file sample.txt
 
+## UTL_FILE DECLARED EXCEPTIONS
+* INVALID_PATH: file location invalid
+* INVALID_MODE: the open_mode parameter in FOPEN is invalid
+* INVALID_FILEHANDLE: File handle invalid
+* INVALID_OPERATION: File could not be opened or operated on as requested. 
+* READ_ERROR: Operating system error ocurred during the read oepration
+* WRITE_ERROR: Operating system error ocurred during the write operation
+* INTERNAL_ERROR: Unspecified PL/SQL error. 
+* 
+
+## UTL_MAIL PACKAGE
+* A utility for managing email
+* Requires the setting of the SMTP_OUT_SERVER database
+* Provides the following procedures
+    * SEND: for messages without attachments. 
+        * Packages an email message, locates SMTP information, and delivers the message to the SMTP server for forwarding to the recipients. 
+    * SEND_ATTACH_RAW for messages with binary attachments (like picture)
+        * Represents the SEND procedure overloaded for RAW attachments. 
+    * SEND_ATTACH_VARCHAR2: for messages with text attachments
+        * Represents the SEND procedure overloaded for VARCHAR2 attachments
+* ***WORKING PROCEDURE***:
+1.  The DBA install the UTL_MAIL package
+    * @$ORACLE_HOME/rdbms/admin/utlmail.sql
+    * @$ORACLE_HOME/rdbms/admin/prvtmail.plb
+2. Define the SMTP_OUT_SERVER (*init.ora*)
+3. The DBA grants Execute on UTL_MAIL to a USER/Public
+4. The DBA adds a Record in ACL (Access Control List) Using a package called DBMS_NETWORK_ACL_ADMIN
+5. Now the USER can use UTL_MAIL
+
+
+# Dynamic SQL
+* ***USUALLY***: The **SQL STATEMENTS** are created at **COMPILE TIME**
+* Dynamic SQL Meaning: 
+    * IN Dynamic SQL, The SQL statements are created dynamically at run time (not compile time)
+* All SQL statements go through some or all of the following stages:
+    * Parse:
+        * Check the statement syntax, validating the statement. Ensure all referencing objects are correct. The privileges exist. 
+    * Bind:
+        * Check the bind variable if the statement contains Bind Var.
+    * Execute:
+        * Execute the statement (non Queries statements)
+    * Fetch:
+        * Retrieve the rows (queries statements)
+
+## What is dynamic SQL?
+* The full text of the dynamic sQL statement might be unknow until run time; therefore, its syntax is checked at *run time rather than at compile time*.
+* You can use dynamic SQL statemetns to make your PL/SQL programs more general and flexible. 
+
+## Dyamic SQL process
+* Use dynamic SQL to create a SQL statement whose structure may change during run time. Dynamic SQL: 
+     * Is constructed and stored as a chracter string, string variable, or string expressio within the application. 
+     * Is a SQL statement with varying column data, or different conditions with or without placeholders (bind variables).
+     * Enables DDL, DCL, or session-control statements to be written and executed from PL/SQL
+     * Is executed with Native Dynamic SQL statements or the DBMS_SQL package. 
+ 
+## When do you need dynamic SQL?
+* In PL/SQL you need dynamic SQL in order to execute the following. 
+    * SQL whose full text is unknown at compile time such as:
+        * A SELECT statement that includes an identifier that is **unknown at compile time** (such as table name)
+        * A WHERE clause in which the column name is **unknown at compile time.** 
 
 
 

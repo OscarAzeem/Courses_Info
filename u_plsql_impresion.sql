@@ -2929,87 +2929,52 @@ create_any_table_and_questions_drop('emp4', 'emp_id number');
 END; 
 
 
+---------------------------------
+
+-- EXECUTE IMMEDIATE WHEN USING
+
+DELETE FROM emp1;
+
+select * from emp1;
+
+-- this procedure can work with any table which contain one column and this column should be number.
+
+CREATE OR REPLACE PROCEDURE add_rows
+(p_table_name varchar2, p_value number)
+IS
+BEGIN
+-- EXECUTE IMMEDIATE 'insert into ' || p_table_name || ' values ('||p_value||') ';
+dbms_output.put_line('insert into ' || p_table_name || ' values(:1)  using ' || p_value);
+EXECUTE IMMEDIATE 'insert into ' || p_table_name || ' values(:1) ' USING p_value;
+END;
+
+execute add_rows('emp1',10);
+
+select * from emp1;
+
+-----------------------------
+
+---------------------------------
+
+-- EXECUTE IMMEDIATE WHEN USING
+
+CREATE OR REPLACE PROCEDURE add_rows
+(p_table_name varchar2, p_value number)
+IS
+val1 number:=20;
+val2 number:=30;
+BEGIN
+EXECUTE IMMEDIATE 'insert into ' || p_table_name || ' values(:1) ' USING p_value;
+EXECUTE IMMEDIATE 'insert into ' || p_table_name || ' values(:yy) ' USING val1;
+EXECUTE IMMEDIATE 'insert into ' || p_table_name || ' values(:uuu) ' USING val2;
+END;
 
 
 
+execute add_rows('emp1',10);
+
+select * from emp1;
 
 
-
-
-select * from USER_SYS_PRIVS;
-
-select * from user_role_privs;
-
-
-
-select * from session_privs;
-
-
-select * from emp4;
-
-drop table emp4;
-
-create table emp4 (emp_id number, name varchar2(100))
-
-select * from user_role_privs;
-
-select * from USER_SYS_PRIVS;
-
-select * from USER_SYS_PRIVS;
-
-show con_name;
-
-
-select * from role_sys_privs where role='RESOURCE';
-
-select * from session_privs;
-
-
-select standard.to_char(100) from dual; 
-
-
-select * from employees; 
-
-
-
-
- INSERT INTO STUDENT VALUES (student_number.nextval, 'oscar', date '1972-05-27');
-
-
-
-
-select * from
-STUDENT
-
-
-
-select * from user_source
-
-where name='GET_SAL'
-
-ORDER BY LINE;
-
-
-select * from user_objects where object_name='GET_SAL';
-
-
-
-
-
-
-
-
-
-select * from user_source
-
-where name='QUERY_EMP'
-
-ORDER BY LINE;
-
-
-
-select * from products;
-
-select * from EMPLOYEES;
 
 

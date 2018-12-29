@@ -903,7 +903,18 @@ SELECT employee_id FROM EMPLOYEES;
 1. execute immediate
 2. the package dbms_sql
 
-## 
+## EXECUTE IMMEDIATE statement for NDS or PL/SQL anonymous blocks:
+* INTO: is used for single-row queries and specifies the variables or records into which column values are retrieved. 
+* USING: is used to hold all bind arguments. The default parameter mode is IN.
+* Example:
+
+.EXECUTE IMMEDIATE dynamic_string
+
+INTO 
+
+USING [IN|OUT|IN OUT] bind argument;
+
+* 
 
 
 

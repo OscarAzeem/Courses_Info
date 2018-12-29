@@ -2871,11 +2871,62 @@ END;
 
 -------------------------------------
 
+------------------------------------------
+
+--- BUILDING the procedure: create_any_table and exception when the object already exists.
+
+------------------------
+
+CREATE OR REPLACE PROCEDURE create_any_table_and_questions_drop
+(p_table_name varchar2, p_details varchar2)
+IS
+-- variable declaration
+e_already_existing_object exception;
+pragma exception_init(e_already_existing_object,-955);
+
+---
+
+v_details varchar2(30000);
+-- 0=no, 1 =si
+v_si_no number:=0;
+-- var to drop
+v_dropping varchar2(100);
+-- var already p_already_dropped
+v_already_dropped number:=0;
+
+BEGIN
+v_details:='CREATE table ' || p_table_name ||  ' ('  || p_details  || ')' ;
+dbms_output.put_line(v_details);
+EXECUTE IMMEDIATE v_details;
+dbms_output.put_line('El objeto: ' || p_table_name || ' was CREATED');
+
+
+EXCEPTION
+
+    WHEN e_already_existing_object then
+    dbms_output.put_line('El objeto: ' || p_table_name || ' already exists');
+    	v_dropping:='DROP TABLE ' || p_table_name;
+    	EXECUTE IMMEDIATE v_dropping;
+    	dbms_output.put_line('El objeto: ' || p_table_name || ' was dropped');
+
+
+    
+    
+    WHEN OTHERS THEN
+
+    dbms_output.put_line(sqlcode);
+    dbms_output.put_line(sqlerrm);
+
+END;
+
+
+------------------------
 
 
 
-
-
+BEGIN
+create_any_table_and_questions_drop('emp4', 'emp_id number');
+END; 
 
 
 

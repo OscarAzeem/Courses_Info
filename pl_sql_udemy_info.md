@@ -899,6 +899,16 @@ SELECT employee_id FROM EMPLOYEES;
         * A WHERE clause in which the column name is **unknown at compile time.** 
 
 
+## Methods to create Dynamic SQL:
+1. execute immediate
+2. the package dbms_sql
+
+## 
+
+
+
+
+
 
 
 
@@ -922,7 +932,7 @@ SELECT employee_id FROM EMPLOYEES;
 
 # December Path to freedom :)
 1. SQL -- ok
-2. PL/SQL -- 38%
+2. PL/SQL -- 51%
 3. DBA BASICS -- 20% 
 4. Informatica -- 25%
 5. Scala -- pending

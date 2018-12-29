@@ -2742,7 +2742,134 @@ execute read_any_file('MIDIRECTORIO','sample3.txt');
 
 -------------------------------------------------------
 
------------- 
+------------
+
+-------------------------------------------------------
+
+
+-- DYNAMIC SQL
+---
+
+drop table emp1;
+
+drop table emp2;
+
+create table emp1 (emp_id number);
+
+create table emp2 (emp_id number);
+
+BEGIN
+INSERT INTO emp1 values(1);
+INSERT INTO emp1 values(2);
+INSERT INTO emp1 values(3);
+
+INSERT INTO emp2 values(1);
+INSERT INTO emp2 values(2);
+INSERT INTO emp2 values(3);
+
+
+COMMIT;
+END;
+
+select * from emp1;
+
+select * from emp2;
+
+
+CREATE OR REPLACE PROCEDURE delete_any_table
+(p_table_name varchar2)
+IS
+v_no_rec number;
+BEGIN
+EXECUTE IMMEDIATE 'delete from ' || p_table_name;
+v_no_rec:=sql%rowcount;
+commit;
+dbms_output.put_line(v_no_rec || ' record(s) where deleted from ' || p_table_name);
+END;
+
+-- EXECUTING THE PROCEDURE---
+
+BEGIN
+delete_any_table('emp2');
+END;
+
+-- OR ALSO CAN BE---
+execute delete_any_table('emp2');
+
+
+-------------------------------------------------
+
+
+----- DDL AND DCL EXAMPLES
+--- DDL AND DCL arent allowed in a PL/SQL block
+-- we also should use execute immediate
+
+-------------------------------------------------
+
+
+DROP TABLE emp3;
+
+SELECT * FROM EMP3;
+
+-- showing that you cant use ddl and dcl statemetns inside a plsql block. 
+
+BEGIN
+CREATE TABLE emp3 (emp_id number);
+END;
+
+---
+BEGIN
+-- there is no need for ; at the end of the statement
+--EXECUTE IMMEDIATE 'CREATE table emp3 (emp_id number)';
+
+
+EXECUTE IMMEDIATE 'CREATE table emp4 (emp_id number, name varchar2(100))';
+
+END; 
+
+
+SELECT * FROM emp3;
+
+----------------------------------------
+
+
+------------------------------------------
+
+--- BUILDING the procedure: create_any_table
+
+------------------------
+
+CREATE OR REPLACE PROCEDURE create_any_table
+(p_table_name varchar2, p_details varchar2)
+IS
+-- variable declaration
+v_details varchar2(30000);
+BEGIN
+v_details:='CREATE table ' || p_table_name ||  ' ('  || p_details  || ')' ;
+dbms_output.put_line(v_details);
+EXECUTE IMMEDIATE v_details;
+END;
+
+------------------------------------------
+
+--- EXECUTING the procedure: create_any_table
+
+------------------------
+
+GRANT ALL ON create_any_table TO public;
+
+execute create_any_table ('emp4', 'emp_id number, name varchar2(100)');
+
+execute create_any_table('emp4', 'emp_id number');
+
+
+---- or can be
+
+BEGIN
+create_any_table('emp4', 'emp_id number');
+END; 
+
+-------------------------------------
 
 
 
@@ -2752,6 +2879,39 @@ execute read_any_file('MIDIRECTORIO','sample3.txt');
 
 
 
+
+
+
+
+
+
+select * from USER_SYS_PRIVS;
+
+select * from user_role_privs;
+
+
+
+select * from session_privs;
+
+
+select * from emp4;
+
+drop table emp4;
+
+create table emp4 (emp_id number, name varchar2(100))
+
+select * from user_role_privs;
+
+select * from USER_SYS_PRIVS;
+
+select * from USER_SYS_PRIVS;
+
+show con_name;
+
+
+select * from role_sys_privs where role='RESOURCE';
+
+select * from session_privs;
 
 
 select standard.to_char(100) from dual; 
@@ -2779,9 +2939,7 @@ where name='GET_SAL'
 ORDER BY LINE;
 
 
-select * from user_objects
-
-where object_name='GET_SAL';
+select * from user_objects where object_name='GET_SAL';
 
 
 

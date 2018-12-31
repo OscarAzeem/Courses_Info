@@ -904,8 +904,10 @@ SELECT employee_id FROM EMPLOYEES;
 2. the package dbms_sql
 
 ## EXECUTE IMMEDIATE statement for NDS or PL/SQL anonymous blocks:
-* INTO: is used for single-row queries and specifies the variables or records into which column values are retrieved. 
-* USING: is used to hold all bind arguments. The default parameter mode is IN.
+* INTO: is used for ***single-row queries*** and specifies the variables or records into which column values are retrieved. 
+* USING: is used to hold all bind arguments. The default parameter mode is IN. 
+    * ***The USING sentence must be declared always last***
+    * The sintaxis for USING sentence is-> =: (contrary to assigning value to a variable, which is: := )
 * Example:
 
 .EXECUTE IMMEDIATE dynamic_string
@@ -914,13 +916,18 @@ INTO
 
 USING [IN|OUT|IN OUT] bind argument;
 
+* When combining using and into, the INTO clause should be used before USING:
+
+EXECUTE IMMEDIATE 'select first_name from employees where employee_id=:c'
+
+INTO V_ENAME USING vno;
+
+* When using %Rowtype and INTO combination, you cant use this function in a SELECT statement, because the function retrieves a %ROWTYPE value (if defined so).
 * 
 
 
-
-
-
-
+## REF CURSOR
+* The REF cursor can be opened many times with different queries. 
 
 
 

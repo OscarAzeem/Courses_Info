@@ -2973,7 +2973,158 @@ END;
 
 execute add_rows('emp1',10);
 
-select * from emp1;
+-------------------
+-- EXECUTE IMMEDIATE EXAMPLE INTO CLAUSE
+--------------------
+
+-- DYNAMIC SQL WITH SINGLE ROW QUERY
+DECLARE
+v_ename varchar2(100);
+BEGIN
+EXECUTE IMMEDIATE 'select first_name from employees where employee_id=100'
+    INTO v_ename;
+dbms_output.put_line(v_ename);
+END;
+
+select first_name from employees where employee_id=100;
+
+-----
+DECLARE
+v_ename varchar2(100);
+vno number:=200;
+BEGIN
+EXECUTE IMMEDIATE 'select first_name from employees where employee_id=:c'
+    INTO V_ENAME USING vno; --note: the into clause should be used first then the using clause
+DBMS_OUTPUT.PUT_LINE(v_ename);
+END;
+
+----------------------------
+
+-- EXAMPLE: SINGLE ROW MULTIPLE DIMENSIONS
+-- INTO AND %ROWTYPE COMBINATION
+----------------------------
+
+CREATE OR REPLACE FUNCTION get_emp
+(p_id NUMBER)
+RETURN employees%rowtype
+IS
+emp_rec employees%rowtype;
+BEGIN
+    SELECT * INTO emp_rec
+    FROM employees
+    WHERE employee_id=p_id;
+    
+RETURN emp_rec;
+end;
+
+---
+
+-- you cannot use this function in select, because it retrieve %ROWTYPE
+select get_emp(100) from dual;
+
+-- IN ORDER TO USE THE FUNCTION get_emp in a PL/SQL statement should be declared as following (using scalars):
+
+DECLARE
+emp_rec employees%rowtype;
+BEGIN
+--calling the get_emp function
+emp_rec:=get_emp(100);
+dbms_output.put_line(emp_rec.employee_id || ' ' || emp_rec.first_name);
+END;
+
+----------------------------------------
+-- EXAMPLE: DYNAMIC SQL WITH A SINGLE ROW QUERY
+-- %ROWTYPE, USING, EXECUTE IMMEDIATE, INTO
+----------------------------------------
+
+CREATE OR REPLACE FUNCTION get_emp2
+(p_id number)
+RETURN employees%ROWTYPE
+IS
+emp_rec employees%rowtype;
+v_query varchar2(1000);
+BEGIN
+    v_query:='select * from employees where employee_id=:1';
+    EXECUTE IMMEDIATE v_query INTO emp_rec USING p_id;
+    return emp_rec;
+END;    
+
+-- -- -- -- -- -- 
+-- EXECUTING THE GET_EMP2 function
+-----------------
+
+
+DECLARE
+v_emp_rowtype employees%rowtype;
+BEGIN
+v_emp_rowtype:=get_emp2(102);
+dbms_output.put_line(v_emp_rowtype.employee_id || ' ' || v_emp_rowtype.last_name);
+END;
+
+select * from employees;
+
+--------------------------------
+---- DYNAMIC SQL WITH MULTI ROW QUERY
+--- REF CURSOR
+---------------------------------
+
+-- Reviewing the normal cursor.
+DECLARE
+    CURSOR c_emp_dept30 IS
+    SELECT employee_id, first_name FROM employees
+    WHERE department_id=30;
+    
+    v_empno employees.employee_id%type;
+    v_first_name employees.first_name%type;
+    
+BEGIN
+OPEN c_emp_dept30;
+
+    LOOP
+        FETCH c_emp_dept30 INTO v_empno, v_first_name;
+        EXIT WHEN c_emp_dept30%notfound;
+        dbms_output.put_line(v_empno || ' ' || v_first_name);
+    END LOOP;
+CLOSE c_emp_dept30;
+END;
+
+----------------------------------------------------
+--- REF CURSOR EXAMPLE
+----------------------------------------------------
+
+-- The REF cursor can be opened many times with different queries
+
+DECLARE
+TYPE c_emp_dept IS REF CURSOR;
+d_cursor c_emp_dept;
+
+    v_empno employees.employee_id%type;
+    v_first_name employees.first_name&type;
+    
+BEGIN
+OPEN d_cursor FOR SELECT employee_id, first_name
+                    FROM employees
+                    WHERE department_id=10;
+                    
+    LOOP
+        FETCH d_cursor INTO v_empno, v_first_name;
+        EXIT WHEN d_cursor%notfound;
+        dbms_output.put_line(v_empno || ' ' || v_first_name);
+    END LOOP;
+CLOSE d_cursor;
+
+OPEN d_cursor FOR SELECT employee_id, first_name
+            FROM employees
+            WHERE department_id=30;
+    LOOP
+        FETCH d_cursor INTO v_empno, v_first_name;
+        EXIT WHEN d_cursor%notfound;
+        dbms_output.put_line(v_empno || ' ' || v_first_name);
+    END LOOP;
+CLOSE d_cursor;
+
+END;
+
 
 
 

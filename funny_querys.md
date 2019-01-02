@@ -67,6 +67,8 @@ B.ACCESSRIGHT=D.ACCESSRIGHT
 
 
 ## General Queries
+* Limit the result subset:
+    * select * from [esquema.table] where ROWNUM <= [number_limit]
 * Show all directories:
     * select * from ALL_DIRECTORIES;
 * Show permissions for tables, squemas: 
@@ -89,3 +91,8 @@ B.ACCESSRIGHT=D.ACCESSRIGHT
         * grant DROP ANY TABLE TO HR;
     * Alter a database:
     	* grant ALTER DATABASE TO HR;
+* Show info about all objects:
+    * SELECT * from ALL_OBJECTS;
+* Show procedures/functions/packages content:
+    * select * from user_source;
+* 

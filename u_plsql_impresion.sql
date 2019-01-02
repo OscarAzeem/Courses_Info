@@ -3099,7 +3099,7 @@ TYPE c_emp_dept IS REF CURSOR;
 d_cursor c_emp_dept;
 
     v_empno employees.employee_id%type;
-    v_first_name employees.first_name&type;
+    v_first_name employees.first_name%type;
     
 BEGIN
 OPEN d_cursor FOR SELECT employee_id, first_name
@@ -3125,6 +3125,87 @@ CLOSE d_cursor;
 
 END;
 
+
+-----------
+-- DYNAMIC SQL WITH MULTI ROW QUERY
+CREATE OR REPLACE PROCEDURE emp_list (p_dept_id number default null)
+IS
+-- type are variable types declared by the user. 
+TYPE c_emp_dept IS REF CURSOR;
+d_cursor c_emp_dept;
+v_empno employees.employee_id%type;
+v_first_name employees.first_name%type;
+v_sql varchar2(1000):='select employee_id, first_name from employees';
+
+-- END OF VARIABLE DECLARATION
+
+BEGIN
+    IF p_dept_id IS NULL THEN
+    OPEN d_cursor FOR v_sql;
+    ELSE
+    v_sql:=v_sql||' where department_id=:id';
+    -- with the FOR statement you can specify the query
+    OPEN d_cursor FOR v_sql USING p_dept_id;
+    END IF;
+    
+        LOOP
+        FETCH d_cursor INTO v_empno, v_first_name;
+        EXIT WHEN d_cursor%notfound;
+        dbms_output.put_line(v_empno||' ' || v_first_name);
+        END LOOP;
+    CLOSE d_cursor;
+END;
+-- Getting all the employees
+execute emp_list;
+
+-- Getting all the employees in a specific department
+execute emp_list(30);
+
+select * from employees;
+
+
+--- EXECUTE IMMEDIATE / MORE EXAMPLES
+
+DECLARE
+    v_code varchar2(100):=
+    'BEGIN
+    dbms_output.put_line(''welcome'');
+    end;
+    ';
+BEGIN
+    EXECUTE IMMEDIATE v_code;
+END;
+
+--------------------------------------
+
+-- We can do this STATEMENT to compile a procedure
+ALTER PROCEDURE ADD_ROWS compile;
+
+ALTER FUNCTION GET_SAL compile;
+
+------------------------------------
+--
+--- EXAMPLE COMPILE ANY PROCEDURE 
+------------------------------------
+
+CREATE OR REPLACE PROCEDURE compile_any_plsql
+(p_name varchar2, p_type varchar2, p_option varchar2 default null)
+IS
+    v_comp_code varchar2(1000):=
+    'alter ' || p_type || ' ' ||p_name|| ' compile ' || p_option;
+BEGIN
+dbms_output.put_line(v_comp_code);
+EXECUTE IMMEDIATE v_comp_code;
+END;
+
+-----------------------------------
+--- executing the compile_any_plsql
+-----------------------------------
+
+EXECUTE compile_any_plsql ('AREA', 'package', 'specification');
+EXECUTE compile_any_plsql ('AREA', 'pacakge', 'body');
+EXECUTE compile_any_plsql ('ADD_ROWS','procedure');
+EXECUTE compile_any_plsql ('GET_SAL','function');
 
 
 

@@ -923,11 +923,26 @@ EXECUTE IMMEDIATE 'select first_name from employees where employee_id=:c'
 INTO V_ENAME USING vno;
 
 * When using %Rowtype and INTO combination, you cant use this function in a SELECT statement, because the function retrieves a %ROWTYPE value (if defined so).
-* 
+
+### Using the ALTER statement to compile:
+* A procedure:
+    * Alter procedure [procedure_name] compile;
+* A function
+    * Alter function [function_name] compile;
+* A package specification:
+    * Alter package [package_specification_name] compile specification;
+* A package body:
+    * Alter package [package_body_name] compile body;
+
 
 
 ## REF CURSOR
-* The REF cursor can be opened many times with different queries. 
+* The REF cursor can be opened many times with **different queries**.
+* And so far, that's it. 
+
+
+
+
 
 
 
@@ -950,7 +965,7 @@ INTO V_ENAME USING vno;
 
 # December Path to freedom :)
 1. SQL -- ok
-2. PL/SQL -- 51%
+2. PL/SQL -- 53%
 3. DBA BASICS -- 20% 
 4. Informatica -- 25%
 5. Scala -- pending

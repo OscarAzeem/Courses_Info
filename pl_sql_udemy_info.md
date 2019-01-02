@@ -875,7 +875,7 @@ SELECT employee_id FROM EMPLOYEES;
     * Parse:
         * Check the statement syntax, validating the statement. Ensure all referencing objects are correct. The privileges exist. 
     * Bind:
-        * Check the bind variable if the statement contains Bind Var.
+        * Check the bind variable if the statement contains Bind Var. (**It's also used with the :VARIABLE replacement**)
     * Execute:
         * Execute the statement (non Queries statements)
     * Fetch:
@@ -941,8 +941,20 @@ INTO V_ENAME USING vno;
 * And so far, that's it. 
 
 
+## DBMS_SQL
+* When using you shouldn't add the ';' character at the end of the sentence, if so, it'll give the error code ORA-00933
+* Uses explicitly the execution flow of SQL:
+    * Parse, Bind, Execute and Fetch
+* When using DBMS_SQL you should declare each one of the four parts of the execlution flow of SQL.  Example:
+    * dbms_sql.parse();
+    * dbms.sql.execute();
+* DBMS_SQL gives you more control of how many rows are being affected by the SQL sentence. example: 
 
+v_no_rec:=dbms_sql.execute(v_cur_id);
 
+dbms_output.put_line(v_no_rec || ' record(s) were deleted from ' || p_table_name);
+
+* 
 
 
 

@@ -3207,6 +3207,86 @@ EXECUTE compile_any_plsql ('AREA', 'pacakge', 'body');
 EXECUTE compile_any_plsql ('ADD_ROWS','procedure');
 EXECUTE compile_any_plsql ('GET_SAL','function');
 
+-------------------------------
+--- DBMS_SQL PACKAGE VS EXECUTE IMMEDIATE
+-------------------------------
+
+--- example using DBMS_SQL
+
+CREATE OR REPLACE PROCEDURE delete_any_table2
+(p_table_name varchar2)
+IS
+v_no_rec number;
+v_cur_id number; -- CURSOR ID
+BEGIN
+v_cur_id:=dbms_sql.open_cursor;
+dbms_sql.parse(v_cur_id,'delete from ' ||p_table_name, dbms_sql.native);
+v_no_rec:=dbms_sql.execute(v_cur_id);
+dbms_output.put_line(v_no_rec || ' record(s) were deleted from ' || p_table_name);
+COMMIT;
+END;
 
 
+
+select * from emp2;
+select * from emp1;
+
+
+execute delete_any_table2('emp1');
+
+--------------------------------------------
+-- using dbms_sql for the add_rows procedure
+--------------------------------------------
+
+CREATE OR REPLACE PROCEDURE add_rows2
+(p_table_name varchar2, p_value number)
+IS
+-- CURSOR DECLARATION
+v_no_rec number;
+v_cur_id number;
+v_calling_query varchar2(300);
+BEGIN
+v_cur_id:=dbms_sql.open_cursor;
+v_calling_query:='insert into ' ||p_table_name || ' values(' || p_value ||');';
+dbms_output.put_line(v_calling_query);
+dbms_sql.parse(v_cur_id,'insert into ' ||p_table_name || ' values(' || p_value ||')',dbms_sql.native);
+
+--dbms_sql.parse(v_cur_id,'delete from ' ||p_table_name, dbms_sql.native);
+
+v_no_rec:=dbms_sql.execute(v_cur_id);
+dbms_output.put_line(v_no_rec||' record(s) were inserted from ' || p_table_name);
+COMMIT;
+END;
+
+-- EXECUTING ADD_ROWS2
+EXECUTE add_rows2('emp1',20);
+
+
+select * from emp2;
+select * from emp1;
+
+----------------------------
+-- Exersise: DBMS_SQL with BIND variable. 
+----------------------------
+
+CREATE OR REPLACE PROCEDURE add_rows2_bind_variable
+(p_table_name varchar2, p_value number)
+IS
+v_no_rec number;
+v_cur_id number;
+V_INSERT varchar2(1000):='INSERT INTO ' ||p_table_name||' VALUES (:ID)'; --why dont use =: ?
+BEGIN
+v_cur_id:=dbms_sql.open_cursor;
+dbms_sql.parse(v_cur_id,V_INSERT,dbms_sql.native);
+dbms_sql.BIND_VARIABLE(v_cur_id,':ID', p_value);
+v_no_rec:=dbms_sql.execute(v_cur_id);
+dbms_output.put_line(v_no_rec || ' record(s) were INSERTO TO ' ||p_table_name);
+COMMIT;
+END;
+
+--- 
+--- EXECUTING: add_rows2_bind_variable
+---
+
+execute add_rows2_bind_variable('emp1',90);
 

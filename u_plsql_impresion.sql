@@ -3290,3 +3290,121 @@ END;
 
 execute add_rows2_bind_variable('emp1',90);
 
+
+--------------------------------------------
+----- EXEPTION HANDILNG
+--------------------------------------------
+
+DELETE FROM departments;
+
+select * from departments;
+
+----- 1 EXAMPLE
+DECLARE
+e_fk_err exception;
+PRAGMA EXCEPTION_INIT (e_fk_err, -02292);
+BEGIN
+	DELETE FROM departments;
+EXCEPTION
+	WHEN e_fk_err THEN
+	RAISE_APPLICATION_ERROR(-20001,'my error');
+END;
+
+
+
+-- SEcond example
+DECLARE
+e_fk_err EXCEPTION;
+PRAGMA EXCEPTION_INIT (e_fk_err,-02292);
+BEGIN
+	DELETE FROM departments;
+EXCEPTION
+	WHEN e_fk_err THEN
+	RAISE_APPLICATION_ERROR (-20001,'my error',true);
+END;
+
+-------------------------------------------
+---- Definer's Rights Versus Invoker's Rights
+-------------------------------------------
+
+--- DEFINER RIGHTS EXAMPLE.
+
+select * from hr_table;
+
+DROP TABLE hr_table;
+
+select * from all_procedures where OWNER='HR';
+
+select * from all_procedures where OWNER='HR'
+order by OBJECT_NAME;
+
+
+CREATE TABLE hr_table
+(
+    id number,
+    name varchar2(100)
+);
+
+
+CREATE OR REPLACE PROCEDURE add_hr_table
+(p_id number, p_name varchar2)
+IS
+BEGIN
+INSERT INTO hr_table VALUES (p_id, p_name);
+END;
+
+---- 
+
+-- GRANT PERMISSIONS TO AN EXTERNAL USER TO EXECUTE THE add_hr_table PROCEDURE
+GRANT EXECUTE ON add_hr_table TO FORD;
+
+-- Granting permissions to a function: 
+GRANT EXECUTE ON get_sal TO FORD;
+
+
+
+commit;
+
+--------------------------------------------------------------------------------
+
+
+select * from ALL_USERS;
+
+select * from
+USER_USERS
+
+
+select * from USER_SYS_PRIVS;
+
+
+select * from user_role_privs;
+
+select * from role_sys_privs;
+
+
+select * from session_privs;
+
+
+select * from user_source
+
+select * from user_tab_privs;
+
+
+SELECT * FROM all_source
+
+select * from employees;
+
+
+declare
+    l_schema varchar2(30);
+begin
+    l_schema := apex_application_install.get_schema;
+    dbms_output.put_line(l_schema);
+end;
+
+APEX_APPLICATION_INSTALL.GET_SCHEMA
+RETURN VARCHAR2;
+
+select APEX_APPLICATION_INSTALL.GET_SCHEMA from dual;
+
+select sys_context('USERENV', 'CURRENT_SCHEMA') from dual;

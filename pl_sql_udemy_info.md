@@ -954,7 +954,93 @@ v_no_rec:=dbms_sql.execute(v_cur_id);
 
 dbms_output.put_line(v_no_rec || ' record(s) were deleted from ' || p_table_name);
 
-* 
+# Design consideration for PLSQL code
+* Constants and exceptions are typicaly implemented using a bodiless package (that is, a package specification).
+* Start with standardization of:
+    * Exception names
+    * Constant definitions
+
+## Standadizing Exceptions
+* They are declared in a package specification, for example: 
+
+CREATE OR REPLACE PACKAGE error_pkg IS
+
+e_fk_err EXCEPTION;
+
+PRAGMA EXCEPTIO_INIT (e_fk_err,-2292);
+
+And called like: 
+
+EXEPTION
+
+WHEN error_pkg.e_fk_err THEN...
+
+### Standardizing Exception Handling
+* Consider writing a subprogram for common exception handling to:
+    * Display errors based on SQLCODE and SQLERRM values for exceptions.
+    * Track run-time errors easily by using parameters in your code to identify: 
+        * The procedure in which the error ocurred
+        * The location (line number) of the error.
+        * RAISE_APPLICATION_ERROR using stack trace capabilities, with the third argument set to TRUE:
+            * RAISE_APPLICATION(-20001,'My first error',TRUE); 
+            * Example:
+
+             DECLARE
+
+            e_fk_err EXCEPTION;
+            
+            PRAGMA EXCEPTION_INIT (e_fk_err,-02292);
+            
+            BEGIN
+            
+            DELETE FROM departments;
+            
+            EXCEPTION
+            
+            WHEN e_fk_err THEN
+            
+            RAISE_APPLICATION_ERROR (-20001,'my error',true);
+            
+            END;
+        * a
+
+### Standardizing Constants
+* For programs that use local variables whose values should not change:
+    * Convert the varaibles to constants to reduce maintenance and debugging.
+    * Create one central package specification and place all constants in it.
+        * Example:
+
+        CREATE OR REPLACE PACKAGE global_Measurement
+
+        IS
+
+        c_mile_to_km constant number:=1.6093;
+
+        END;
+
+## Local subprograms
+* A local subprogram is a PROCEDURE or FUNCTION defined **at the end of the declarative section**.
+* Can be be accesible from the block owner
+* It's compiled as a part of the owner block. 
+* Why using a local subprogram?
+    * Reduction of repetitive code
+    * Code readability
+    * Easy mantenance
+
+## Definer's Rights Versus Invoker's Rights
+* Definer's rights:
+    * Used prior to Oracle 8i
+    * Programs execute with the privileges of the creating user.
+    * **User does not require privileges on underlying objects that the procedure accesses. User requires privilege only to execute a procedure.**
+* Invoker's rights:
+    * Introduced in Oracle 8i
+    * Programs execute with the privileges of the calling user.
+    * **User requieres privileges on the underlying objects that the procedure accesses.**
+    
+
+
+
+
 
 
 

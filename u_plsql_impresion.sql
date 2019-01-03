@@ -3411,6 +3411,107 @@ GRANT DROP ANY TABLE ON HR.HR_TABLE TO FORD;
 select * from  HR.HR_TABLE;
 
 
+------------------------------------------------
+---- AUTONOMOUS TRANSACTIONS
+--------------------
+
+-- CASE ONE WITHOUT USING PRAGMA AUTONOMOUS_TRANSACTION
+
+DROP TABLE tt;
+
+CREATE TABLE tt (test_value varchar2(25));
+
+CREATE OR REPLACE PROCEDURE child_block IS
+BEGIN
+    INSERT INTO tt(test_value)
+    VALUES
+        ('child block insert');
+    COMMIT;
+END child_block;
+
+CREATE OR REPLACE PROCEDURE parent_block IS
+BEGIN
+    INSERT INTO tt(test_value)
+    VALUES ('Parent block insert');
+    
+child_block;
+ROLLBACK; -- <- this rollback has no effect due to the first commit (parent commit)
+END parent_block; 
+
+-- EXECUTING
+
+EXECUTE parent_block;
+
+-- check the results;
+select * from tt;
+
+-----------------------------------------------------------
+---- CASE 2 AUTONOMOUS_TRANSACTION
+-----------------------------------------------------
+
+
+DROP TABLE tt;
+
+CREATE TABLE tt (test_value varchar2(25));
+
+CREATE OR REPLACE PROCEDURE child_block IS
+PRAGMA AUTONOMOUS_TRANSACTION; -- <- EACH TRANSACTION IS INDEPENDENT
+BEGIN
+    INSERT INTO tt(test_value)
+    VALUES
+        ('child block insert');
+    COMMIT;
+END child_block;
+
+CREATE OR REPLACE PROCEDURE parent_block IS
+BEGIN
+    INSERT INTO tt(test_value)
+    VALUES ('Parent block insert');
+    
+child_block;
+ROLLBACK; -- <- this rollback has NOW effect due to the first commit (parent commit)
+END parent_block; 
+
+-- EXECUTING
+
+EXECUTE parent_block;
+
+-- check the results;
+select * from tt;
+
+
+------------------------------
+
+-------------------------------------------
+---- VARIABLES BY VALUE AND BY REFERENCE--
+-----------------------------------------------------
+
+-- 1 IN parameter always passed by reference
+
+CREATE OR REPLACE PROCEDURE pass_by_ref -- 1 IN parameter always passed by reference
+(p_id in number) -- p_id called formal parameter
+IS
+BEGIN
+--p_id:=555; --this is not valid
+dbms_output.put_line(p_id);
+end;
+
+EXECUTE pass_by_ref(10);
+
+--- PASING BY VALUE
+
+CREATE OR REPLACE PROCEDURE pass_by_ref_value -- in out values are pased by value
+(p_id in out number) -- p_id called formal parameter
+IS
+BEGIN
+p_id:=p_id+1; --this is not valid
+dbms_output.put_line(p_id);
+end;
+
+EXECUTE pass_by_ref_value(10); -- ?? why when executing it gives you error: TO_NUMBER(SQLDEVBIND1Z_1)
+
+-----------------------
+
 
 
 

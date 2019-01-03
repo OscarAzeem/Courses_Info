@@ -1049,8 +1049,58 @@ WHEN error_pkg.e_fk_err THEN...
         * Which kind of error: **00942. 00000 -  "table or view does not exist"**
         * In order to solve the previous type of errors, GRANT permissions should be given to the calling user. 
 
+## Autonomous Transactions
+* Each transaction are independent from the main transaction. Such new transaction is declared with the statement: *PRAGMA AUTONOMUS_TRANSACTION*
+* Are independent transactions started by another main transaction
+* Are specified with PRAGMA AUTONOMOUS_TRANSACTION
+* All the transactions will be ended by the *parent commit* but using PRAGMA AUTONOMUS_TRANSACTION
+* Example:
+    
+    CREATE OR REPLACE PROCEDURE child_block IS
 
+    **PRAGMA AUTONOMOUS_TRANSACTION;**
 
+### Features of Autonomous Transactions 
+* Are independent of the main transaction.
+* Suspend the calling transaction until the autonomous transactions are completed. 
+* Are not nested transactions
+* Do not rollback if the main transaction rolls back. 
+* Enable the changes to become visible to other transactions upon a commit.
+* Are started and ended by ***individual* subprograms** and **not by nested or anonymous PL/SQL blocks**
+* 
+
+## USING THE NOCOPY HINT
+* Allows the PL/SQL compiler to PASS OUT and IN OUT parameters by reference rather than by value. 
+* *Enhances performance by reducing overhead when passing parameters*
+* We use NOCOPY in complex data types (LOBs, XMLTYPEs, collections, etc).
+* Example:
+    
+    DECLARE
+
+    TYPE rec_emp_type IS TABLE OF employees%ROWTYPE;
+
+    rec_emp rec_emp_type;
+
+    PROCEDURE populate(p_tab IN OUT **NOCOPY** emptabtype) IS
+
+    BEGIN
+
+    ...
+
+* **IN parameters are always passed by reference**, no temporary buffer is needed, it's used the same memory location
+* When trying to modify an **IN** value, the server will give the following error: *Expression **IN_VALUE** cannot be used as an assignment target*
+* **OUT/IN OUT** parameters can be passed by:
+    1. Pass by value (default)
+        * The default actino is to create a tepmorary buffer (formal parameter), copy the data from the aprameter variable (actual parameter) to that buffer and work on the tepmorary buffer during the lifetime of the procedure. On successful completion of the procedure, the contest of the temproary buffer are copied back into the parameter variable. In the event of an exception ocurring, the copy back operation does not happen. 
+    2. Pass by reference using no copy
+
+### Effects of the NOCOPY HINT
+* If the subprogram exits with an exception that is not handled:
+    * You cannot rely on the values of the actual parameters passed to a NOCOPY parameter
+    * Any incomplete modifications **are not 'rolled back'**
+* The remote procedure call (RPC) protocol enables you to pass parameters only by value
+    * **If you want to call a procedure in a remote database the NOCOPY will not work, only in the local database it will work**
+* 
 
 
 

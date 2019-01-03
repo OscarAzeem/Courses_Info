@@ -59,17 +59,23 @@ B.ACCESSRIGHT=D.ACCESSRIGHT
 * Oracle queries
 * An User could have **USER RIGHTS (USER_SYS_PRIVS)** and rights granted by their  **GRANTED_ROLE (user_role_privs)**. When using *Dynamic SQL (execute immediate)* the user should have the rights for the SQL STATEMENTS declared within the procedure. 
 * ***Until an user has done a commit***, the remain users **can't see** any possible modification or update. 
+* When giving permissions to a certain Database object (package|procedure|function), you can grant such permissions since the object owner or with the sys as dba account.
+* 
 
 
 ## General Info: 
 
 * [Oracle Grant](https://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_9013.htm "Oracle grant")
+    * Note: You can't give permissons for DROPPING *just one table* to an user. To solve this you can create a procedure, give permissions to such user, and then whithin the procedure declare the drop table. 
+* [Oracle Revoke](https://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_9020.htm "Oracle revoke")  
 
 
 
 ## General Queries
 * Limit the result subset:
     * select * from [esquema.table] where ROWNUM <= [number_limit]
+* Getting the current user:
+    * select user from dual;
 * Shows all directories:
     * select * from ALL_DIRECTORIES;
 * Shows permissions for tables, squemas: 
@@ -101,16 +107,19 @@ B.ACCESSRIGHT=D.ACCESSRIGHT
     * SELECT * from ALL_OBJECTS;
 * Shows procedures/functions/packages content:
     * select * from user_source;
-* Shows which procedures/packages/functions have execute permissons for an user:
+* Shows which procedures/packages/functions have execute permissions for an user:
     * select * from user_tab_privs;
 * Shows the content of the database objects that were given permission to execute to a certain user, but such user is not the owner. 
     * SELECT * FROM all_source WHERE name = '[Procedure|Package|Function]' ORDER BY TYPE, LINE;
 * [SET_SQUEMA (Default schema)](https://docs.oracle.com/javadb/10.6.2.1/ref/rrefsqlj32268.html "The default schema for a certain user")
-    * By default the 'default schema name' it is the user you used to log in. 
+    * By default the 'default schema name' it is the user you use to log in. [GET_SQUEMA (GET Default schema)](https://dba.stackexchange.com/questions/131995/what-is-the-name-of-the-default-schema-in-oracle "GET Default schema")
     * You can query it as belows:
         * select sys_context('USERENV', 'CURRENT_SCHEMA') from dual;
     * Changing the default schema: 
         * alter session set current_schema=USER2;
+* Revoke permissons SELECT|INSERT|UPDATE|DELETE to a TABLE TO certain user:
+    * REVOKE  [INSERT|DELETE|UPDATE] ON ESQUEMA.TABLE FROM USER;
+        * Example: REVOKE  INSERT,DELETE,UPDATE ON HR.HR_TABLE FROM FORD;
 
 
 

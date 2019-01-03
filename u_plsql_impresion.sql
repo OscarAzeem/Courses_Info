@@ -3368,6 +3368,58 @@ commit;
 --------------------------------------------------------------------------------
 
 
+--- INVOKER'S RIGHTS---
+--- EXAMPLE
+
+
+select * from hr_table;
+
+-- NOW USER HR will create the procedure again but adding authid current_user
+CREATE OR REPLACE PROCEDURE add_hr_table_auth_id
+(p_id number, p_name varchar2) authid current_user
+IS
+BEGIN
+INSERT INTO hr.hr_table values (p_id,p_name);
+END;
+
+-- granting permissons to FORD
+
+GRANT EXECUTE ON add_hr_table_auth_id TO FORD;
+
+-- GRANTING PERMISSONS To the hr.hr_table values table
+
+GRANT INSERT,DELETE,UPDATE ON HR.HR_TABLE TO FORD;
+
+-- revoking permissions
+
+REVOKE  INSERT,DELETE,UPDATE ON HR.HR_TABLE FROM FORD;
+
+-- declaring the add_hr_table_auth_id procedure with the default: AUTHID DEFINER
+
+CREATE OR REPLACE PROCEDURE add_hr_table_auth_id
+(p_id number, p_name varchar2)  AUTHID DEFINER
+IS
+BEGIN
+INSERT INTO hr.hr_table values (p_id,p_name);
+END;
+
+
+GRANT DROP ANY TABLE ON HR.HR_TABLE TO FORD;
+
+
+
+select * from  HR.HR_TABLE;
+
+
+
+
+
+
+
+
+select * from emp1;
+
+
 select * from ALL_USERS;
 
 select * from

@@ -483,7 +483,7 @@ STATEMENT1;
 * 
 
 # Procedures and subprograms
-* You can give permissons to certain users to execute a Procedure. 
+* You can give permissions to certain users to execute a Procedure. 
 
 ## Anonymous Blocks and Subprograms
 * **Anonymous Blocks**: 
@@ -1028,15 +1028,28 @@ WHEN error_pkg.e_fk_err THEN...
     * Easy mantenance
 
 ## Definer's Rights Versus Invoker's Rights
-* Definer's rights:
-    * Used prior to Oracle 8i
+* Definer's rights (**DEFAULT** way: *AUTHID DEFINER*):
+    * Used prior to Oracle 8i (it was the only option available)
     * Programs execute with the privileges of the creating user.
     * **User does not require privileges on underlying objects that the procedure accesses. User requires privilege only to execute a procedure.**
+    * Instead of the sentence: *AUTHID CURRENT_USER* of Invoker rights,  it's *AUTHID DEFINER*
 * Invoker's rights:
     * Introduced in Oracle 8i
     * Programs execute with the privileges of the calling user.
     * **User requieres privileges on the underlying objects that the procedure accesses.**
-    
+    * Should be declared the Invoker's rights after the CREATE statement with the option: *AUTHID CURRENT_USER*
+    * Example:
+
+        CREATE OR REPLACE PROCEDURE add_hr_table
+
+        (p_id number, p_name varchar2) **authid current_user**
+
+    * After being defined **authid current_user** and if the calling user doesn´t have permissions to any object within the Procedure|Package|Function, ORACLE will give the following errors:
+        * Which part within the procedure the user doesn't have acces to: **ORA-06512: at "HR.ADD_HR_TABLE_AUTH_ID", line 5**
+        * Which kind of error: **00942. 00000 -  "table or view does not exist"**
+        * In order to solve the previous type of errors, GRANT permissions should be given to the calling user. 
+
+
 
 
 

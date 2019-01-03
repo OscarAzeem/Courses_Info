@@ -272,6 +272,13 @@ alter user hr identified by hr account unlock;
     * PL/SQL records
     * PL/SQL collections
 
+## PL/SQL TABLES:
+* Objects of type TABLE are called PL/SQL tables, which are modeled as (but not the same as) database table
+* its primary key gives you array-like access to rows
+* Think of the key and rows as the index and elements of a one-dimensional array. 
+
+
+
 
 ## PL/SQL RECORDS
 * A PL/SQL record is a composite data structure that is a group of related data stored in fields
@@ -484,6 +491,7 @@ STATEMENT1;
 
 # Procedures and subprograms
 * You can give permissions to certain users to execute a Procedure. 
+* The procedures are all about exceptions. When calling a procedure with a IN/OUT variable, if the program ends without finding an exception, **the calculated value** from the procedure it's returned. If the program reaches an exception the **original** value it´s returned, **if not NOCOPY** is declared. 
 
 ## Anonymous Blocks and Subprograms
 * **Anonymous Blocks**: 
@@ -549,18 +557,33 @@ STATEMENT1;
             3. IN/OUT: supplies an input value, which may be returned (output) as a modified value
             * Parameter modes are specified in the formal parameter declaration, after the aprameter name and before its data type
             * The IN mode is the dfault if no mode is specified. 
-* **Calling a procedure**:
-    * You can call a procedure by the command: 
-        * *execute* PROCEDURE_NAME(PARAMETER1,PARAMETER2);
-    * You can call a procedure inside any PL/SQL block: 
-        * BEGIN
-        * PROCEDURE_NAME(PARAMETER1, PARAMETER2);
-        * ...
-        * END; 
+
+### Calling a procedure
+* You can call a procedure by the command: 
+    * *execute* PROCEDURE_NAME(PARAMETER1,PARAMETER2);
+* You can call a procedure inside any PL/SQL block: 
+    * BEGIN
+    * PROCEDURE_NAME(PARAMETER1, PARAMETER2);
+    * ...
+    * END; 
 * After declaring the Procedure Name and parameters, the procedure it's initialized with one of the three following reserved words:
     1. IS
     2. OR
     3. AS
+* **Calling with OUT parameters**
+    * You should DECLARE the returning variables inside the *DECLARE* statement and such variables used when calling the procedure
+    * Example:
+
+    DECLARE 
+
+    v_first_name employees.first_name%type;
+
+    v_sal employees.salary%type;
+
+    BEGIN
+
+    query_emp(104,v_first_name,v_sal);
+
 
 ## Metadata Querys Procedures
 * Seeing the metadata Procedure
@@ -1095,11 +1118,21 @@ WHEN error_pkg.e_fk_err THEN...
     2. Pass by reference using no copy
 
 ### Effects of the NOCOPY HINT
+* The procedures are all about exceptions. When calling a procedure with a IN/OUT variable, if the program ends without finding an exception, **the calculated value** from the procedure it's returned. If the program reaches an exception the **original** value it´s returned, **if not NOCOPY** is declared, if so, the modified value it's returned since using **NOCOPY** will pass the value as reference. 
 * If the subprogram exits with an exception that is not handled:
     * You cannot rely on the values of the actual parameters passed to a NOCOPY parameter
     * Any incomplete modifications **are not 'rolled back'**
 * The remote procedure call (RPC) protocol enables you to pass parameters only by value
     * **If you want to call a procedure in a remote database the NOCOPY will not work, only in the local database it will work**
+
+### When does the PL/SQL compiler ignore the NOCOPY hint?
+* The NOCOPY hint has no effect if:
+    * The actual parameter:
+        * Is an element of an index-by-table
+        * Is constrained (for example, by scale(number) or NOT NULL)
+        * And formal parameter are records, where one or both records were declared by using %ROWTYPE or %TYPE, and constraints on corresponding fields in the recors differ
+        * Requieres an implicit data type conversion
+    * The subprogram is involved in an external or remote procedure call. (calling a procedure in another database).
 * 
 
 

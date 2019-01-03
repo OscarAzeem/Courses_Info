@@ -3504,13 +3504,256 @@ CREATE OR REPLACE PROCEDURE pass_by_ref_value -- in out values are pased by valu
 (p_id in out number) -- p_id called formal parameter
 IS
 BEGIN
-p_id:=p_id+1; --this is not valid
 dbms_output.put_line(p_id);
+p_id:=p_id+1; --this is not valid
+
 end;
 
-EXECUTE pass_by_ref_value(10); -- ?? why when executing it gives you error: TO_NUMBER(SQLDEVBIND1Z_1)
+EXECUTE pass_by_ref_value(10); 
+-- ?? why when executing it gives you error: TO_NUMBER(SQLDEVBIND1Z_1)
+-- Because it's an OUT parameter! It should be returned! you cant call the procedure
+-- Jus with execute. 
+
+
+-- Solving the last example giving a returning variable.
+
+declare
+v_return number:=30;
+BEGIN
+pass_by_ref_value(v_return);
+dbms_output.put_line('The value returned is: ' || v_return);
+END;
+
+
+
+
+
+
 
 -----------------------
+-- example passed by value:
+----------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE pass_by_value1
+(p_id IN OUT number)
+IS 
+BEGIN
+    p_id:=p_id*10;
+    /*if p_id>100 THEN
+    RAISE VALUE_ERROR;
+    END IF;*/
+END;
+
+----
+-- executing from a SP
+---
+
+DECLARE
+v number:=11; 
+BEGIN
+dbms_output.put_line('Original valor: ' || v);
+pass_by_value1(v);
+dbms_output.put_line('After calling valor: ' || v);
+
+dbms_output.put_line('No issue ' ||v);
+EXCEPTION
+WHEN VALUE_ERROR THEN
+dbms_output.put_line('exception ' || v);
+END;
+
+
+
+
+-----------------------
+-- example passed by value AND NOCOPY
+----------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE pass_by_value2
+(p_id IN OUT NOCOPY number)
+IS 
+BEGIN
+    p_id:=p_id*10;
+    if p_id>100 THEN
+    RAISE VALUE_ERROR;
+    END IF;
+END;
+
+----
+-- executing from a SP
+---
+
+DECLARE
+v number:=11; 
+BEGIN
+pass_by_value2(v);
+dbms_output.put_line('No issue ' ||v);
+EXCEPTION
+WHEN VALUE_ERROR THEN
+dbms_output.put_line('exception ' || v);
+END;
+
+--------------------------------------------------
+----- NOCOPY WILL HAVE NO EFFECTS
+--- CASE 1
+
+CREATE OR REPLACE PROCEDURE pass_by_value3
+(p_id IN OUT NOCOPY number)
+IS 
+BEGIN
+    p_id:=p_id*10;
+    if p_id>100 THEN
+    RAISE VALUE_ERROR;
+    END IF;
+END;
+
+----
+-- executing from a SP
+---
+
+DECLARE
+v number(10):=20; -- IF THE ACTUAL parameter has size (for number only) nocopy will not work
+BEGIN
+pass_by_value3(v);
+dbms_output.put_line('No issue ' ||v);
+EXCEPTION
+WHEN VALUE_ERROR THEN
+dbms_output.put_line('exception ' || v);
+END;
+
+-------------------------------
+--- CASE 2
+--------------------------------
+
+CREATE OR REPLACE PROCEDURE pass_by_value4
+(p_id IN OUT NOCOPY number)
+IS 
+BEGIN
+    p_id:=p_id*10;
+    if p_id>100 THEN
+    RAISE VALUE_ERROR;
+    END IF;
+END;
+
+----
+-- executing from a SP
+---
+
+DECLARE
+v number NOT NULL:=20; 
+BEGIN
+pass_by_value4(v);
+dbms_output.put_line('No issue ' ||v);
+EXCEPTION
+WHEN VALUE_ERROR THEN
+dbms_output.put_line('exception ' || v);
+END;
+
+-------------------------------
+--- CASE 3: IMPORTANT
+-------------------------------
+
+CREATE OR REPLACE PROCEDURE pass_by_value5
+(p_id IN OUT NOCOPY varchar2)
+IS 
+BEGIN
+    p_id:=p_id*10;
+    if p_id>100 THEN
+    RAISE VALUE_ERROR;
+    END IF;
+END;
+
+----
+-- executing from a SP
+---
+
+DECLARE
+v number:=20; -- IF THE ACTUAL NEEDS AN IMPLICIT CONVERSION, NOCOPY wont work. 
+BEGIN
+pass_by_value5(v);
+dbms_output.put_line('No issue ' ||v);
+EXCEPTION
+WHEN VALUE_ERROR THEN
+dbms_output.put_line('exception ' || v);
+END;
+
+
+---------------------
+--- NO COPY PERFORMANCE EXERCISE
+----------------------
+
+CREATE OR REPLACE PACKAGE nocopy_test
+IS
+TYPE number_t IS TABLE OF VARCHAR2(32767) INDEX BY BINARY_INTEGER;
+PROCEDURE pass_by_value(nums in out number_t);
+PROCEDURE pass_by_reference(nums in out nocopy number_t);
+PROCEDURE init;
+END;
+
+----------------------------------
+CREATE OR REPLACE PACKAGE BODY nocopy_test
+IS
+    l_numbers number_t;
+    c_array_size number:=1000000;
+    c_it number:=20;
+        
+        PROCEDURE pass_by_value(nums in out number_t)
+        IS
+        indx pls_integer;
+        BEGIN
+        indx:=nums.count;
+        END;
+        
+        PROCEDURE pass_by_reference(nums in out nocopy number_t)
+        IS
+        indx pls_integer;
+        BEGIN
+        indx:=nums.count;
+        END;
+        
+        PROCEDURE init
+        IS
+        BEGIN
+        l_numbers.delete;
+        for i in 1..c_array_size
+            LOOP
+            l_numbers(i):='s'||i;
+            END LOOP;
+            dbms_output.put_line('start ' ||to_char(sysdate,'hh:mi:ss') );
+            
+        FOR i in 1..1000
+            LOOP
+            pass_by_value(l_numbers);
+            END LOOP;
+            
+            dbms_output.put_line('end ' ||to_char(sysdate,'hh:mi:ss') );
+            
+            dbms_output.put_line('start ' ||to_char(sysdate,'hh:mi:ss') );
+            
+        FOR i in 1..1000
+            LOOP
+            pass_by_reference(l_numbers);
+            END LOOP;            
+            
+            dbms_output.put_line('end ' ||to_char(sysdate,'hh:mi:ss') );
+            
+            
+        END;
+END;
+        
+
+-- EXECUTING
+
+EXECUTE nocopy_test.INIT;
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3561,3 +3804,5 @@ RETURN VARCHAR2;
 select APEX_APPLICATION_INSTALL.GET_SCHEMA from dual;
 
 select sys_context('USERENV', 'CURRENT_SCHEMA') from dual;
+
+SELECT * FROM DBA_AUDIT_SESSION ;

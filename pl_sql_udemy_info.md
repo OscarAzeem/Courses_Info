@@ -270,10 +270,13 @@ alter user hr identified by hr account unlock;
 # Composite Data Types
 * Can hold multiple values (unlike scalar types)
 * Are of two types: 
+    * PL/SQL TABLES
     * PL/SQL records
     * PL/SQL collections
 
+
 ## PL/SQL TABLES:
+* When using an user defined data type, i.e PL/SQL table in this case, the data type declaration should be given whithin the DECLARE or IS section.
 * Objects of type TABLE are called PL/SQL tables, which are modeled as (but not the same as) database [PL/SQL table](https://docs.oracle.com/cd/A57673_01/DOC/server/doc/PLS23/ch4.htm "PL/SQL table")
 * its primary key gives you array-like access to rows
 * Think of the **key and rows as the index and elements of a one-dimensional array.**
@@ -289,7 +292,7 @@ alter user hr identified by hr account unlock;
         2. PL/SQL tables do not. This characteristic, called sparsity, allows the use of meaningful index numbers
 
 ### Why Use PL/SQL Tables?
-* **PL/SQL tables help you move bulk data** 
+* **PL/SQL tables help you move bulk data  into and out of database tables or between client-side applications and stored subprograms** 
 * They can store columns or rows of Oracle data, and they can be passed as parameters
 * PL/SQL tables make it easy to move collections of data into and out of database tables or between client-side applications and stored subprograms
 * You can even use PL/SQL tables of records to simulate local database tables.
@@ -360,6 +363,7 @@ alter user hr identified by hr account unlock;
 
 ## PL/SQL Table Attributes
 * **Attributes are characteristics of an object.**
+* Currently, you **cannot** use PL/SQL **table attributes** in a SQL statement
 * A PL/SQL table has the attributes **EXISTS, COUNT, FIRST, LAST, PRIOR, NEXT, and DELETE.** 
     * The attributes EXISTS, PRIOR, NEXT, and DELETE take parameters
         * Each parameter must be an expression that yields a BINARY_INTEGER value or a value implicitly convertible to that datatype
@@ -390,12 +394,26 @@ alter user hr identified by hr account unlock;
 * If n has no predecessor, PRIOR(n) returns a null. Likewise, if n has no successor, NEXT(n) returns a null. 
 * **You can use PRIOR or NEXT to traverse PL/SQL tables indexed by any series of integers**
 * **you can use PRIOR or NEXT to traverse PL/SQL tables from which some elements have been deleted**
+
+### Using DELETE
+* Delete has three forms: 
+    1. DELETE removes all elements from a PL/SQL table
+    2. DELETE(n) removes the nth element
+    3. DELETE(m, n) removes all elements in the range m .. n.
+
+
+### Retrieving Oracle Data with PL/SQL TABLE
+* You can retrieve Oracle data into a PL/SQL table in three ways
+    1. SELECT INTO statement lets you select a single row of data
+        * Using the SELECT INTO statement, you can select a column entry into a scalar element. Or, you can select an entire row into a record element
+    2. The FETCH statement or a cursor FOR loop lets you fetch multiple rows
+        * Using the FETCH statement, you can fetch an entire column of Oracle data into a PL/SQL table of scalars
+        * Or, you can fetch an entire table of Oracle data into a PL/SQL table of records
+
+### Inserting Oracle Data with PL/SQL TABLE
+* You cannot reference **record** variables in the VALUES clause
+    * Instead, you must specify one or more fields in the record
 * 
-
-
-
-
-
 
 
 

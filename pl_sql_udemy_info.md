@@ -1,4 +1,5 @@
 # Oracle PL/SQL COURSE
+* [Oracle Data Types](http://psoug.org/reference/datatypes.html "Oracle Data Types")
 
 * Oracle - Windows
 * Usuario: DatabaseOracle
@@ -273,9 +274,129 @@ alter user hr identified by hr account unlock;
     * PL/SQL collections
 
 ## PL/SQL TABLES:
-* Objects of type TABLE are called PL/SQL tables, which are modeled as (but not the same as) database table
+* Objects of type TABLE are called PL/SQL tables, which are modeled as (but not the same as) database [PL/SQL table](https://docs.oracle.com/cd/A57673_01/DOC/server/doc/PLS23/ch4.htm "PL/SQL table")
 * its primary key gives you array-like access to rows
-* Think of the key and rows as the index and elements of a one-dimensional array. 
+* Think of the **key and rows as the index and elements of a one-dimensional array.**
+* PL/SQL table is an ordered collection of elements of the same type
+    * Each element has a unique index number that determines its position in the ordered collection
+* **PL/SQL tables differ from arrays** in two important ways
+    * First: 
+        1. arrays have fixed lower and upper bounds
+        2. PL/SQL tables are unbounded.
+        3. the size of a PL/SQL table can increase dynamically
+    * Second: 
+        1. arrays require consecutive index numbers
+        2. PL/SQL tables do not. This characteristic, called sparsity, allows the use of meaningful index numbers
+
+### Why Use PL/SQL Tables?
+* **PL/SQL tables help you move bulk data** 
+* They can store columns or rows of Oracle data, and they can be passed as parameters
+* PL/SQL tables make it easy to move collections of data into and out of database tables or between client-side applications and stored subprograms
+* You can even use PL/SQL tables of records to simulate local database tables.
+* You can specify a TABLE type in the RETURN clause of a function specification. That allows the function to return a PL/SQL table of the same type. 
+
+
+## PL/SQL Table Sintax:
+* **An initialization clause is not required (or allowed).**
+    * A PL/SQL table is unbounded; its index can include any BINARY_ INTEGER value. So, you cannot initialize a PL/SQL table in its declaration.
+* Table sintax:
+    
+    TYPE table_type_name IS TABLE OF datatype [NOT NULL]
+   
+    INDEX BY BINARY_INTEGER; 
+
+* INDEX BY clause must specify datatype BINARY_INTEGER, which has a magnitude range of -2147483647 .. 2147483647.
+* Tabla row sintax:
+    * To specify the element type, you can use %TYPE to provide the datatype of a variable or database column. In the following example, you define a TABLE type based on the ename column:
+
+    DECLARE
+
+    TYPE EnameTabTyp IS TABLE OF emp.ename%TYPE
+
+    INDEX BY BINARY_INTEGER;
+
+* you can add the NOT NULL constraint to a TABLE type definition and so prevent the storing of nulls in PL/SQL tables of that type
+
+### Sintax for a RECORDS PL/SQL Table
+* In the following example, you use a RECORD type to specify the element type:
+    
+    DECLARE
+
+    TYPE TimeRecTyp IS RECORD (
+
+    hour   SMALLINT := 0, 
+
+    minute SMALLINT := 0,
+
+    second SMALLINT := 0);
+
+    TYPE TimeTabTyp IS TABLE OF TimeRecTyp
+
+    INDEX BY BINARY_INTEGER;
+
+* With a PL/SQL table of records, you use the following syntax to reference fields in a record:
+    * plsql_table_name(index).field_name
+* the following IF statement references a field in the record stored by the first element of the PL/SQL table emp_tab: 
+    
+    DECLARE
+
+    TYPE EmpTabTyp IS TABLE OF emp%ROWTYPE 
+
+    INDEX BY BINARY_INTEGER;
+
+    emp_tab EmpTabTyp;
+
+    BEGIN
+
+    ...
+
+    IF emp_tab(1).job = 'CLERK' THEN ...
+
+    END;
+
+* When calling a function **that returns a PL/SQL table,** you use the following syntax to reference elements in the table
+    * function_name(parameters)(index)
+
+
+## PL/SQL Table Attributes
+* **Attributes are characteristics of an object.**
+* A PL/SQL table has the attributes **EXISTS, COUNT, FIRST, LAST, PRIOR, NEXT, and DELETE.** 
+    * The attributes EXISTS, PRIOR, NEXT, and DELETE take parameters
+        * Each parameter must be an expression that yields a BINARY_INTEGER value or a value implicitly convertible to that datatype
+        * This four table attributes act like a function, which is called as part of an expression
+    * DELETE acts like a procedure, which is called as a statement
+
+
+* To apply the attributes to a PL/SQL table, you use dot notation, as follows: 
+    * plsql_table_name.attribute_name
+
+### Using EXISTS
+* EXISTS(n) returns TRUE if the nth element in a PL/SQL table exists. Otherwise, EXISTS(n) returns FALSE.
+* You can use EXISTS to avoid the exception NO_DATA_FOUND, which is raised when you reference a nonexistent element
+
+### Using COUNT
+* COUNT returns the number of elements that a PL/SQL table contains.
+* COUNT is useful because the future size of a PL/SQL table is unconstrained and therefore unknown
+* you could use COUNT to specify the upper bound of a loop range
+
+### Using FIRST and LAST
+* FIRST and LAST return the first and last (smallest and largest) index numbers in a PL/SQL table.
+* If the PL/SQL table is empty, FIRST and LAST return nulls.
+* If the PL/SQL table contains only one element, FIRST and LAST return the same index number,
+
+### Using PRIOR and NEXT
+* PRIOR(n) returns the index number that precedes index n in a PL/SQL table
+* NEXT(n) returns the index number that succeeds index n.
+* If n has no predecessor, PRIOR(n) returns a null. Likewise, if n has no successor, NEXT(n) returns a null. 
+* **You can use PRIOR or NEXT to traverse PL/SQL tables indexed by any series of integers**
+* **you can use PRIOR or NEXT to traverse PL/SQL tables from which some elements have been deleted**
+* 
+
+
+
+
+
+
 
 
 
@@ -332,6 +453,8 @@ TYPE -var_record_name- IS RECORD
 
 
 # Cursors
+* * **Attributes are characteristics of an object.**
+* A cursor has the attributes %FOUND, %NOTFOUND, %ISOPEN, and %ROWCOUNT.
 * Every SQL statement executed by the Oracle server has an associated individual cursor: 
     * *Implicit cursors:* Declared and managed by PL/SQL for all DML and PL/SQL statements.
         * .
@@ -384,6 +507,7 @@ TYPE -var_record_name- IS RECORD
 	    	* A cursor can be reopened only if it is closed. If you attempt to fetch data from a cursor after it has been closed, then an INVALID_CURSOR exception will be raised. 
 	    	* Note: Although it is possible to terminate the PL/SQL block withouth closing cursors, there is a maximum limit on the number of open cursors per session, which is determined by the OPEN_CURSORS, paramter in the database parameter file. 
 	    	* Default: OPEN_CURSORS=50.
+* Using the [Cursor](https://stackoverflow.com/questions/10629802/can-i-pass-an-explicit-cursor-to-a-function-procedure-for-use-in-for-loop "Cursor as function parameter") as a function parameter.  
 
 ## FOR - CURSORS
 * A For loop cursor doesn't need to OPEN, FETCH, and CLOSE
@@ -1157,9 +1281,9 @@ WHEN error_pkg.e_fk_err THEN...
 
 ## User tables: user_tables 
 
-# December Path to freedom :)
+# December Path to freedom :) - Now also January :(
 1. SQL -- ok
-2. PL/SQL -- 53%
+2. PL/SQL -- 60%
 3. DBA BASICS -- 20% 
 4. Informatica -- 25%
 5. Scala -- pending

@@ -465,9 +465,17 @@ TYPE -var_record_name- IS RECORD
 
 
 ## PL/SQL collections
-* INDEX BY tables or associative arrays
-* Nested table
-* VARRAY
+* Can be the following types: 
+    * Associative array (or index-by table) (PL/SQL TABLE)
+    * Nested table
+    * Variable-size array (varray)
+* These composite variables have internal components that you can treat as individual variables
+* In a collection, the internal components are always of the same data type, and are called elements
+* In a record, the internal components can be of different data types, and are called fields
+
+
+
+
 
 
 # Cursors
@@ -1278,8 +1286,43 @@ WHEN error_pkg.e_fk_err THEN...
 * 
 
 
+## Using the PARALLEL_ENABLE Hint
+* Can be used in **functions** as an optimization hint
+* Indicates that a function can be used in a parallelized query or parallelized DML statement. 
+* **Cache and parallel are only in oracle enterprise editions** [See Diferences between Oracle editions](https://docs.oracle.com/database/121/DBLIC/editions.htm#DBLIC116 "Diferrences oracle editions")
 
 
+## USING the Cross-Session PL/SQL Function Result Cache
+* Each time a result-cached PL/SQL function is called with different parameter values, those parameters and their results are stored in cache. 
+* The function result cache is stored in a shared global area (SGA), making it available to any session that runs you application. 
+* Subsequent calls to the same function with the same parameters uses the result from cache. 
+* Improves performance and scalability.
+* Use with functions that are called frequently and dependent on information that changes infrequently. 
+* Notes:
+    * If the database object that uses to compute the value changed ,then result is computed. 
+    * If function execution results in an unhandled exception, the exception results are not stored in the cache. 
+* Example:
+
+    CREATE OR REPLACE FUNCTION get_sum_sal_dept
+
+    (dept_id number)
+
+    return number result_cache -- <-  result cache info
+
+## USING the deterministic clause with functions
+* **If another session runs the same code with the same parameters the code is still executed. The cache is not shared between sessions**
+* Cache and parallel are only available for oracle enterprise editions.
+* Also the DBA should make changes in these values
+    * parameter shared_pool_size
+    * parameter result_cache_max_size
+    * parameter result_cache_mode
+* The DETERMINISTIC hint has been available since Oracle 8i
+* Specify DETERMINISTIC to indicate that the function returns the same result value whenever it is called with the same values for its arguments.
+* This helps the optmizer avoid redundant function calls. 
+* If a function was called previously with the same argumetns, the optimizer can elect to use the previous result. 
+* Do not specify DETERMINISTIC for a function whose result depends on the state of session variables or schema obects. 
+* You must specify this keyword if you intent to call the function in the expression of a funcion-based index OR from the query of a materialized view taht is marked refresh fast or enable query rewrite. 
+    * When oracle encounters ad eterministic function in one of these contexts, it attempts to use previously calculated results when possible rather than reexecuting the functino. If you subsequently change the semantics of the function, you must manually rebuild all dependent function-based indexes and materialized view. 
 
 
 # Commands

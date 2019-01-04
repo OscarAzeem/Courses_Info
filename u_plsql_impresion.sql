@@ -3746,13 +3746,32 @@ END;
 EXECUTE nocopy_test.INIT;
 
 
+-------------------------------
+
+-- RESULT CACHE HINT
+-----------------------------
+
+CREATE OR REPLACE FUNCTION get_sum_sal_dept
+(dept_id number)
+return number result_cache -- <-  result cache info
+IS
+v_sal number; 
+BEGIN
+    SELECT SUM(salary)
+    INTO v_sal
+    FROM employees
+    WHERE department_id=dept_id;
+    RETURN v_sal;
+END;
+
+select get_sum_sal_dept(10) from dual;
+select get_sum_sal_dept(20) from dual; 
 
 
 
-
-
-
-
+-- now when you do: 
+select get_sum_sal_dept(10) from dual;
+-- it should be faster because the results are stored in the cache. 
 
 
 

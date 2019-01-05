@@ -467,10 +467,15 @@ TYPE -var_record_name- IS RECORD
 ## PL/SQL collections
 * Can be the following types: 
     * Associative array (or index-by table) (PL/SQL TABLE)
-    * Nested table
+    * Nested table:
+        * a nested table is like a one-dimensional array with an arbitrary number of elements
+        * a nested table is a column type that holds a set of values
+        * The database stores the rows of a nested table in no particular order
     * Variable-size array (varray)
+        * A variable-size array (varray) is an item of the data type VARRAY
+        * 
 * These composite variables have internal components that you can treat as individual variables
-* In a collection, the internal components are always of the same data type, and are called elements
+* In a collection, **the internal components are always of the same data type, and are called elements**
 * In a record, the internal components can be of different data types, and are called fields
 
 
@@ -479,7 +484,7 @@ TYPE -var_record_name- IS RECORD
 
 
 # Cursors
-* * **Attributes are characteristics of an object.**
+* **Attributes are characteristics of an object.**
 * A cursor has the attributes %FOUND, %NOTFOUND, %ISOPEN, and %ROWCOUNT.
 * Every SQL statement executed by the Oracle server has an associated individual cursor: 
     * *Implicit cursors:* Declared and managed by PL/SQL for all DML and PL/SQL statements.
@@ -1323,6 +1328,38 @@ WHEN error_pkg.e_fk_err THEN...
 * Do not specify DETERMINISTIC for a function whose result depends on the state of session variables or schema obects. 
 * You must specify this keyword if you intent to call the function in the expression of a funcion-based index OR from the query of a materialized view taht is marked refresh fast or enable query rewrite. 
     * When oracle encounters ad eterministic function in one of these contexts, it attempts to use previously calculated results when possible rather than reexecuting the functino. If you subsequently change the semantics of the function, you must manually rebuild all dependent function-based indexes and materialized view. 
+
+## BULK BINDING
+* **BULK BINDING** only works with *EXCEPTIONS*
+* When dealing with *collections* this slower the performance in the dataserver, So Oracle introduced something called BULK binding. (**Send the SQL statemetns using bulk**).
+* Sintax:
+    * The FORALL keyword instructs the PL/SQL engine to bulk bind input collections before sending them to te SQL engine: 
+
+    FORALL index IN lower_bound..upper_bound
+
+    sql_statement;
+
+    * The **BULK COLLECT** keyword instructs the SQL engine to bulk bind output collections before returning them to the PL/SQL engine. 
+
+    ... BULK COLLECT INTO
+
+    collection_name[,collection_name]
+
+### Handling FORALL EXCEPTIONS with the %BULK_EXCEPTIONS Attribute
+* To manage exceptions and have the bulk bind complete despite errors, add the keyword SAVE EXCEPTIONS to your FORALL statement after the bounds, before the DML statement. 
+* All exceptions raised during the execution are saved in the cursor attribute **%BULK_EXCEPTIONS**, which stores a collection of records. Each record has two fields:
+    1. **%BULK_EXCEPTIONS(I). ERROR_INDEX** Holds the "iteration" of the FORALL statement during which the exception was raised and 
+    2. **%BULK_EXCEPTIONS(I).ERROR_CODE** which holds the corresponding Oracle error code. 
+* Values stored in %BULK_EXCEPTIONS refer to the most recently executed FORALL statement. Its subscripts range from 1 to **%BULK_EXCEPTIONS.COUNT**
+* 
+
+
+
+
+
+
+
+
 
 
 # Commands

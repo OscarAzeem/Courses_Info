@@ -3773,6 +3773,121 @@ select get_sum_sal_dept(20) from dual;
 select get_sum_sal_dept(10) from dual;
 -- it should be faster because the results are stored in the cache. 
 
+-------------------------
+-- BULK BINDING
+-------------------------------
+
+SELECT * FROM employees where employee_id IN (100,101,102,200,300);
+
+CREATE OR REPLACE PROCEDURE update_sal_withouth_bulk
+(p_amount number)
+IS
+-- DECLARATION OF TYPES. EXAMPLE TABLE TYPES.
+TYPE emp_table_type IS TABLE OF NUMBER INDEX BY BINARY_INTEGER;
+emp_table emp_table_type;
+i number:=0;
+BEGIN
+emp_table(1):=100;
+emp_table(2):=200;
+emp_table(3):=300;
+i:=emp_table.first;
+    WHILE i < emp_table.last
+        LOOP
+        UPDATE employees
+        SET salary=salary+p_amount
+        where employee_id=emp_table(i);
+        i:=i+1;
+        END LOOP;
+    /*
+    FOR i IN emp_table.first..emp_table.last
+        LOOP
+        UPDATE employees
+        SET salary=salary+p_amount
+        where employee_id=emp_table(i);
+        END LOOP;
+        --COMMIT;
+    */  
+        
+    EXCEPTION WHEN OTHERS THEN
+    dbms_output.put_line('Couldnt find the :' || emp_table(i) || ' value');
+END; 
+
+-- executing
+
+EXECUTE update_sal_withouth_bulk(1.1);
+
+-----------------------------------------------------------------------------------
+----------- update salWITH BBULK----------------------------------
+-- BULK BINDING ------------------
+
+
+SELECT * FROM employees where employee_id IN (100,101,102,200,300);
+
+CREATE OR REPLACE PROCEDURE update_sal_with_bulk
+(p_amount number)
+IS
+-- DECLARATION OF TYPES. EXAMPLE TABLE TYPES.
+TYPE emp_table_type IS TABLE OF NUMBER INDEX BY BINARY_INTEGER;
+emp_table emp_table_type;
+i number:=0;
+BEGIN
+emp_table(1):=100;
+emp_table(2):=200;
+emp_table(3):=300;
+i:=emp_table.first;
+
+    FORALL i IN emp_table.first..emp_table.last
+        ---LOOP, the loop sentence it's deleted 
+        UPDATE employees
+        SET salary=salary+p_amount
+        where employee_id=emp_table(i);
+        --END LOOP; the same with the end loop sentence .
+        
+    EXCEPTION WHEN OTHERS THEN
+    dbms_output.put_line('Couldnt find the :' || emp_table(i) || ' value');
+END; 
+
+-- executing
+
+EXECUTE update_sal_withouth_bulk(1.1);
+
+
+-------------------------------------------------------------------------------------------
+
+select count(*) from employees;
+
+select * from employees;
+
+----------------------------------------------------------------
+---- example time differences bulk and without bulk
+---------------------------------
+
+/*
+    1. time function
+    2. cloning all the registers of a table and make it double, register 1 it's -1, 2 it's -2
+    3. do the  for with the bulk and withouth
+    4. compare times
+*/
+
+CREATE OR REPLACE PROCEDURE comparing_bulk_and_no_bulk()
+IS
+-- variables
+TYPE PT_employees_table IS TABLE OF HR.EMPLOYEES%ROWTYPE;
+v_employees_table PT_employees;
+CURSOR c_employees_table IS select * from HR.employees;
+i number:=0;
+-- procedures
+
+
+
+
+BEGIN
+-- fetching all the employees rows in the 
+    FOR elemento in c_employees_table
+        LOOP
+        i:=i+1;
+        v_employees_table(i):=elemento;
+        v_em
 
 
 

@@ -3868,26 +3868,98 @@ select * from employees;
     3. do the  for with the bulk and withouth
     4. compare times
 */
-
-CREATE OR REPLACE PROCEDURE comparing_bulk_and_no_bulk()
+-- second procedure
+CREATE OR REPLACE PROCEDURE comparing_bulk_and_no_bulk
 IS
 -- variables
-TYPE PT_employees_table IS TABLE OF HR.EMPLOYEES%ROWTYPE;
-v_employees_table PT_employees;
+TYPE PT_employees_table IS TABLE OF HR.EMPLOYEES%ROWTYPE INDEX BY BINARY_INTEGER;
+v_employees_table PT_employees_table;
 CURSOR c_employees_table IS select * from HR.employees;
+total_rows number:=0;
 i number:=0;
+ii number:=0;
+max_iterations number:=2;
+
+
 -- procedures
-
-
 
 
 BEGIN
 -- fetching all the employees rows in the 
-    FOR elemento in c_employees_table
+    DBMS_OUTPUT.ENABLE(1000000); 
+    -- The select statements mean to assing a value to a variable are declared inside the BEGIN statement
+    select count(*) INTO total_rows from HR.EMPLOYEES;
+    
+    WHILE ii< max_iterations
         LOOP
-        i:=i+1;
-        v_employees_table(i):=elemento;
-        v_em
+        ii:=ii+1;
+        FOR elemento in c_employees_table
+                LOOP
+                i:=i+1;
+                v_employees_table(i):=elemento;
+                --dbms_output.put_line('Elemento : ' || i || ' , ' || 'Id= ' || v_employees_table(i).employee_id || ' Salario: ' || v_employees_table(i).salary);
+                END LOOP;
+        END LOOP;
+
+
+    dbms_output.put_line('El primer elemento de v_employees_table: ' || v_employees_table.first);
+    dbms_output.put_line('El ultimo elemento de v_employees_table: ' || v_employees_table.last);
+    dbms_output.put_line('Que tiene un total de: ' || v_employees_table.count || ' El cual es: ' || max_iterations || '*' || total_rows);
+
+
+END; 
+
+
+
+-- executing
+
+execute hr.comparing_bulk_and_no_bulk;
+
+
+------------------------------------------------------------
+
+-- bulk binding with save exceptions. 
+
+DESC employees;
+
+DROP TABLE ename; 
+
+CREATE TABLE ename AS SELECT DISTINCT first_name FROM employees;
+
+SELECT first_name from ename; 
+
+SELECT * FROM ename;
+
+------------------------------
+
+DECLARE
+TYPE ename_t IS TABLE OF VARCHAR2(100);
+enable_table ename_t:=ename_t(); --?
+c number:=0;
+BEGIN
+    FOR i IN (select * from ename)
+        LOOP
+        c:=c+1;
+        ename_table.extend; -- It's neccesary since the table wasn't declared with an INDEX BY- why? for the lools?
+        ename_table(c):=i.first_name;
+        END LOOP;
+        
+    FOR i IN ename_table.first..ename_table.last
+        LOOP
+        --begin
+        UPDATE ename
+        SET first_name=first_name|| ' to be added '
+        WHERE first_name=ename_table(i);
+        
+        -- exception
+        -- end;
+        END LOOP;
+        
+    EXCEPTION
+    WHEN OTHERS THEN
+    NULL;
+END; 
+        
 
 
 

@@ -135,3 +135,12 @@ B.ACCESSRIGHT=D.ACCESSRIGHT
     * select * from ALL_USERS;
     * DBA_USERS; describes all users of the database, and contains more columns than ALL_USERS
     * USER_USERS describes the current user, and contains more columns than ALL_USERS;
+* Increaze the buffer size: 
+	* When facing the error: *RA-20000: ORU-10027: buffer overflow, limit of 2000 bytes*, you can increaze the buffer size as follows: 
+	* SQL PLUS: 
+		1. set serveroutput on size 1000000; (buffer up to 1,000,000)
+		2. set serveroutput on size unlimited; (unlimited)
+	* PL/SQL
+		1. DBMS_OUTPUT.ENABLE(1000000); 
+		2. DBMS_OUTPUT.ENABLE (buffer_size => NULL); 
+		

@@ -478,6 +478,16 @@ TYPE -var_record_name- IS RECORD
 * In a collection, **the internal components are always of the same data type, and are called elements**
 * In a record, the internal components can be of different data types, and are called fields
 
+## EXTEND (Increase the size of a collection):
+* EXTEND it's used to increase the size of a nested table or varray
+* The procecure EXTEND has three forms: 
+    1. **EXTEND** appends one null element to a collection.
+    2. **EXTEND(n)** appends n null elements to a collection.
+    3. **EXTEND(n,i)**  appends n copies of the ith element to a collection
+* NOTE(s):
+1. **You cannot use EXTEND with index-by tables**
+2. You cannot use EXTEND to add elements to an uninitialized collection
+3. If you impose the NOT NULL constraint on a TABLE or VARRAY type, you cannot apply the first two forms of EXTEND to collections of that type.
 
 
 
@@ -1381,7 +1391,7 @@ WHEN error_pkg.e_fk_err THEN...
 
 # December Path to freedom :) - Now also January :(
 1. SQL -- ok
-2. PL/SQL -- 60%
+2. PL/SQL -- 63%
 3. DBA BASICS -- 20% 
 4. Informatica -- 25%
 5. Scala -- pending

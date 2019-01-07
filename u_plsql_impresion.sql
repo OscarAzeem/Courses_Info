@@ -3926,15 +3926,27 @@ DROP TABLE ename;
 
 CREATE TABLE ename AS SELECT DISTINCT first_name FROM employees;
 
+CREATE TABLE ename (first_name varchar2(30));
+
+-- insert into 
+INSERT INTO hr.ename
+
+SELECT DISTINCT first_name FROM hr.employees
+
+
 SELECT first_name from ename; 
 
 SELECT * FROM ename;
 
 ------------------------------
+-- EXAMPLE WITHOUT BULK BINDING (ERROR COLUMN)
+-------------------------------
+
 
 DECLARE
 TYPE ename_t IS TABLE OF VARCHAR2(100);
-enable_table ename_t:=ename_t(); --?
+ename_table ename_t:=ename_t(); -- You cannot use EXTEND to add elements to an uninitialized collection
+i number:=0;
 c number:=0;
 BEGIN
     FOR i IN (select * from ename)
@@ -3943,72 +3955,128 @@ BEGIN
         ename_table.extend; -- It's neccesary since the table wasn't declared with an INDEX BY- why? for the lools?
         ename_table(c):=i.first_name;
         END LOOP;
-        
-    FOR i IN ename_table.first..ename_table.last
+     
+    i:=ename_table.first-1;
+    dbms_output.put_line('The last element of: ename_table : ' || ename_table.last);
+    dbms_output.put_line('The 16 element of: ename_table : ' || ename_table(16));
+    dbms_output.put_line('The 1 element of: ename_table : ' || ename_table(1));
+    
+    BEGIN
+    WHILE i < ename_table.last
         LOOP
         --begin
-        UPDATE ename
+        i:=i+1;
+        dbms_output.put_line('The name im looking: ' || ename_table(i) || ' number ' || i);
+        UPDATE HR.ename
         SET first_name=first_name|| ' to be added '
         WHERE first_name=ename_table(i);
         
         -- exception
         -- end;
         END LOOP;
+       
+       
+    EXCEPTION WHEN OTHERS THEN
+    dbms_output.put_line('Problem finding: ' || ename_table(i) || ' number ' || i);
+    dbms_output.put_line(sqlcode);
+    dbms_output.put_line(sqlerrm);
+       
+     END;  
+        
         
     EXCEPTION
     WHEN OTHERS THEN
     NULL;
 END; 
         
+---------------------------------------
+----- EXAMPLE EXCEPTIONS BEING CONTROLLED BY THE LOOP
+----------------------------------------------
+
+DECLARE
+TYPE ename_t IS TABLE OF VARCHAR2(100);
+ename_table ename_t:=ename_t(); -- You cannot use EXTEND to add elements to an uninitialized collection
+i number:=0;
+c number:=0;
+BEGIN
+    FOR i IN (select * from ename)
+        LOOP
+        c:=c+1;
+        ename_table.extend; -- It's neccesary since the table wasn't declared with an INDEX BY- why? for the lools?
+        ename_table(c):=i.first_name;
+        END LOOP;
+     
+    i:=ename_table.first-1;
+    dbms_output.put_line('The last element of: ename_table : ' || ename_table.last);
+    dbms_output.put_line('The 16 element of: ename_table : ' || ename_table(16));
+    dbms_output.put_line('The 1 element of: ename_table : ' || ename_table(1));
+    
+    --BEGIN
+    WHILE i < ename_table.last
+        LOOP
+        BEGIN
+        i:=i+1;
+        dbms_output.put_line('The name im looking: ' || ename_table(i) || ' number ' || i);
+        UPDATE HR.ename
+        SET first_name=first_name|| ' to be added '
+        WHERE first_name=ename_table(i);
+        
+         EXCEPTION WHEN OTHERS THEN
+        dbms_output.put_line('Problem finding: ' || ename_table(i) || ' number ' || i);
+        dbms_output.put_line(sqlcode);
+        dbms_output.put_line(sqlerrm);
+       
+         END;  
+     
+        END LOOP;    
+        
+    EXCEPTION
+    WHEN OTHERS THEN
+    NULL;
+END; 
+        
+        
+        
+-----------------------------------------
+-- EXAMPLE WITH BULK BINDING
+-----------------------------------------
+DROP TABLE ename; 
+
+CREATE TABLE ename AS SELECT DISTINCT first_name FROM employees;
+
+SELECT * FROM ename; 
+
+------------------
+DECLARE
+TYPE ename_t IS TABLE OF VARCHAR2(100); -- WITHOUT INDEX, NOTE
+ename_table ename_t:=ename_t(); -- as doesnt have an index, every instance of ename_t should be initialized
+c number:=0;
+
+BEGIN
+    FOR i IN (select * from ename)
+    LOOP
+    c:=c+1;
+    ename_table.extend; -- as doesnt have an index, you should extend :/
+    ename_table(c):=i.first_name;
+    END LOOP;
+    
+    FORALL i IN ename_table.first..ename_table.last SAVE EXCEPTIONS
+    -- with the SAVE 
+    --dbms_output.put_line('The name im looking: ' || ename_table(i) || ' number ' || i);
+    UPDATE ename
+    SET first_name=first_name||' to be added'
+    WHERE first_name=ename_table(i);
+    
+    EXCEPTION 
+    WHEN OTHERS THEN
+
+    dbms_output.put_line(sqlcode);
+    dbms_output.put_line(sqlerrm);
+
+END;
+----------------------------------------
 
 
 
 
 
-
-
-select * from emp1;
-
-
-select * from ALL_USERS;
-
-select * from
-USER_USERS
-
-
-select * from USER_SYS_PRIVS;
-
-
-select * from user_role_privs;
-
-select * from role_sys_privs;
-
-
-select * from session_privs;
-
-
-select * from user_source
-
-select * from user_tab_privs;
-
-
-SELECT * FROM all_source
-
-select * from employees;
-
-
-declare
-    l_schema varchar2(30);
-begin
-    l_schema := apex_application_install.get_schema;
-    dbms_output.put_line(l_schema);
-end;
-
-APEX_APPLICATION_INSTALL.GET_SCHEMA
-RETURN VARCHAR2;
-
-select APEX_APPLICATION_INSTALL.GET_SCHEMA from dual;
-
-select sys_context('USERENV', 'CURRENT_SCHEMA') from dual;
-
-SELECT * FROM DBA_AUDIT_SESSION ;

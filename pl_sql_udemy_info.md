@@ -1361,7 +1361,11 @@ WHEN error_pkg.e_fk_err THEN...
     1. **%BULK_EXCEPTIONS(I). ERROR_INDEX** Holds the "iteration" of the FORALL statement during which the exception was raised and 
     2. **%BULK_EXCEPTIONS(I).ERROR_CODE** which holds the corresponding Oracle error code. 
 * Values stored in %BULK_EXCEPTIONS refer to the most recently executed FORALL statement. Its subscripts range from 1 to **%BULK_EXCEPTIONS.COUNT**
-* 
+
+### FORALL AND SAVE EXCEPTIONS
+* Inside a FORALL statement, when finding an error the PL/SQL block will go to the exception section and the block will be ended. To bypass this kind of error it's possible to declare a PL/SQL block outside the FOR (instead of FORALL) and deal with each register as one exception. For specifically the FORALL statement it's available the SAVE EXCEPTIONS statement, as the example below: 
+* **FORALL i IN ename_table.first..ename_table.last SAVE EXCEPTIONS**
+
 
 
 

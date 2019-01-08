@@ -4322,4 +4322,22 @@ BEGIN
     END LOOP;
 END; 
 
+--------------------------------------------------------------
+--- USING RETURNING IN BULK COLLECT
+---------------------------------------------------
 
+CREATE OR REPLACE PROCEDURE update_sal_x (emp_id number, p_amount number)
+IS
+v_new_sal number;
+BEGIN
+
+    UPDATE employees
+    SET salary=salary+p_amount
+    WHERE employee_id=emp_id
+    RETURNING salary into v_new_sal;
+    
+    dbms_output.put_line('the new sal is: ' || v_new_sal);
+    END;
+    
+-- executing update_sal    
+exec update_sal_x(200,1);

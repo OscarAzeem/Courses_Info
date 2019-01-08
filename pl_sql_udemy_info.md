@@ -1076,6 +1076,7 @@ SELECT employee_id FROM EMPLOYEES;
 
 # Dynamic SQL
 * ***USUALLY***: The **SQL STATEMENTS** are created at **COMPILE TIME**
+* When some word belonging to an element of a database object (schema name, table name) it's used as an input variable, the server cannot find such input variable in the **compile time**, in such cases it's neccesary to use *Dynamic SQL*
 * Dynamic SQL Meaning: 
     * IN Dynamic SQL, The SQL statements are created dynamically at run time (not compile time)
 * All SQL statements go through some or all of the following stages:

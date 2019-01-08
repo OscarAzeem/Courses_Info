@@ -4221,6 +4221,7 @@ BEGIN
     
     select * BULK COLLECT INTO emp_table FROM employees;
     
+    -- how can this work just with two columns as follows? And the insert below
     --select first_name, last_name BULK COLLECT INTO emp_table FROM employees;
     
     FOR i IN emp_table.first..emp_table.last
@@ -4239,5 +4240,86 @@ insert into test_table ( first_name, last_name )  select first_name, last_name f
 ------------------------------------------------
 -------------------------------------------
 ----------- 
+-------------- USING BULK COLLECT AND CURSORS ------------
+---------------------------------------------------------
+DECLARE
+TYPE emp_t IS TABLE OF employees%rowtype;
+emp_table emp_t;
+CURSOR emp_c IS SELECT * FROM employees; 
+c number:=0;
+BEGIN
+emp_table:=emp_t();
+OPEN emp_c;
+    LOOP
+    emp_table.extend;
+    c:=c+1;
+    FETCH emp_c INTO emp_table(c);
+    EXIT WHEN emp_c%notfound;
+    dbms_output.put_line(emp_table(c).first_name);
+    END LOOP;
+    CLOSE emp_c;
+END;    
+
+
+--------------------------------------------
+---- example using bulk and cursors but with for instead of OPEN-FETCH-CLOSE
+
+DECLARE
+TYPE emp_t IS TABLE OF employees%ROWTYPE INDEX BY BINARY_INTEGER;
+emp_table emp_t;
+CURSOR emp_c IS SELECT * FROM employees; 
+c number:=0;
+BEGIN
+--emp_table:=emp_t(); -- YOU CANT INITIALIZE A PL/SQL TABLE WICH HAS AN INDEX
+
+FOR elemento in emp_c
+    LOOP
+    c:=c+1;
+    emp_table(c):=elemento;
+    dbms_output.put_line(emp_table(c).first_name);
+    END LOOP;
+END;  
+
+----------------------------------------------
+
+----- EXAMPLE DOING A BULK COLLECT FROM A CURSOR INTO A PL/SQL TABLE
+
+-----------------------------------------------
+
+DECLARE
+TYPE emp_t IS TABLE OF employees%rowtype;
+emp_table emp_t;
+CURSOR emp_c IS SELECT * FROM employees;
+BEGIN
+    OPEN emp_c;
+    FETCH emp_c BULK COLLECT INTO emp_table; -- FETCHING THE CURSOR INTO THE PL/SQL TABLE. 
+    
+    FOR i IN emp_table.first..emp_table.last
+    LOOP
+    dbms_output.put_line(emp_table(i).first_name);
+    END LOOP;
+END; 
+
+
+
+----------------------------------------------
+
+----- EXAMPLE DOING A BULK COLLECT FROM A CURSOR INTO A PL/SQL TABLE AND LIMIT
+
+-----------------------------------------------
+
+DECLARE
+TYPE emp_t IS TABLE OF employees%rowtype;
+emp_table emp_t;
+CURSOR emp_c IS SELECT * FROM employees;
+BEGIN
+    OPEN emp_c;
+    FETCH emp_c BULK COLLECT INTO emp_table LIMIT 5; -- FETCHING THE CURSOR INTO THE PL/SQL TABLE. 
+    
+    FOR i IN emp_table.first..emp_table.last
+    LOOP
+    dbms_output.put_line(emp_table(i).first_name);
+    END LOOP;
+END; 
 
 

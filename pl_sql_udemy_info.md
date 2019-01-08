@@ -498,7 +498,10 @@ TYPE -var_record_name- IS RECORD
 * A cursor has the attributes %FOUND, %NOTFOUND, %ISOPEN, and %ROWCOUNT.
 * Every SQL statement executed by the Oracle server has an associated individual cursor: 
     * *Implicit cursors:* Declared and managed by PL/SQL for all DML and PL/SQL statements.
-        * .
+        * They are defined with the *prefix:* **SQL**
+            * ***Functions:*** 
+                * SQL%BULK_EXCEPTIONS
+                *
     * *Explicit cursors:* Declared and managed by the programmer
         * You declare explicit cursors in PL/SQL when you have a SELECT statement that returns multiple rows. You can process each row returned by the SELECT statement. 
         * Functions: 
@@ -566,6 +569,22 @@ TYPE -var_record_name- IS RECORD
 * When you put for update, then no one can do any DML (I, U, D) for these records, until you finish your transaction (commit, update).
 * When you use the for update statement, oracle gives you the option to refer directly to that records selected in the CURSOR statement. It's possible to update inside the FOR the reserved ercords.
 * 
+
+## HANDLING ERRORS WITH IMPLICIT CURSOR PROPERTIES DUE TO A BULK BINDING (FORALL - SAVE EXCEPTIONS)
+* It's possible to use this propierties after declaring a *FORALL* and *SAVE EXCEPTIONS* statement in order to see each error individually.
+
+### BULK_EXEPTIONS
+* **SQL%BUL_EXCEPTION.COUNT**:
+    * Conteo total de las excepciones encontradas
+* **SQL%BULK_EXCEPTIONS**: can be indexed an has the following properties: 
+    1. SQL%BULK_EXCEPTIONS(n).error_index
+    2. SQL%BULK_EXCEPTIONS(n).error_code
+* 
+
+
+
+
+
 
 
 # EXCEPTIONS
@@ -1340,7 +1359,7 @@ WHEN error_pkg.e_fk_err THEN...
     * When oracle encounters ad eterministic function in one of these contexts, it attempts to use previously calculated results when possible rather than reexecuting the functino. If you subsequently change the semantics of the function, you must manually rebuild all dependent function-based indexes and materialized view. 
 
 ## BULK BINDING
-* **BULK BINDING** only works with *EXCEPTIONS*
+* **BULK BINDING** only works with *EXCEPTIONS*. [Nice explication about FORALL and BULK COLLECT](https://blogs.oracle.com/oraclemagazine/bulk-processing-with-bulk-collect-and-forall "FORALL AND BULK COLLECT") 
 * When dealing with *collections* this slower the performance in the dataserver, So Oracle introduced something called BULK binding. (**Send the SQL statemetns using bulk**).
 * Sintax:
     * The FORALL keyword instructs the PL/SQL engine to bulk bind input collections before sending them to te SQL engine: 
@@ -1365,7 +1384,15 @@ WHEN error_pkg.e_fk_err THEN...
 ### FORALL AND SAVE EXCEPTIONS
 * Inside a FORALL statement, when finding an error the PL/SQL block will go to the exception section and the block will be ended. To bypass this kind of error it's possible to declare a PL/SQL block outside the FOR (instead of FORALL) and deal with each register as one exception. For specifically the FORALL statement it's available the SAVE EXCEPTIONS statement, as the example below: 
 * **FORALL i IN ename_table.first..ename_table.last SAVE EXCEPTIONS**
+* Using the **SAVE EXCEPTIONS** statement means the server will send the SQL statements one by one (like a simple for)
 
+## BULK COLLECT INTO
+* It's convenient when you want to insert values from a certain table into a PL/SQL table, but instead of doing the FOR statement you can use the **BULK COLLECT INTO** sentence. 
+* Example:
+    * select first_name **bulk collect into** ename_table from ename; -- where ename_table it's a PL/SQL table
+    * 
+
+Instead of doing a for to insert
 
 
 

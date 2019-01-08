@@ -4076,7 +4076,168 @@ BEGIN
 END;
 ----------------------------------------
 
+-----------------------------------------
+-- EXAMPLE WITH BULK BINDING AND
+-- DEALING WITH EACH ERROR OBTAINED BY SAVE EXCEPTIONS
+-----------------------------------------
+DROP TABLE ename; 
+
+CREATE TABLE ename AS SELECT DISTINCT first_name FROM employees;
+
+SELECT * FROM ename; 
+
+---------------------------------------------
+DECLARE
+TYPE ename_t IS TABLE OF VARCHAR2(100);
+ename_table ename_t:=ename_t();
+c number:=0;
+errors number;
+---
+BEGIN
+    FOR i IN (select * from ename)
+    LOOP
+    c:=c+1;
+    ename_table.extend;
+    ename_table(c):=i.first_name;
+    END LOOP;
+    
+    FORALL i IN ename_table.first..ename_table.last SAVE EXCEPTIONS
+    UPDATE ename
+    SET first_name=first_name || ' to be added'
+    WHERE first_name=ename_table(i);
+    
+    EXCEPTION
+    WHEN OTHERS THEN
+    errors:=sql%bulk_exceptions.COUNT;
+    dbms_output.put_line('The total number of errors ocurred are: ' ||errors);
+    FOR j in 1..ERRORS LOOP
+        dbms_output.put_line('The error iteration is: ' ||
+            sql%bulk_exceptions(j).error_index ||
+            ' and the error code is: ' ||
+            sql%bulk_exceptions(j).error_code ||
+            ' and the error message is: ' ||
+            sqlerrm(-sql%bulk_exceptions(j).error_code)
+            );
+    END LOOP;
+END;
+
+----------------------------------------------------------
+
+-----------------------------------------
+-- EXAMPLE WITH BULK BINDING AND
+-- DEALING WITH EACH ERROR OBTAINED BY SAVE EXCEPTIONS
+-- AND BULK COLLECT INTO (ANALOGUS AS INSERT INTO) A PL/SQL TABLE
+-----------------------------------------
+DROP TABLE ename; 
+
+CREATE TABLE ename AS SELECT DISTINCT first_name FROM employees;
+
+SELECT * FROM ename; 
+
+---------------------------------------------
+DECLARE
+TYPE ename_t IS TABLE OF VARCHAR2(100);
+ename_table ename_t:=ename_t();
+c number:=0;
+errors number;
+---
+BEGIN
+/* THE FOLLOWING FOR IS REPLACED BY BULK COLLECT INTO
+    FOR i IN (select * from ename)
+    LOOP
+    c:=c+1;
+    ename_table.extend;
+    ename_table(c):=i.first_name;
+    END LOOP;
+   */   
+    
+    select first_name bulk collect into ename_table from ename; 
+    
+    FORALL i IN ename_table.first..ename_table.last SAVE EXCEPTIONS
+    UPDATE ename
+    SET first_name=first_name || ' to be added'
+    WHERE first_name=ename_table(i);
+
+    
+    EXCEPTION
+    WHEN OTHERS THEN
+    errors:=sql%bulk_exceptions.COUNT;
+    dbms_output.put_line('The total number of errors ocurred are: ' ||errors);
+    FOR j in 1..ERRORS LOOP
+        dbms_output.put_line('The error iteration is: ' ||
+            sql%bulk_exceptions(j).error_index ||
+            ' and the error code is: ' ||
+            sql%bulk_exceptions(j).error_code ||
+            ' and the error message is: ' ||
+            sqlerrm(-sql%bulk_exceptions(j).error_code)
+            );
+    END LOOP;
+END;
+
+-----------------------------------------------------
+
+------ EXAMPLE: BULK COLLECT
+-------------------------------------------------
+
+DROP TABLE ename2;
+
+CREATE TABLE ename2 AS SELECT employee_id,first_name FROM employees;
+
+SELECT * FROM ename2;
+
+DECLARE
+
+TYPE emp_t IS TABLE OF varchar2(100) INDEX BY BINARY_INTEGER;
+
+emp_table emp_t;
+c number:=0;
+BEGIN
+    FOR i in (select employee_id, first_name FROM ename2)
+    LOOP
+    c:=c+1;
+    emp_table(c):=i.first_name;
+    END LOOP;
+    
+    FOR i IN emp_table.first..emp_table.last
+    LOOP
+    dbms_output.put_line(emp_table(i));
+    END LOOP;
+END; 
+
+------------------------------------------
+--- example with bulk
+
+--------------------------------
+
+DECLARE
+
+--TYPE emp_t IS TABLE OF varchar2(100) ; -- INDEX BY BINARY_INTEGER;
+
+TYPE emp_t IS TABLE OF employees%ROWTYPE INDEX BY BINARY_INTEGER;
+
+emp_table emp_t;
+c number:=0;
+BEGIN
+    
+    select * BULK COLLECT INTO emp_table FROM employees;
+    
+    --select first_name, last_name BULK COLLECT INTO emp_table FROM employees;
+    
+    FOR i IN emp_table.first..emp_table.last
+    LOOP
+    dbms_output.put_line(emp_table(i).first_name);
+    END LOOP;
+END; 
+
+--------------------
+
+create table test_table as select * from hr.employees where 1=0;
+
+insert into test_table ( first_name, last_name )  select first_name, last_name from hr.employees;
 
 
+------------------------------------------------
+-------------------------------------------
+----------- 
 
 

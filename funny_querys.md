@@ -72,6 +72,14 @@ B.ACCESSRIGHT=D.ACCESSRIGHT
 
 
 ## General Queries
+* Create Table with the same structure as other table (with no data): 
+	* CREATE TABLE [table_name] AS SELECT * FROM [ESCHEMA].[TABLE] WHERE 1=0; -- select no value
+	* Example:
+		* create table test_table as select * from hr.employees where 1=0;
+* Create table with the same structure and data from other table: 
+	* CREATE TABLE [table_name] AS SELECT * FROM [ESCHEMA].[TABLE]; 
+	* Example:
+		* create table test_table as select * from hr.employees;
 * Limit the result subset:
     * select * from [esquema.table] where ROWNUM <= [number_limit]
 * Getting the current user:
@@ -120,8 +128,9 @@ B.ACCESSRIGHT=D.ACCESSRIGHT
 * Revoke permissons SELECT|INSERT|UPDATE|DELETE to a TABLE TO certain user:
     * REVOKE  [INSERT|DELETE|UPDATE] ON ESQUEMA.TABLE FROM USER;
         * Example: REVOKE  INSERT,DELETE,UPDATE ON HR.HR_TABLE FROM FORD;
-
-
+* Show the error message of an SQL error: 
+	* dbms_output.put_Line(sqlerrm([error_Number]));
+* 
 
 
 
@@ -143,4 +152,3 @@ B.ACCESSRIGHT=D.ACCESSRIGHT
 	* PL/SQL
 		1. DBMS_OUTPUT.ENABLE(1000000); 
 		2. DBMS_OUTPUT.ENABLE (buffer_size => NULL); 
-		

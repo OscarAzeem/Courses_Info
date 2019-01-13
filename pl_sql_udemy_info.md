@@ -1393,11 +1393,32 @@ WHEN error_pkg.e_fk_err THEN...
     * select first_name **bulk collect into** ename_table from ename; -- where ename_table it's a PL/SQL table
     * 
 
-Instead of doing a for to insert
+## RETURNING - BULK COLLECT INTO
+* After doing an DML statement (UPDATE, i.e) and appending the *RETURNING* operator, the Oracle server will return all the affected values.
+    * Example: 
+        
+        UPDATE employees
 
+        SET salary=salary+p_amount
 
+        WHERE employee_id=emp_id
 
+        **RETURNING salary into v_new_sal**;
 
+* The returning statement can also be combined with *BULK COLLECT INTO* as the example Below:
+    * Example:
+
+    FORALL i IN emp_table.first..emp_table.last
+
+    UPDATE ename_test
+
+    SET salary=salary/2
+
+    WHERE employee_id=emp_table(i).employee_id
+
+    **RETURNING employee_id, salary BULK COLLECT INTO emp_new_sal;**
+
+## INDICES OF
 
 
 

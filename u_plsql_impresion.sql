@@ -4341,3 +4341,62 @@ BEGIN
     
 -- executing update_sal    
 exec update_sal_x(200,1);
+
+
+--------------------------------------------------
+
+--- EXAMPLE RETURNING IN BULK CONNECTG
+-------------------------------------
+
+SELECT * FROM ename_test;
+
+DROP TABLE ename_test;
+
+CREATE TABLE ename_test AS select employee_id, salary from employees;
+
+SELECT * from ename_test ORDER BY 1;
+
+DECLARE
+TYPE emp_t IS TABLE OF ename_test%ROWTYPE;
+emp_table emp_t:=emp_t();
+emp_new_sal emp_t:=emp_t();
+
+BEGIN
+    SELECT * BULK COLLECT INTO emp_table FROM ename_test;
+    
+    FORALL i IN emp_table.first..emp_table.last
+    UPDATE ename_test
+    SET salary=salary/2
+    WHERE employee_id=emp_table(i).employee_id
+    RETURNING employee_id, salary BULK COLLECT INTO emp_new_sal;
+    
+    FOR i IN emp_new_sal.first..emp_new_sal.last
+    LOOP
+    dbms_output.put_line(emp_new_sal(i).employee_id || ' ' || emp_new_sal(i).salary);
+    END LOOP;
+END; 
+
+----------------------------------------------------------------
+----------------- INDICES OF
+---------------------------------------------------------------
+
+SELECT * FROM employees WHERE employee_id IN (100,101,102,103);
+
+DECLARE
+    TYPE emp_table_type IS TABLE OF NUMBER INDEX BY BINARY_INTEGER;
+    emp_table emp_table_type;
+BEGIN
+    emp_table(1):=100;
+    emp_table(2):=101;
+    emp_table(3):=102;
+    emp_table(100):=103; -- -it will lead to an exception if we dont handle the empty values in the array
+    
+    dbms_output.put_line(emp_table.first);
+    dbms_output.put_line(emp_table.last);
+    
+    FORALL i IN emp_table.first..emp_table.last SAVE EXCEPTIONS
+        UPDATE employees
+        SET salary=salary+5
+        WHERE employee_id=emp_table(i);
+END;
+

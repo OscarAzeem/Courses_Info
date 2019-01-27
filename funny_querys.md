@@ -11,6 +11,29 @@ SELECT * FROM DatabaseNameReference.TableNameReference
 WHERE CONDITION='CONDITION';
 
 
+# MySQL
+* Start the MySQL Server
+1. $ sudo service mysql start
+2. $ mysql -u root -p 
+
+* Load a .sql file: 
+
+mysql> use db_name;
+
+mysql> source backup-file.sql;
+
+* Change the Database and Table Name to case insensitive (by default some environments has the Case senstive option ON by default)
+1. Edit: 
+    * sudo nano /etc/mysql/my.cnf
+2. Underneath the [mysqld] section.add
+    * lower_case_table_names = 1
+3. Restart Mysql 
+    * sudo /etc/init.d/mysql restart
+4. Check the changes: 
+    * mysqladmin -u root -p variables
+
+
+
 # Teradata 
 
 * Getting Databases and tables info -- Teradata

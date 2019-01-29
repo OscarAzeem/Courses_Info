@@ -9,6 +9,15 @@
 * Password (SYS-USER): masterdatabaseoracle
 * alter pluggable database all open;
 
+## Instalation Oracle 12c
+* Create and Configure a database
+* Desktop Class
+* User windows built in account
+* Database edition: Enterprise Edition
+* Global database name: orcl
+* Pluggable databae name: orclpdb
+* Oracle Enterprise Manager Database Express URL: https://localhost:5500/em
+
 
 ## configuration file to make the configurations
 * Path: C:\app\DatabaseOracle\product\12.2.0\dbhome_1\network\admin
@@ -16,6 +25,24 @@
 * As usual: connection name, same as Database name
 * Connection name= Capital letters
 * Service name = lower letters
+* Adding the following to the tnsnames.ora file: 
+
+ORCLPDB =
+
+(DESCRIPTION =
+
+(ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
+
+(CONNECT_DATA =
+
+(SERVER = DEDICATED)
+
+(SERVICE_NAME = orclpdb)
+
+)
+
+)
+
 
 ### Configuring the connectyon tipe
 * using Connection type = TNS, you have to select a Network alias, which is declared in the tnsames.ora file.
@@ -1418,9 +1445,69 @@ WHEN error_pkg.e_fk_err THEN...
 
     **RETURNING employee_id, salary BULK COLLECT INTO emp_new_sal;**
 
-## INDICES OF
+# Triggers
+* A trigger is a PL/SQL block that is **stored in the database** (it's like an squema object like procedures and functions) and fired (executed) in response to a specified event. 
+* The Oracle database automatically executes a trigger when specified conditions occur. 
+* **Defining Triggers**
+    * A trigger can be defined on the table, view, schema (schema owner), or database (all users)
+* Differences between Application and Database Triggers
+    * A database trigger:
+        * Fires whenever a DML, a DDL, or **system event occurs on a schema or database.**
+    * Application trigger:
+        * Fires whenever an event occurs within a particular application (outside the database)
 
+## Trigger Event Types
+* You can write triggers that fire whenever one of the following operations occurs in the database: 
+    * A database manipulation **(DML)** statement (DELETE, INSERT, or UPDATE)
+    * A database definition **(DDL)** statement (CREATE,ALTER or DROP)
+    * A database operation such as SERVERERROR, LOGON, LOGOFF, STARTUP, or SHUTDOWN
 
+## Business Application Scenarios for Implementing Triggers:
+You can use triggers for: 
+* Security
+    * Insert allowed only in working hours
+* Auditing
+    * Log all the transactions for specific tables
+* Data integrity:
+    * Complex integrity rules which not standard
+* Referential integrity:
+    * Non stanard referential
+* Table replication:
+    * Syncronize a table
+* Computing derived data automatically
+* Event loggin
+
+## Available Trigger Types
+* **Simple DML triggers**
+    * BEFORE
+    * AFTER
+    * INSTEAD OF
+* **Compound triggers**
+* **Non DML Triggers**
+    * DDL event triggers
+        * Audit for some user who tries to create a database
+    * Database event triggers
+
+## Trigger Event Types and Body
+* A **trigger event** type determines which DML statement cause the trigger to execute. The possible evetns are: 
+    * INSERT
+    * UPDATE [of column]
+    * DELETE
+* A **trigger body** determines what action is performed and is a PL/SQL block or a CALL to a procedure. Also called the code of "what you want to do" when an action happens.
+    * The trigger body could be a PL/SQL block, or
+    * A call to other procedure
+
+## DML Triggers
+1. Statement-Level trigger
+    * Used commonly on: security check on (user, time,...)
+    * Is the default when creating a trigger
+    * Fires **once** for the triggering event
+    * Fires once **even if no rows are affected**
+2. Row-Level Triggers
+    * Used commonly on: transactions log
+    * Use the FOR EACH ROW clause when creating a trigger.
+    * Fires once for each row affected by  the triggering event
+    * Does **not fire if** the triggering **event does not affect any rows.**
 
 
 

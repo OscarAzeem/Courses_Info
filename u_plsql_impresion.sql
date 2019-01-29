@@ -4400,3 +4400,32 @@ BEGIN
         WHERE employee_id=emp_table(i);
 END;
 
+----------------------------------------------------------------
+----------------- TRIGGERS / BEGGINING
+---------------------------------------------------------------
+
+DROP TABLE t1;
+
+CREATE TABLE t1
+( emp_id number,
+ename varchar2(100)
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

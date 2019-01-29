@@ -91,7 +91,9 @@ WHERE CONDITION='CONDITION';
 
 
 # ORACLE
-* Oracle queries
+**Oracle queries**
+* When an user doesn't have rights to see o query a table/view/procedure the server will retrieve the following sentence: ORA-00942: table or view does not exist, even if the squema object exists. 
+    * You can't see any tables because the USER doesn't [**OWN**](https://www.thatjeffsmith.com/archive/2013/03/why-cant-i-see-my-tables-in-oracle-sql-developer/ "Cool info about the user rights") any tables.
 * An User could have **USER RIGHTS (USER_SYS_PRIVS)** and rights granted by their  **GRANTED_ROLE (user_role_privs)**. When using *Dynamic SQL (execute immediate)* the user should have the rights for the SQL STATEMENTS declared within the procedure. 
 * ***Until an user has done a commit***, the remain users **can't see** any possible modification or update. 
 * When giving permissions to a certain Database object (package|procedure|function), you can grant such permissions since the object owner or with the sys as dba account.
@@ -165,7 +167,11 @@ WHERE CONDITION='CONDITION';
         * Example: REVOKE  INSERT,DELETE,UPDATE ON HR.HR_TABLE FROM FORD;
 * Show the error message of an SQL error: 
 	* dbms_output.put_Line(sqlerrm([error_Number]));
-* 
+* Show all the **Triggers** (independent of the database privileges)
+    * select * from all_triggers;
+    * **DEPENDING** on your assigned database privileges:
+        * select * from DBA_TRIGGERS;
+        * select * from USER_TRIGGERS;
 
 
 

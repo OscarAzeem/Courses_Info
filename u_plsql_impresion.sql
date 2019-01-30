@@ -4401,7 +4401,7 @@ BEGIN
 END;
 
 ----------------------------------------------------------------
------------------ TRIGGERS / BEGGINING
+----------------- TRIGGERS / BEGGINING (Statement level trigger)
 ---------------------------------------------------------------
 
 DROP TABLE t1;
@@ -4412,17 +4412,63 @@ ename varchar2(100)
 );
 
 
+select * from t1;
+
+INSERT INTO t1 VALUES (1,'ford');
+INSERT INTO t1 VALUES (2,'aya');
+
+--- statement trigger ----
+
+CREATE OR REPLACE TRIGGER t1_b4_update
+BEFORE UPDATE -- Means -> timing + event
+ON t1
+BEGIN -- start the declaration of the trigger
+dbms_output.put_line('ON UPDATE. STATEMENT TRIGGER');
+END;
+
+UPDATE t1
+SET ename=ename || ' s';
+
+-- Notice that the trigger will be fired *even* if no row is updated!
+update t1
+SET ename=ename || 'ss'
+where emp_id=5555;
+
+-------------------------------------------------------------------
 
 
+----------------------------------------------------------------
+----------------- TRIGGERS / ROW LEVEL
+---------------------------------------------------------------
+
+CREATE OR REPLACE TRIGGER t1_b4_update_row_level
+BEFORE UPDATE -- Means -> timing + event
+ON t1
+FOR EACH ROW -- WITH THIS LINE THE TRIGGER WILL BE FIRED je, for each row.
+-- but remember, the trigger won't be fired if the triggering event 
+-- does not not affect any rows. 
+BEGIN -- start the declaration of the trigger
+dbms_output.put_line('ON UPDATE. ROW LEVEL TRIGGER');
+END;
+
+ROLLBACK;
 
 
+-- calling implicity the trigger 
+-- the table t1 now has two triggers, one Statement Level Trigger y otro 
+-- Row level trigger
 
 
+UPDATE t1
+SET ename=ename || ' s';
 
+update t1
+SET ename=ename || 'ss'
+where emp_id=5555;
 
-
-
-
+update t1
+SET ename=ename || 'ss'
+where emp_id=2;
 
 
 

@@ -7,6 +7,7 @@
 * Global database name: orcl
 * Master user: sys as sysdba
 * Password (SYS-USER): masterdatabaseoracle
+    * Or can be: masteroracledatabase (sorry)
 * alter pluggable database all open;
 
 ## Instalation Oracle 12c
@@ -1503,11 +1504,16 @@ You can use triggers for:
     * Is the default when creating a trigger
     * Fires **once** for the triggering event
     * Fires once **even if no rows are affected**
+    * **COMMON CASES**:
+        * When you want to check security **before** DML (DATE, TIME)
+        * When you want to check user profile **before** DML
 2. Row-Level Triggers
     * Used commonly on: transactions log
     * Use the FOR EACH ROW clause when creating a trigger.
     * Fires once for each row affected by  the triggering event
     * Does **not fire if** the triggering **event does not affect any rows.**
+    * **COMMON CASES**:
+        * When you need the **OLD** and new values for the **DML**
 
 
 

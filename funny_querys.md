@@ -159,6 +159,10 @@ WHERE CONDITION='CONDITION';
     * select * from user_source;
 * Shows which procedures/packages/functions have execute permissions for an user:
     * select * from user_tab_privs;
+* Shows all the objects owned by the USER:
+    * select * from user_objects;
+* Shows detailed info about the triggers owned by the user:
+    * select * from user_triggers;
 * Shows the content of the database objects that were given permission to execute to a certain user, but such user is not the owner. 
     * SELECT * FROM all_source WHERE name = '[Procedure|Package|Function]' ORDER BY TYPE, LINE;
 * [SET_SQUEMA (Default schema)](https://docs.oracle.com/javadb/10.6.2.1/ref/rrefsqlj32268.html "The default schema for a certain user")

@@ -1515,6 +1515,38 @@ You can use triggers for:
     * **COMMON CASES**:
         * When you need the **OLD** and new values for the **DML**
 
+## Triggers Sintax
+CREATE [ OR REPLACE ] TRIGGER <trigger_name> 
+
+[BEFORE | AFTER | INSTEAD OF ]
+
+[INSERT | UPDATE | DELETE......]
+
+ON<name of underlying object>
+
+[FOR EACH ROW] 
+
+[WHEN<condition for trigger to get execute> ]
+
+DECLARE
+
+<Declaration part>
+
+BEGIN
+
+<Execution part> 
+
+EXCEPTION
+
+<Exception handling part> 
+
+END;
+
+
+## Trigger constraints priority
+* First the database will check the following constraints in the following order:
+    1. Trigger constraint
+    2. Integrity constraint (child record) 
 
 
 

@@ -4470,8 +4470,35 @@ update t1
 SET ename=ename || 'ss'
 where emp_id=2;
 
+----------------------------------------------------------------
+----------------- TRIGGERS / STATEMENT LEVEL TRIGGER. EXAMPLE
+---------------------------------------------------------------
+
+DELETE FROM departments;
+
+CREATE OR REPLACE TRIGGER dept_check_time
+BEFORE 
+INSERT OR UPDATE OR DELETE -- THE TRIGGER CONDITIONS CAN BE COMBINED
+ON DEPARTMENTS
+BEGIN -- begin the trigger body
+    IF to_number(to_char(sysdate,'hh24')) NOT BETWEEN 8 and 14 then
+    raise_application_error(-20010, 'DML operations not allowed now ');
+    END IF;
+END; 
+
+--- 
+-- TESTING THE TRIGGER
+DELETE FROM departments;
+
+DELETE FROM departments
+WHERE department_id=-4;
+
+select * from user_objects
+WHERE object_name='DEPT_CHECK_TIME';
 
 
+select * from user_triggers
+WHERE trigger_name='DEPT_CHECK_TIME';
 
 
 

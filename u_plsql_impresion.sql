@@ -4471,7 +4471,7 @@ SET ename=ename || 'ss'
 where emp_id=2;
 
 ----------------------------------------------------------------
------------------ TRIGGERS / STATEMENT LEVEL TRIGGER. EXAMPLE
+----------------- TRIGGERS / STATEMENT LEVEL TRIGGER. EXAMPLE 1
 ---------------------------------------------------------------
 
 DELETE FROM departments;
@@ -4500,5 +4500,135 @@ WHERE object_name='DEPT_CHECK_TIME';
 select * from user_triggers
 WHERE trigger_name='DEPT_CHECK_TIME';
 
+----------------------------------------------------------------
+----------------- TRIGGERS / STATEMENT LEVEL TRIGGER. EXAMPLE 2
+---------------------------------------------------------------
+
+CREATE OR REPLACE TRIGGER dept_check_time_detailed
+BEFORE
+INSERT OR UPDATE OR DELETE
+ON DEPARTMENTS
+BEGIN -- BEGIN THE TRIGGER BODY
+    IF to_number(to_char(sysdate,'hh24')) NOT BETWEEN 8 and 14 then
+        IF inserting THEN
+        raise_application_error(-20010,'INSERT not allowed now');
+        ELSIF DELETING THEN 
+        raise_application_error(-20011,'DELETE not allowed now');
+        ELSIF UPDATING THEN
+        raise_application_error(-20012,'UPDATE not allowed now');
+        END IF;
+    END IF;
+END;    
+
+delete from departments;
+
+update departments
+set department_name='x'
+where department_id=-5;
+
+insert into departments (department_id, department_name)
+values (3,'azeem department');
+
+select * from departments;
 
 
+
+----------------------------------------------------------------
+----------------- TRIGGERS / OLD AND NEW QUALIFIERS. ROW LEVEL TRIGGER
+---------------------------------------------------------------
+
+DROP TABLE EMP_COPY;
+
+CREATE TABLE EMP_COPY
+AS SELECT * FROM EMPLOYEES;
+
+SELECT * FROM EMP_COPY;
+
+-------------
+CREATE OR REPLACE TRIGGER check_sal
+BEFORE
+INSERT OR UPDATE OF SALARY -- WHAT OF MEANS?
+ON
+EMP_COPY
+FOR EACH ROW
+BEGIN
+    dbms_output.put_line('FOR EACH ROW. TRIGGER');
+    IF :new.salary<500 THEN
+    raise_application_error(-20030,'min sal is 500');
+    END IF;
+END;
+-------------
+CREATE OR REPLACE TRIGGER check_sal
+BEFORE
+INSERT OR UPDATE OF SALARY -- WHAT OF MEANS?
+ON
+EMP_COPY
+REFERENCING NEW AS NEW OLD AS OLD
+FOR EACH ROW
+BEGIN
+    dbms_output.put_line('FOR EACH ROW. TRIGGER');
+    IF :new.salary<500 THEN
+    raise_application_error(-20030,'min sal is 500');
+    END IF;
+END;
+
+--------------------------
+
+UPDATE EMP_COPY
+SET salary=200
+WHERE employee_id=100;
+
+UPDATE EMP_COPY
+SET salary=200;
+
+select count(*) from emp_copy;
+
+
+----------------------------------------------------------------
+-----TRIGGERS / CREATE AUDIT TABLE
+---------------------------------------------------------------
+
+DROP TABLE EMP_COPY;
+
+CREATE TABLE EMP_COPY
+AS SELECT * FROM EMPLOYEES;
+
+SELECT * FROM EMP_COPY;
+
+DROP TABLE EMP_SAL_AUDIT;
+
+CREATE TABLE EMP_SAL_AUDIT
+(
+    EMP_ID NUMBER,
+    OPERATION VARCHAR2(20),
+    OLD_SAL NUMBER,
+    NEW_SAL NUMBER,
+    OP_DATE DATE,
+    BY_USER VARCHAR2(100)
+);    
+
+
+-- CREATING THE TRIGGER FOR AUDIT
+CREATE OR REPLACE TRIGGER emp_copy_sal_audit
+AFTER INSERT OR UPDATE OF SALARY --the trigger can be fired by columns
+OR DELETE -- or it can be fired by the all the table. such wow. such inserts. 
+ON emp_copy
+FOR EACH ROW
+BEGIN -- begin the trigger body
+    IF inserting then
+    INSERT INTO EMP_SAL_AUDIT(EMP_ID,OPERATION,OLD_SAL,NEW_SAL,OP_DATE,BY_USER)
+    VALUES (:new.employee_id,'Inserting',null,:new.salary,sysdate,user);
+    END IF;
+    
+    IF updating then
+    INSERT INTO EMP_SAL_AUDIT(EMP_ID,OPERATION,OLD_SAL,NEW_SAL,OP_DATE,BY_USER)
+    VALUES (:old.employee_id,'updating',:old.salary,:new.salary,sysdate,user);
+    END IF;
+
+    IF DELETING then
+    INSERT INTO EMP_SAL_AUDIT(EMP_ID,OPERATION,OLD_SAL,NEW_SAL,OP_DATE,BY_USER)
+    VALUES (:old.employee_id,'Deleting',:old.salary,null,sysdate,user);
+    END IF;
+END;  
+
+------------------------------------------------------

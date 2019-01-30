@@ -1456,6 +1456,8 @@ WHEN error_pkg.e_fk_err THEN...
         * Fires whenever a DML, a DDL, or **system event occurs on a schema or database.**
     * Application trigger:
         * Fires whenever an event occurs within a particular application (outside the database)
+* When a raise_application_error sentence is raised, the trigger/procedure its ended. 
+* Everytime a trigger is raised depending on the condition which the trigger is fired, the DBMS server adds two new values to the buffer called :old.column_name and :new.column_name. Like all the bind variables, they can be accessed by the operator: ':'. 
 
 ## Trigger Event Types
 * You can write triggers that fire whenever one of the following operations occurs in the database: 
@@ -1516,29 +1518,33 @@ You can use triggers for:
         * When you need the **OLD** and new values for the **DML**
 
 ## Triggers Sintax
-CREATE [ OR REPLACE ] TRIGGER <trigger_name> 
+CREATE [ OR REPLACE ] TRIGGER [trigger_name]
 
 [BEFORE | AFTER | INSTEAD OF ]
 
 [INSERT | UPDATE | DELETE......]
 
-ON<name of underlying object>
+[OF] [COLUMN_NAME OF THE OBJECT]
+
+ON[name of underlying object] 
+
+[REFERENCING NEW AS **NEW** OLD AS **OLD**]
 
 [FOR EACH ROW] 
 
-[WHEN<condition for trigger to get execute> ]
+[WHEN[condition for trigger to get execute] ]
 
 DECLARE
 
-<Declaration part>
+[Declaration part]
 
 BEGIN
 
-<Execution part> 
+[Execution part] 
 
 EXCEPTION
 
-<Exception handling part> 
+[Exception handling part] 
 
 END;
 
@@ -1547,6 +1553,44 @@ END;
 * First the database will check the following constraints in the following order:
     1. Trigger constraint
     2. Integrity constraint (child record) 
+
+
+## Trigger conditional predicates
+* IF INSERTING
+* IF DELETING
+* IF UPDATING
+* Example:
+
+IF inserting THEN
+
+raise_application_error(-20010,'INSERT not allowed now');
+
+ELSIF DELETING THEN 
+
+raise_application_error(-20011,'DELETE not allowed now');
+
+ELSIF UPDATING THEN
+
+raise_application_error(-20012,'UPDATE not allowed now');
+
+END IF;
+
+## OLD AND NEW QUALIFIERS
+1. INSERT CASE (there will be just new values, no old ones)
+    * Insert into dept (deptno, dname) values (1,'IT');
+    * New values:
+        * :new.deptno=1
+        * :new.dname='IT'
+2. UPDATE CASE (there will be new and old values)
+    * UPDATE DEPT
+
+    SET dname='IT dept' -> **new value**-> :new.dname
+
+    WHERE deptno=1 -> **old value** -> :old.deptno
+3. DELETE CASE (all the columns are old values, there is no new)
+
+
+
 
 
 

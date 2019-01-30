@@ -105,7 +105,10 @@ WHERE CONDITION='CONDITION';
 * [Oracle Grant](https://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_9013.htm "Oracle grant")
     * Note: You can't give permissons for DROPPING *just one table* to an user. To solve this you can create a procedure, give permissions to such user, and then whithin the procedure declare the drop table. 
 * [Oracle Revoke](https://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_9020.htm "Oracle revoke")  
-
+* [Oracle Synonyms](https://www.thatjeffsmith.com/archive/2013/03/why-cant-i-see-my-tables-in-oracle-sql-developer/ "Cool info about synonyms")
+    * A SYNONYM is like a shortcut or pointer or link, it allows you to reference an object in the database by a different name
+    * Everytime you have been granted any type or right (select, update, etc) to an squema object different from yours, a synonym is created in order to **QUERY** the object outside your default schema. Now you have a synonym who has the rights to execute a certain right to an object, but you dont have directly the rights to such object because you are not the owner .
+    * 
 
 
 ## General Queries
@@ -143,6 +146,8 @@ WHERE CONDITION='CONDITION';
         * grant DROP ANY TABLE TO HR;
     * Alter a database:
     	* grant ALTER DATABASE TO HR;
+    * Select:
+        * GRANT SELECT ON [esquema.table] TO [user_name]
 	* Create a session and connect to database:
 	    * GRANT CREATE SESSION, CONNECT TO [user_name];
     * Permissions to execute an external procedure (not propietary): 

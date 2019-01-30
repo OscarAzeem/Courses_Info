@@ -4595,6 +4595,8 @@ AS SELECT * FROM EMPLOYEES;
 
 SELECT * FROM EMP_COPY;
 
+SELECT * FROM EMP_SAL_AUDIT;
+
 DROP TABLE EMP_SAL_AUDIT;
 
 CREATE TABLE EMP_SAL_AUDIT
@@ -4632,3 +4634,109 @@ BEGIN -- begin the trigger body
 END;  
 
 ------------------------------------------------------
+
+-- NOTICE: we don't use commit or rollback in triggers. 
+--The commit or rollback should be in the main transaction (DML)
+
+-- 1 testing the insert operation
+
+INSERT INTO emp_copy (EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, SALARY, HIRE_DATE, JOB_ID)
+VALUES (1,'AZEEM','BECERRIL','ADMIN@REDIRAC.COM',40000,SYSDATE,'AD_PRES');
+
+INSERT INTO emp_copy (EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, SALARY, HIRE_DATE, JOB_ID)
+VALUES (2,'OSCAR','BECERRIL','ADMIN@REDIRAC.COM',40000,SYSDATE,'AD_PRES');
+
+UPDATE EMP_COPY
+SET SALARY=SALARY+10
+
+DELETE FROM EMP_COPY
+WHERE EMPLOYEE_ID=2;
+
+DELETE FROM EMP_COPY;
+
+SELECT EMP_ID,OPERATION,OLD_SAL,NEW_SAL,TO_CHAR(OP_DATE,'dd-mm-yyyy hh24:mi:ss') OP_DATE, BY_USER
+FROM EMP_SAL_AUDIT
+ORDER BY OP_DATE;
+
+
+
+
+ROLLBACK;
+
+----------------------------------------------------------------
+-----TRIGGERS / FIRING SEQUENCE
+---------------------------------------------------------------
+
+-- we will create 4 triggers for the same table
+-- 1) before statment
+-- 2) before for each row
+-- 3) after each row
+-- 4) after statement
+
+-- we want to know the sequence for firing the triggers.
+
+DROP TABLE test_emp;
+
+CREATE TABLE test_emp
+(
+    emp_id number,
+    first_name varchar2(100)
+);
+
+drop table test_emp_sequence;
+
+CREATE TABLE test_emp_sequence
+(
+    seq number,
+    trigger_type varchar2(100)
+);
+
+drop sequence s;
+
+create sequence s;
+
+-- 1, Before statement
+
+CREATE OR REPLACE TRIGGER before_insert_statement
+BEFORE
+INSERT ON test_emp
+BEGIN
+INSERT INTO test_emp_sequence values (s.nextval,'before_insert_statement');
+END;
+
+-- 2 before each row
+CREATE OR REPLACE TRIGGER before_insert_each_row
+BEFORE
+INSERT ON test_emp
+FOR EACH ROW
+BEGIN
+INSERT INTO test_emp_sequence values (s.nextval,'before_insert_each_row');
+END;
+
+-- 3 after each row
+
+
+CREATE OR REPLACE TRIGGER after_insert_each_row
+AFTER
+INSERT ON test_emp
+FOR EACH ROW
+BEGIN
+INSERT INTO test_emp_sequence values (s.nextval,'after_insert_each_row');
+END;
+
+-- 4) after statement 
+
+CREATE OR REPLACE TRIGGER after_insert_statement
+after
+INSERT ON test_emp
+BEGIN
+INSERT INTO test_emp_sequence values (s.nextval,'after_insert_statement');
+END;
+
+INSERT INTO test_emp
+VALUES (1,'AZEEM RULES');
+
+
+SELECT * FROM test_emp_sequence;
+
+

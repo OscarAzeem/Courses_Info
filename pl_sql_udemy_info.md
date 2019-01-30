@@ -1458,6 +1458,7 @@ WHEN error_pkg.e_fk_err THEN...
         * Fires whenever an event occurs within a particular application (outside the database)
 * When a raise_application_error sentence is raised, the trigger/procedure its ended. 
 * Everytime a trigger is raised depending on the condition which the trigger is fired, the DBMS server adds two new values to the buffer called :old.column_name and :new.column_name. Like all the bind variables, they can be accessed by the operator: ':'. 
+* You should never use COMMIT or ROLLBACK whithin the body of the trigger, the commit or rollback should be in the main transaction(DML), THIS IS CALLED **DATA CONSISTENCY** (rolling back all, o commit all)
 
 ## Trigger Event Types
 * You can write triggers that fire whenever one of the following operations occurs in the database: 
@@ -1588,6 +1589,22 @@ END IF;
 
     WHERE deptno=1 -> **old value** -> :old.deptno
 3. DELETE CASE (all the columns are old values, there is no new)
+
+
+## Trigger-Firing Sequence:
+1. BEFORE statement trigger
+2. BEFORE row trigger
+3. AFTER row trigger
+4. AFTER statement trigger.
+
+
+
+
+
+
+
+
+
 
 
 

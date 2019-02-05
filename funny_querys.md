@@ -32,6 +32,15 @@ mysql> source backup-file.sql;
 4. Check the changes: 
     * mysqladmin -u root -p variables
 
+## DBA Querys
+* **When Grating you can use Wildcards.**
+* [Create an user](https://dev.mysql.com/doc/refman/8.0/en/create-user.html "Create an user on MySQL"): 
+    * CREATE [USER] IDENTIFIED BY [PASSWORD_USER];
+* [Grant Permissions](https://dev.mysql.com/doc/refman/8.0/en/grant.html "Grant Mysql8.0 reference manual")
+    * GRANT ALL:
+        * GRANT ALL ON [SCHEMA].[TABLE | * ] TO ['USER']
+    * GRANT CREATE on any database and any table:
+        * GRANT CREATE ON * . * TO ['USER'];
 
 
 # Teradata 

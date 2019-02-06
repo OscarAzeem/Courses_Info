@@ -1598,11 +1598,26 @@ END IF;
 4. AFTER statement trigger.
 
 
+## Follow statement in triggers
+* In case when declaring many triggers in the same leve, you will never know which one will be fired first because everyone has the same hierarchy.
+* To explicity declare which trigger will be fired first, you should use the statement **FOLLOWS**
+    * CREATE OR REPLACE TRIGGER t2
 
+    BEFORE
 
+    INSERT
 
+    ON emp
 
+    **FOLLOWS** T1
 
+    BEGIN
+
+    INSERT INTO table VALUES (value1,value2);
+
+    END;
+
+ 
 
 
 

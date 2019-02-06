@@ -12,8 +12,12 @@ WHERE CONDITION='CONDITION';
 
 
 # MySQL
-* [MySQL Data types](http://www.mysqltutorial.org/mysql-data-types.aspx "Mysql data types")
-* Start the MySQL Server
+General Knowledge
+* When creating a table with the sentences: CREATE TABLE_BACKUP AS SELECT * FROM TABLE_ORIGINAL, the MySQL server doesn't add the **PRIMARY KEYS** belonging to the TABLE_ORIGINAL
+* 
+
+
+## Start the MySQL Server
 1. $ sudo service mysql start
 2. $ mysql -u root -p 
 
@@ -33,7 +37,12 @@ mysql> source backup-file.sql;
 4. Check the changes: 
     * mysqladmin -u root -p variables
 
-## DBA Querys
+## MySQL DDL definition
+* [MySQL Data types](http://www.mysqltutorial.org/mysql-data-types.aspx "Mysql data types")
+    * Select current timestamp: 
+        * select CURRENT_TIMESTAMP from dual;
+
+## MySQL DBA Querys
 * **When Grating you can use Wildcards.**
 * [Create an user](https://dev.mysql.com/doc/refman/8.0/en/create-user.html "Create an user on MySQL"): 
     * CREATE [USER] IDENTIFIED BY [PASSWORD_USER];
@@ -42,6 +51,9 @@ mysql> source backup-file.sql;
         * GRANT ALL ON [SCHEMA].[TABLE | * ] TO ['USER']
     * GRANT CREATE on any database and any table:
         * GRANT CREATE ON * . * TO ['USER'];
+* Show Table definition: 
+    * SHOW CREATE TABLE [SCHEMA].[TABLE]
+* 
 
 
 # Teradata 
@@ -101,14 +113,24 @@ WHERE CONDITION='CONDITION';
 
 
 # ORACLE
-* [Oracle Data types](https://docs.oracle.com/cd/A58617_01/server.804/a58241/ch5.htm "Oracle Data types")
-**Oracle queries**
+Common oracle knowledge
+* When creating a table with the sentences: CREATE TABLE_BACKUP AS SELECT * FROM TABLE_ORIGINAL, the ORACLE server doesn't add the **PRIMARY KEYS** belonging to the TABLE_ORIGINAL
 * When an user doesn't have rights to see o query a table/view/procedure the server will retrieve the following sentence: ORA-00942: table or view does not exist, even if the squema object exists. 
     * You can't see any tables because the USER doesn't [**OWN**](https://www.thatjeffsmith.com/archive/2013/03/why-cant-i-see-my-tables-in-oracle-sql-developer/ "Cool info about the user rights") any tables.
 * An User could have **USER RIGHTS (USER_SYS_PRIVS)** and rights granted by their  **GRANTED_ROLE (user_role_privs)**. When using *Dynamic SQL (execute immediate)* the user should have the rights for the SQL STATEMENTS declared within the procedure. 
 * ***Until an user has done a commit***, the remain users **can't see** any possible modification or update. 
 * When giving permissions to a certain Database object (package|procedure|function), you can grant such permissions since the object owner or with the sys as dba account.
-* 
+
+## Oracle DDL Definition
+
+* [Oracle Data types](https://docs.oracle.com/cd/A58617_01/server.804/a58241/ch5.htm "Oracle Data types")
+* [Declaring an autoincrement column](https://www.arungudelli.com/tutorial/oracle/auto-increment-identity-column-in-oracle-table-primary-key/ "Oracle autoincrement column")
+    * In Oracle 12c (mid 2014) they introduced **IDENTITY** columns which allows users to create auto increment columns.
+* [Describe the **basic ddl info** about a schema object definition (table,view,sp)](https://docs.oracle.com/javadb/10.8.3.0/tools/rtoolsijcomrefdescribe.html "Describe an object")
+    * Describe : 
+        * DESCRIBE [SCHEMA].[TABLE]
+* [Describe the **full ddl info** ](https://stackoverflow.com/questions/19564989/how-to-extract-table-definitions-using-sql-or-toad "Full Oracle DDL definition")
+    *  select dbms_metadata.get_ddl('TABLE', table_name) from user_tables;
 
 
 ## General Info: 

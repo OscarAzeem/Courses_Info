@@ -12,6 +12,7 @@ WHERE CONDITION='CONDITION';
 
 
 # MySQL
+* [MySQL Data types](http://www.mysqltutorial.org/mysql-data-types.aspx "Mysql data types")
 * Start the MySQL Server
 1. $ sudo service mysql start
 2. $ mysql -u root -p 
@@ -100,6 +101,7 @@ WHERE CONDITION='CONDITION';
 
 
 # ORACLE
+* [Oracle Data types](https://docs.oracle.com/cd/A58617_01/server.804/a58241/ch5.htm "Oracle Data types")
 **Oracle queries**
 * When an user doesn't have rights to see o query a table/view/procedure the server will retrieve the following sentence: ORA-00942: table or view does not exist, even if the squema object exists. 
     * You can't see any tables because the USER doesn't [**OWN**](https://www.thatjeffsmith.com/archive/2013/03/why-cant-i-see-my-tables-in-oracle-sql-developer/ "Cool info about the user rights") any tables.

@@ -124,13 +124,16 @@ Common oracle knowledge
 ## Oracle DDL Definition
 
 * [Oracle Data types](https://docs.oracle.com/cd/A58617_01/server.804/a58241/ch5.htm "Oracle Data types")
-* [Declaring an autoincrement column](https://www.arungudelli.com/tutorial/oracle/auto-increment-identity-column-in-oracle-table-primary-key/ "Oracle autoincrement column")
+* [Declaring an autoincrement column](https://www.oracle.com/technetwork/es/articles/sql/oracle-database-columna-identidad-2775883-esa.html "Oracle autoincrement column")
     * In Oracle 12c (mid 2014) they introduced **IDENTITY** columns which allows users to create auto increment columns.
 * [Describe the **basic ddl info** about a schema object definition (table,view,sp)](https://docs.oracle.com/javadb/10.8.3.0/tools/rtoolsijcomrefdescribe.html "Describe an object")
     * Describe : 
         * DESCRIBE [SCHEMA].[TABLE]
 * [Describe the **full ddl info** ](https://stackoverflow.com/questions/19564989/how-to-extract-table-definitions-using-sql-or-toad "Full Oracle DDL definition")
     *  select dbms_metadata.get_ddl('TABLE', table_name) from user_tables;
+* [Oracle Primary Keys](https://www.techonthenet.com/oracle/primary_keys.php "Oracle Primary Keys")
+* [Creating Oracle Tables](http://ramkedem.com/en/oracle-create-table-statement/ "Creating Oracle tables"), when creating a table, the not null sentence should be always at the end of the row.
+    * [Creating Oracle not null columns](http://www.oracletutorial.com/oracle-basics/oracle-not-null/ "Oracle not null columns")
 
 
 ## General Info: 
@@ -145,6 +148,8 @@ Common oracle knowledge
 
 
 ## General Queries
+* Show Current version:
+    * SELECT * FROM V$VERSION
 * Create Table with the same structure as other table (with no data): 
 	* CREATE TABLE [table_name] AS SELECT * FROM [ESCHEMA].[TABLE] WHERE 1=0; -- select no value
 	* Example:

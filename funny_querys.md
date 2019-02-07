@@ -134,6 +134,7 @@ Common oracle knowledge
 * [Oracle Primary Keys](https://www.techonthenet.com/oracle/primary_keys.php "Oracle Primary Keys")
 * [Creating Oracle Tables](http://ramkedem.com/en/oracle-create-table-statement/ "Creating Oracle tables"), when creating a table, the not null sentence should be always at the end of the row.
     * [Creating Oracle not null columns](http://www.oracletutorial.com/oracle-basics/oracle-not-null/ "Oracle not null columns")
+* [Alter table to add a new column](http://www.dba-oracle.com/t_alter_table_add_column_syntax_example.htm "Alter table to add a new column")
 
 
 ## General Info: 

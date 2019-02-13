@@ -124,6 +124,7 @@ Common oracle knowledge
 ## Oracle DDL Definition
 
 * [Oracle Data types](https://docs.oracle.com/cd/A58617_01/server.804/a58241/ch5.htm "Oracle Data types")
+* [Oracle Datetime and Interval Datatypes](https://docs.oracle.com/cd/B19306_01/server.102/b14225/ch4datetime.htm "Oracle interval time")
 * [Declaring an autoincrement column](https://www.oracle.com/technetwork/es/articles/sql/oracle-database-columna-identidad-2775883-esa.html "Oracle autoincrement column")
     * In Oracle 12c (mid 2014) they introduced **IDENTITY** columns which allows users to create auto increment columns.
 * [Describe the **basic ddl info** about a schema object definition (table,view,sp)](https://docs.oracle.com/javadb/10.8.3.0/tools/rtoolsijcomrefdescribe.html "Describe an object")
@@ -135,6 +136,12 @@ Common oracle knowledge
 * [Creating Oracle Tables](http://ramkedem.com/en/oracle-create-table-statement/ "Creating Oracle tables"), when creating a table, the not null sentence should be always at the end of the row.
     * [Creating Oracle not null columns](http://www.oracletutorial.com/oracle-basics/oracle-not-null/ "Oracle not null columns")
 * [Alter table to add a new column](http://www.dba-oracle.com/t_alter_table_add_column_syntax_example.htm "Alter table to add a new column")
+
+## Alter command
+* [Oracle add column](https://www.techonthenet.com/oracle/tables/alter_table.php "Add a new column in oracle server")
+    * ALTER TABLE customers
+
+    ADD customer_name varchar2(45);
 
 
 ## General Info: 

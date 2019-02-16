@@ -58,6 +58,36 @@ mysql> source backup-file.sql;
 
 # Teradata 
 
+## TERADATA DDL definition
+* [Teradata Primary Index](http://www.teradatawiki.net/2013/08/Teradata-Primary-Index.html "Teradata primary index info")
+    * **Unique Primary Index(UPI)**
+        * A Unique Primary Index (UPI) is unique and cannot have any duplicates.
+        * If you try and insert a row with a Primary Index value that is already in the table, the row will be rejected. 
+        * **An UPI enforces UNIQUENESS for a column (or columns)**
+        * **SQL SINTAXIS**
+            * CREATE TABLE sample_1
+            
+             (col_a INT
+            
+             ,col_b INT
+            
+             ,col_c INT)
+            
+            **UNIQUE PRIMARY INDEX** (col_b);
+    * **Non-Unique Primary Index (NUPI)**
+        * A Non-Unique Primary Index (NUPI) means that the values for the selected column can be non-unique. 
+        * **Duplicate values can exist.**
+        * **SQL SINTAXIS**
+            * CREATE TABLE sample_2
+            
+             (col_x INT
+            
+             ,col_y INT
+            
+             ,col_z INT)
+            
+            **PRIMARY INDEX** (col_x);
+
 * Getting Databases and tables info -- Teradata
 
  SELECT DatabaseName,TableName, CreatorName, CreateTimeStamp, LastAlterName FROM dbc.columns

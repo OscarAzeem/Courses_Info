@@ -12,9 +12,24 @@ WHERE CONDITION='CONDITION';
 
 
 # MySQL
-General Knowledge
+## MySQL DDL definition
+* [MySQL Data types](http://www.mysqltutorial.org/mysql-data-types.aspx "Mysql data types")
+    * Select current timestamp: 
+        * select CURRENT_TIMESTAMP from dual;
+* [Show table definition](https://stackoverflow.com/questions/898688/how-to-get-database-structure-in-mysql-via-query "Mysql ddl table definition")
+    * Statement: **DESCRIBE** (only shows type, and primary key)
+        * DESCRIBE [TABLE_NAME];
+    * Statement: **SHOW CREATE TABLE** (shows the complete table definition):
+        * SHOW CREATE TABLE [TABLE_NAME];
+
+
+## General Knowledge
 * When creating a table with the sentences: CREATE TABLE_BACKUP AS SELECT * FROM TABLE_ORIGINAL, the MySQL server doesn't add the **PRIMARY KEYS** belonging to the TABLE_ORIGINAL
-* 
+* Considerations when using (and creating) indexes: 
+    * Every time a **PRIMARY KEY** is declared as a constraint in a column table, also is automatically created an **UNIQUE INDEX** for such column table
+    * However, when declaring an **UNIQUE INDEX** in a column table no **PRIMARY KEY** is build in such column table. 
+    * Remember: ***you should not build unique indexes on your primary key column(s), since the server already checks uniqueness for primary key values***
+
 
 
 ## Start the MySQL Server
@@ -37,10 +52,6 @@ mysql> source backup-file.sql;
 4. Check the changes: 
     * mysqladmin -u root -p variables
 
-## MySQL DDL definition
-* [MySQL Data types](http://www.mysqltutorial.org/mysql-data-types.aspx "Mysql data types")
-    * Select current timestamp: 
-        * select CURRENT_TIMESTAMP from dual;
 
 ## MySQL DBA Querys
 * **When Grating you can use Wildcards.**
@@ -172,7 +183,8 @@ Common oracle knowledge
     * ALTER TABLE customers
 
     ADD customer_name varchar2(45);
-
+* [Oracle rename a column table](https://www.geeksforgeeks.org/sql-alter-rename/ "Oracle rename column table")
+    * ALTER TABLE [table_name] RENAME COLUMN [old_name] TO [new_name];
 
 ## General Info: 
 

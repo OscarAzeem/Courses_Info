@@ -30,7 +30,9 @@ WHERE CONDITION='CONDITION';
     * However, when declaring an **UNIQUE INDEX** in a column table no **PRIMARY KEY** is build in such column table. 
     * Remember: ***you should not build unique indexes on your primary key column(s), since the server already checks uniqueness for primary key values***
 
-
+### OVERHEAD table
+* [overhead](https://stackoverflow.com/questions/565997/in-mysql-what-does-overhead-mean-what-is-bad-about-it-and-how-to-fix-it "overhead table") is temporary diskspace that the database used to run some of the queries, so you should only worry if this gets really high. 
+* 
 
 ## Start the MySQL Server
 1. $ sudo service mysql start
@@ -98,6 +100,16 @@ mysql> source backup-file.sql;
              ,col_z INT)
             
             **PRIMARY INDEX** (col_x);
+
+* [Teradata Create Table *SET* VS *MULTISET*](http://www.teradatatech.com/?p=782 "Set vs Multiset Teradata")
+    * When a Table is created if not explicity declared, by default is a SET table. 
+    * A SET table force Teradata to **check for the duplicate rows every time a new row is inserted or updated in the table.** This is an overhead on the resource if we need to insert massive amount of rows.
+    * **SET**
+        * If we are inserting data using ***INSERT into SEL from clause*** then SET table check for duplicate rows will removed automatically and there will be no DUPLICATE ROW ERROR.
+    *  **MULTISET**
+        * If we are inserting data using ***INSERT into VALUES clause*** then SET table check for duplicate rows will not be removed automatically and there will be DUPLICATE ROW ERROR.
+
+
 
 * Getting Databases and tables info -- Teradata
 

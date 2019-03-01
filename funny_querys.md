@@ -24,6 +24,7 @@ WHERE CONDITION='CONDITION';
 
 
 ## General Knowledge
+* You can't put SHOW statements inside a subquery. **The only statement that can go in a subquery is SELECT.**
 * When creating a table with the sentences: CREATE TABLE_BACKUP AS SELECT * FROM TABLE_ORIGINAL, the MySQL server doesn't add the **PRIMARY KEYS** belonging to the TABLE_ORIGINAL
 * Considerations when using (and creating) indexes: 
     * Every time a **PRIMARY KEY** is declared as a constraint in a column table, also is automatically created an **UNIQUE INDEX** for such column table

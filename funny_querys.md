@@ -199,6 +199,10 @@ Common oracle knowledge
 * [Oracle rename a column table](https://www.geeksforgeeks.org/sql-alter-rename/ "Oracle rename column table")
     * ALTER TABLE [table_name] RENAME COLUMN [old_name] TO [new_name];
 
+* [Oracle adding a primary key constraint](https://www.techonthenet.com/oracle/primary_keys.php "Oracle adding a PK constraint")
+    * ALTER TABLE table_name
+ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
+
 ## General Info: 
 
 * [Oracle Grant](https://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_9013.htm "Oracle grant")

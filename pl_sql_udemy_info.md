@@ -1618,6 +1618,48 @@ END IF;
     END;
 
  
+## Compound Trigger (After Oracle 11g)
+* You can compound multiple triggers into one single trigger called, compound trigger. 
+* Inside the Compound triger you can have optional secctions for each individual trigger. 
+* The sequence for each individual trigger is very important, and should follow:
+    1. BEFORE STATEMENT IS
+    2. BEFORE EACH ROW IS
+    3. AFTER EACH ROW IS
+    4. AFTER STATEMENT IS
+* Compound Trigger definition:
+    * A single trigger on a table that allows you to specify actions for each of the following four timing points: 
+        * Before the firing statement
+        * Before each row that the firing statement affects
+        * After each row that the firing statement affects
+        * After the firing statement. 
+* Compound Trigger Structure for Tables:
+    * CREATE OR REPLACE TRIGGER [SCHEMA].[TRIGGER] FOR [DML_EVENT_CLAUSE] ON [SCHEMA].[TABLE]
+
+    COMPOUND TRIGGER
+
+    -- Initial section
+
+    -- declarations
+
+    -- subprograms
+
+    -- Optional Section
+
+    BEFORE STATEMENT IS ..;
+
+    -- Optional Section
+
+    BEFORE EACH ROW IS ..;
+
+    --Optional Section
+
+    AFTER EACH ROW IS..;
+
+    --Optional section
+
+    AFTER STATEMENT IS...;
+
+* 
 
 
 
@@ -1643,9 +1685,9 @@ END IF;
 
 ## User tables: user_tables 
 
-# December Path to freedom :) - Now also January :(
+# December Path to freedom :) - Now also January :( - Now also March :(
 1. SQL -- ok
-2. PL/SQL -- 63%
+2. PL/SQL -- 73%
 3. DBA BASICS -- 20% 
 4. Informatica -- 25%
 5. Scala -- pending

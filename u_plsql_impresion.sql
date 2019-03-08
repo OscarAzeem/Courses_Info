@@ -4739,4 +4739,108 @@ VALUES (1,'AZEEM RULES');
 
 SELECT * FROM test_emp_sequence;
 
+----------------------------------------------------------------
+-----TRIGGERS / FOLLOW STATEMENT
+---------------------------------------------------------------
+
+drop table emp;
+
+drop table mp;
+
+create table emp
+(id number,
+name varchar2(100)
+);
+
+drop table which_fired_first;
+
+create table which_fired_first
+(seq number,
+trigger_name varchar2(100)
+);
+
+drop sequence s1;
+
+create sequence s1;
+
+CREATE OR REPLACE trigger t1
+BEFORE
+INSERT
+ON emp 
+BEGIN
+INSERT INTO which_fired_first values (s1.nextval,'trigger t1');
+END;
+
+CREATE OR REPLACE TRIGGER t2
+BEFORE
+INSERT
+ON emp
+BEGIN
+INSERT INTO which_fired_first values( s1.nextval, 'trigger t2');
+END;
+
+insert into emp values (1, 'azeem');
+
+select * from which_fired_first order by seq;
+
+delete from which_fired_first;
+
+# Modifying trigger t2 to follow t1
+
+
+CREATE OR REPLACE TRIGGER t2
+BEFORE
+INSERT
+ON emp
+-- addying follows sentence
+FOLLOWS t1
+BEGIN
+INSERT INTO which_fired_first values( s1.nextval, 'trigger t2');
+END;
+
+
+----------------------------------------------------------------
+----- COMPOUND TRIGGERS
+---------------------------------------------------------------
+
+DROP TABLE test_emp;
+
+CREATE TABLE test_emp
+( emp_id number,
+first_name varchar2(100)
+);
+
+
+CREATE OR REPLACE TRIGGER comp_test
+FOR INSERT OR UPDATE OR DELETE
+ON test_emp
+COMPOUND TRIGGER
+-- VARIABLE DECLARATION
+-- we can define variables here
+-- x number; -> example
+    BEFORE STATEMENT IS
+    -- VARIABLE DECLARATION
+    -- y number;
+    BEGIN
+    dbms_output.put_line('1');
+    END BEFORE STATEMENT;
+    
+    BEFORE EACH ROW IS
+    -- VARIABLE DECLARATION
+    -- z number;
+    BEGIN
+    dbms_output.put_line('2');
+    END BEFORE EACH ROW;
+    
+    AFTER EACH ROW IS
+    BEGIN
+    dbms_output.put_line('3');
+    END AFTER EACH ROW;
+    
+    AFTER STATEMENT IS
+    BEGIN
+    dbms_output.put_line('4');
+    END AFTER STATEMENT;
+END;     
+
 

@@ -287,7 +287,51 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
         * select * from DBA_TRIGGERS;
         * select * from USER_TRIGGERS;
 
+## Partitions
+* Table partitions: Dividing table into multiple pieces. 
+* Partitioning enables data management operations such data laods, index creation and rebuilding, and backup/revoery at the **partition level**, rather than on the entire table. This results in significantly reduced times for these operations. 
+* Partitioning improves query performance
+* Partition independence for partition maintenance operations lets you perform concurrent maintenance operations on different partitions of the same table or indx. 
+* Partitioning increaces the availability of mission-critical databases. If critical tables and indexes are divided into partitions to reduce the maintenance windows, recovery times and impact of failures. 
+* Partitioning can be implemented without requiring any modification to your applications. 
 
+### Partitioning Methods
+* **Range Partitioning:**
+    * Partitioning technique where data is stored separately in different sub-tables based on the data range
+    * Example:
+    * CREATE TABLE SALES
+
+    (
+
+    customer_id NUMBER,
+
+    order_date DATE,
+
+    order_amount number,
+
+    region varchar2(10)
+
+    )
+
+    PARTITION BY RANGE (order_date)
+
+    (
+
+    PARTITION sales_p1507 VALUES LESS THAN (TO_DATE('2015-07-01',' YYYY-MM-DD')),
+
+    PARTITION sales_p1508 VALUES LESS THAN (TO_DATE('2015-08-01',' YYYY-MM-DD')),
+
+    PARTITION sales_pmax VALUES LESS THAN (MAXVALUE)
+
+    );
+
+* List Partitioning
+* Hash Partitioning
+* Composite Partitioning
+ 
+ #### Range Partitioning
+
+* 
 
 ## DBA
 * Changing the session:

@@ -175,6 +175,7 @@ Common oracle knowledge
 * ***Until an user has done a commit***, the remain users **can't see** any possible modification or update. 
 * When giving permissions to a certain Database object (package|procedure|function), you can grant such permissions since the object owner or with the sys as dba account.
 
+
 ## Oracle DDL Definition
 
 * [Oracle Data types](https://docs.oracle.com/cd/A58617_01/server.804/a58241/ch5.htm "Oracle Data types")
@@ -190,6 +191,42 @@ Common oracle knowledge
 * [Creating Oracle Tables](http://ramkedem.com/en/oracle-create-table-statement/ "Creating Oracle tables"), when creating a table, the not null sentence should be always at the end of the row.
     * [Creating Oracle not null columns](http://www.oracletutorial.com/oracle-basics/oracle-not-null/ "Oracle not null columns")
 * [Alter table to add a new column](http://www.dba-oracle.com/t_alter_table_add_column_syntax_example.htm "Alter table to add a new column")
+
+## NLS (National Language Support) (Solves ORA-01861 ERROR)
+* [NLS (National Language Support)](https://docs.oracle.com/cd/B28359_01/server.111/b28298/ch3globenv.htm "NLS") parameters that determine the locale-specific behavior on both the client and the server. 
+*  NLS parameters can be specified in the following ways:
+* As initialization parameters on the server. 
+    * You can include parameters in the initialization parameter file to specify a default session NLS environment. **These settings have no effect on the client side; they control only the server's behavior**
+* As environment variables on the client
+    * You can use NLS environment variables, which may be platform-dependent, to specify locale-dependent behavior for the client and also to override the default values set for the session in the initialization parameter file
+* With the ALTER SESSION statement:
+    * You can use NLS parameters that are set in an ALTER SESSION statement **to override the default values that are set for the session in the initialization parameter file or set by the client with environment variables**
+    * Example: 
+        * ALTER SESSION SET NLS_SORT = FRENCH;
+    * Example altering NSL_DATE_LANGUAGE parameter session: 
+        * ALTER SESSION SET NLS_DATE_LANGUAGE = AMERICAN;
+* In SQL functions:
+    * You can use NLS parameters explicitly to hardcode NLS behavior within a SQL function. This practice overrides the default values that are set for the session in the initialization parameter file, set for the client with environment variables, or set for the session by the ALTER SESSION statement
+    * Example: 
+        * TO_CHAR(hiredate, 'DD/MON/YYYY', 'nls_date_language = FRENCH')
+
+
+### NLS Data Dictionary Views
+* You can query the NSL parameters with the following sentences:
+* **NLS_SESSION_PARAMETERS**
+    * shows the NLS parameters and their values for the session that is querying the view. It does not show information about the character set.
+    * Example:
+        * select * from nls_session_parameters
+* **NLS_INSTANCE_PARAMETERS:**
+    * shows the current NLS instance parameters that have been explicitly set and the values of the NLS instance parameters
+    * Example:
+        * select * from NLS_INSTANCE_PARAMETERS
+* **NLS_DATABASE_PARAMETERS:**
+    * shows the values of the NLS parameters for the database. The values are stored in the database.
+    * Example: 
+        * select * from NLS_DATABASE_PARAMETERS;
+
+
 
 ## Alter command
 * [Oracle add column](https://www.techonthenet.com/oracle/tables/alter_table.php "Add a new column in oracle server")
@@ -215,6 +252,9 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 
 
 ## General Queries
+* Show [Explain Plan FOR](https://docs.oracle.com/cd/B10500_01/server.920/a96533/ex_plan.htm "Expalin plan paps")
+    * Example: 
+        * EXPLAIN PLAN FOR SELECT * FROM [TABLE];
 * Show Current version:
     * SELECT * FROM V$VERSION
 * Create Table with the same structure as other table (with no data): 
@@ -227,7 +267,7 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 		* create table test_table as select * from hr.employees;
 * Limit the result subset:
     * select * from [esquema.table] where ROWNUM <= [number_limit]
-* Getting the current user:
+* Getting the current user (show user):
     * select user from dual;
 * Shows all directories:
     * select * from ALL_DIRECTORIES;
@@ -295,7 +335,22 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 * Partitioning increaces the availability of mission-critical databases. If critical tables and indexes are divided into partitions to reduce the maintenance windows, recovery times and impact of failures. 
 * Partitioning can be implemented without requiring any modification to your applications. 
 
+### QUERYING PARTITIONS
+* **QUERYING SPECIFIC PARTITIONS CONTENT**:
+    * SELECT * FROM [TABLE] PARTITION([PARTITION_NAME]) WHERE=[CONDITIONS]
+* **SHOW all tab partitions (metadata table):**
+    * SELECT * FROM ALL_TAB_PARTITIONS
+* **SHOW all partitions from a specifyc table:**
+    * SELECT * FROM ALL_TAB_PARTITIONS WHERE TABLE_NAME='[TABLE_NAME]'
+* **ADDING A NEW PARTITION**:
+    * A partition can be added when **NO other partition** has been declared before with an upper bound. The partition PARTITION sales_pmax VALUES LESS THAN (MAXVALUE), always adds a bigger value and no new partitions can be created. To create a new partition you have to delete the MAXVALUE partition. 
+    * [Creating partition example:](https://www.enterprisedb.com/de/docs/en/10.0/Ora_Compat_Dev_Guide/Database_Compatibility_for_Oracle_Developers_Guide.1.106.html "Partition alter example") 
+        * ALTER TABLE SALES ADD PARTITION p10 VALUES LESS THAN(TO_DATE ('2016-01-01', 'YYYY-MM-DD'));
+* **DROPPING A PARTITION:**
+    * ALTER TABLE [TABLE] DROP PARTITION [PARTITION_NAME];
 ### Partitioning Methods
+* When creating partitions you need to use the TO_DATE function to convert DATES to the specific DATE used by the NSL_DATE_LANGUAGE parameter.
+
 * **Range Partitioning:**
     * Partitioning technique where data is stored separately in different sub-tables based on the data range
     * Example:
@@ -325,13 +380,134 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 
     );
 
-* List Partitioning
-* Hash Partitioning
-* Composite Partitioning
- 
- #### Range Partitioning
+* **List Partitioning:**
+    * List partitioning is a partitioning technique where you specify a list of discrete values for the partitioning key in the description for each partition.
+        * Example: 
+        * CREATE TABLE SALES_PARTITION_LIST
 
-* 
+        (
+
+        customer_id NUMBER,
+        
+        order_date DATE,
+        
+        order_amount NUMBER,
+        
+        region varchar2(10)
+        
+        )
+
+        PARTITION BY LIST (region)
+
+        (
+
+        PARTITION partition_east VALUES ('east'),
+        
+        PARTITION partition_west VALUES ('west'),
+        
+        PARTITION partition_nort_south VALUES ('north', 'south')
+
+        );
+* **Hash Partitioning:**
+    * Hash partitioning is a partitioning technique where a hash key is used to distribute rows evenly across the different partitions (sub-tables). **You can't explicity declare partitions** 
+    * This is typically used where rangets aren't appropiate, i.e. customer id, product ID, etc.
+    * Example:
+        * CREATE TABLE SALES_PARTITION_HASH
+
+        (
+        
+        customer_id NUMBER,
+        
+        order_date DATE,
+        
+        order_amount number,
+        
+        region varchar2(10)
+
+        )
+
+        PARTITION BY HASH(customer_id)
+
+        (
+
+        PARTITION c1,
+
+        PARTITION c2,
+
+        PARTITION c3,
+
+        PARTITION c4
+
+        );
+
+
+* **Composite Partitioning**
+    * Composite partitioning is a partitioning technique that combines some of the other partitioning methods.
+    * Example: 
+        * CREATE TABLE SALES_PARTITION_COMPOSITE_PARTITION
+
+        (
+        
+        customer_id NUMBER,
+        
+        order_date DATE,
+        
+        order_amount number,
+        
+        region varchar2(10)
+
+        )
+
+        PARTITION BY RANGE(order_date)
+        
+        SUBPARTITION BY HASH(customer_id) SUBPARTITIONS 4
+        
+        (
+        
+        PARTITION partition_julio VALUES LESS THAN (TO_DATE('2015-07-01', 'YYYY-MM-DD')),
+        
+        PARTITION partition_agosto VALUES LESS THAN (TO_DATE('2015-08-01', 'YYYY-MM-DD')),
+        
+        PARTITION partition_septiembre VALUES LESS THAN (TO_DATE('2015-09-01', 'YYYY-MM-DD')),
+        
+        PARTITION partition_pmax VALUES LESS THAN (MAXVALUE)
+        
+        );
+
+* **INTERVAL PARTITIONING:**
+    * Interval partitioning is an enhancement to range partitioning in Oracle 11g and Interval partitioning.
+    * Automatically creates time-based partition as new data is added **instead** of saving it in the **MAXVALUE** partition.
+    * You have the specify the interval quantity with the clause **INTERVAL**
+    * Example:
+        * CREATE TABLE SALES_PARTITION_BY_INTERVAL
+
+        (
+        
+        customer_id NUMBER,
+        
+        order_date DATE,
+        
+        order_amount number,
+        
+        region varchar2(10)
+
+        )
+
+        PARTITION BY RANGE(order_date)
+        
+        **INTERVAL(NUMTOYMINTERVAL(1,'MONTH'))**
+        
+        (
+        
+        PARTITION partition_julio VALUES LESS THAN (TO_DATE('2015-07-01', 'YYYY-MM-DD')),
+        
+        PARTITION partition_agosto VALUES LESS THAN (TO_DATE('2015-08-01', 'YYYY-MM-DD')),
+        
+        PARTITION partition_septiembre VALUES LESS THAN (TO_DATE('2015-09-01', 'YYYY-MM-DD'))
+        
+        );        
+
+
 
 ## DBA
 * Changing the session:

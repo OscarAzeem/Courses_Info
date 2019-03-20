@@ -601,7 +601,10 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
     next 512k
 
     maxsize 250M;
-
+* **SHOW ALL DBA DATA FILES OF EACH TABLESPACE:**
+    * SELECT * FROM dba_data_files;
+* **ASSIGNING A TABLESPACE TO A CERTAIN TABLE:**
+    * 
 
 ## DBA
 * Changing the session:
@@ -623,3 +626,9 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 		2. DBMS_OUTPUT.ENABLE (buffer_size => NULL); 
 
 
+### SQLPLUS
+* **CHANGING THE OUTPUT FORMAT:**
+    * SET LINESIZE 150;
+    * COLUMN TABLESPACE_NAME FORMAT A30
+    * COLUMN FILE_NAME FORMAT A50
+* 

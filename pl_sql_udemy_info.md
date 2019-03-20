@@ -17,7 +17,14 @@
 * Database edition: Enterprise Edition
 * Global database name: orcl
 * Pluggable databae name: orclpdb
+* Software Location: C:\app\Apeiron\product\12.2.0\dbhome_1
 * Oracle Enterprise Manager Database Express URL: https://localhost:5500/em
+* Sys user: sys as sysdba
+* Password: masteroracledatabase
+* OraMTS Port Number: 2030
+* PORT (tnsnames.ora): 1522
+* Oracle Enterprise Manager Database Express URL: https://localhost:5500/em
+* 
 
 
 ## configuration file to make the configurations

@@ -515,6 +515,9 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 * A tablespace stores not only table data but all Database objects (indexes, views, materialized view, sequences, etc.). 
 * A tablespace can have **multiple Data Files** but a Data File it's associated **to only one** Tablespace. 
 * A Data File it's stored in a Storage System (NFS, Exadata, SAN, Raw, File System)
+* **EFECTS OF DELETE VS TRUNCTABLE TABLE ON A TABLESPACE:**
+    * When deleting a table using the *DELETE* clause, the space taken for such rows remains untouch. The rows remains but the space is shown as available to be used for new rows. In other words the table is still full but with the space available, therefore, it could be not shown in the **dba_free_space** view.
+    * When deleting a table using the **TRUNCATE** sentence completely deletes all the rows and is shown in the **dba_free_space** view.
 * Logical stored sequence: 
     1. Database
     2. Tablespace
@@ -567,8 +570,8 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 
 ## ADDING SPACE TO A DATABASE
 * You can add more space to any database doing any of the following: 
-    * Create a new tablespace
-    * Add a datafile to an existing tablespace: 
+    1. Create a new tablespace
+    2. Add a datafile to an existing tablespace: 
         * ALTER TABLESPACE tbs1
 
         ADD DATAFILE '/disk1/dev/data/data02.dbf'
@@ -580,13 +583,13 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
         NEXT 512k
 
         MAXSIZE 250M;
-    * Increace the size of an existing data file:
+    3. Increace the size of an existing data file:
         * ALTER database
 
         DATAFILE '/disk1/dev/data/data02.dbf'
 
         RESIZE 100m;
-    * Configure dynamic growth data file using the AUTOEXTEND=ON sentence.
+    4. Configure dynamic growth data file using the AUTOEXTEND=ON sentence.
 
 ## TABLESPACE QUERYS:
 * [**CREATE A TABLESPACE:**](https://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_7003.htm "Create a tablespace")
@@ -601,10 +604,128 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
     next 512k
 
     maxsize 250M;
+* **CREATE A TABLESPACE WITH AN EXISTING .DBF FILE:**
+    * You should add **REUSE** after the **SIZE** sentence.
+    * CREATE TABLESPACE tbs2
+
+    DATAFILE 'C:\APP\XMY9080\ORADATA\ORCL\ORCLPDB\USERS_CREATED2.DBF'
+
+    size 5m
+
+    **REUSE**
+
+    autoextend on
+
+    next 512k
+
+    maxsize 250M;
+
 * **SHOW ALL DBA DATA FILES OF EACH TABLESPACE:**
     * SELECT * FROM dba_data_files;
+* **SHOW THE FREE SPACE OF ALL TABLESPACES:**
+    * SELECT * FROM dba_free_space;
+    * Notice, if no free space is available for any Tablespace, it won't appear in the query results. 
+* **SHOW ALL INFO ABOUT ALL TABLESPACES:**
+    * This query is taken from [**HERE**](https://amitzil.wordpress.com/2016/03/23/tablespaces-free-space-and-stuff/ "Tablespaces cool info")
+    * Query:
+        * select
+        
+        tablespace_name,
+        
+        curr_size,
+        
+        max_size,
+        
+        free_size,
+        
+        curr_size-free_size used_size,
+        
+        pct_free,
+        
+        round(((max_size-(curr_size-free_size))/max_size)*100,2) pct_free_total,
+        
+        free_chunks,
+        
+        largest_chunk
+        
+        from
+        
+        (select 
+        
+        ts.tablespace_name,
+        
+        round(dbf.bytes/1024/1024,2) curr_size,
+        
+        round(dbf.maxbytes/1024/1024) max_size,
+        
+        nvl(round(fs.bytes/1024/1024,2),0) free_size,
+        
+        round((nvl(fs.bytes,0)/dbf.bytes)*100,2) pct_free,
+        
+        nvl(fs.free_chunks,0) free_chunks,
+        
+        nvl(round(fs.largest_chunk/1024/1024,2),0) largest_chunk
+        
+        from
+        
+        dba_tablespaces ts,
+        
+        (select
+        
+        tablespace_name,
+        
+        sum(bytes) bytes, 
+        
+        sum(greatest(maxbytes,bytes)) maxbytes
+        
+        from
+        
+        (select tablespace_name,bytes,maxbytes from dba_data_files)
+        
+        group by tablespace_name
+        
+        ) dbf,
+        
+        (select
+        
+        tablespace_name, 
+        
+        sum(bytes) bytes,
+        
+        count(*) free_chunks,
+        
+        max(bytes) largest_chunk
+        
+        from dba_free_space
+        
+        group by tablespace_name
+        
+        ) fs
+        
+        where ts.tablespace_name=dbf.tablespace_name
+        
+        and ts.tablespace_name=fs.tablespace_name(+)
+        
+        )
+        
+        order by pct_free desc;
+
+
 * **ASSIGNING A TABLESPACE TO A CERTAIN TABLE WHEN CREATING:**
     * CREATE TABLE [SCHEMA].[TABLE] ([COLUMN_NAME] [DATA_TYPE]) **TABLESPACE** [TABLESPACE_NAME]
+* **DROPPING A TABLESPACE:**
+    * *Dropping a Tablespace with no info inside*: 
+        * DROP TABLESPACE [TABLESPACE_NAME];
+        * Notice: 
+            * When you delete a tablespace using the DROP sentence only, physically the Data File (.DBF) for such Tablespace remains untouch in the OS. If you want to delete the .DBF file also, you should use the DROP setence with INCLUDING CONTENTS AND DATAFILES. 
+            * When deleting a tablespace **all the related objects to such tablespace (tables, views) are also deleted.**
+    * *Dropping a Tablespace with existing info:*
+        * DROP TABLESPACE [TABLESPACE_NAME] INCLUDING CONTENTS AND DATAFILES;
+        * Notice: 
+            * Using the INCLUDING CONTENTS AND DATAFILES option also with the DROP TABLESPACE sentence, the .DBF file from such tablespace is physically removed from the OS.
+            * If a transaction is currently active from an object which uses any .DBF file related to such TABLESPACE, the .DBF file can't be removed from the OS until the transaction finishes. 
+
+
 
 ## DBA
 * Changing the session:

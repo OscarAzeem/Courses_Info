@@ -508,6 +508,100 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
         );        
 
 
+## TABLESPACES
+* A tablespace **logically** organizes data will it's being physically stored in **Data Files**
+* A tablespace belongs to only one database
+* A tablespace has at least **one Data File** that is used to store data to the associated tablespace. 
+* A tablespace stores not only table data but all Database objects (indexes, views, materialized view, sequences, etc.). 
+* A tablespace can have **multiple Data Files** but a Data File it's associated **to only one** Tablespace. 
+* A Data File it's stored in a Storage System (NFS, Exadata, SAN, Raw, File System)
+* Logical stored sequence: 
+    1. Database
+    2. Tablespace
+    3. Segment
+        * Collection of **Extents**
+    4. Extent
+        * Collection of **Data Blocks**
+    5. Data Block: 
+        * 8Kb size.  
+        * A data block is the smallest unit of storage in an Oracle database. In contrast, at the physical, operating system level, all data is stored in bytes. 
+        * 
+* **TABLESPACES TYPES**
+    1. **PERMANENT**:
+        * It's used to stored all the permanent data, i.e. Table data, indexes. 
+    2. **UNDO:**
+        * It's used to stored all the undo data, when rollback a transaction if neccesary. 
+    3. **TEMPORARY:** 
+        * It's used to stored all the temporary data, for example, when you are running a sql statement this tablespace is used to store sort or Join operations. 
+* **DEFAULT TABLESPACES:**
+    1. **SYSTEM:**
+        * It's used by the Oracle server to manage the database. Contains the data dictionary and tables that contain administrative information about the database. 
+        * Not all users have accces to the SYSTEM tablespace. 
+        * You cant take the SYSTEM tablespace offline. 
+        * Is not recommended to store user data into the System tablespace. 
+    2. **SYSAUX (System Auxiliary):**
+        * Auxiliary Tablespace to the SYSTEM Tablespace.
+        * Has the same properties as the SYSTEM Tablespace. 
+    3. **TEMP:**
+        * It's used to store al the temporary data. Everytime you run a SQL query with a sort operation.
+    4. **UNDOTBS1:**
+        * It's used to store all the UNDO data.
+    5. **USERS:**
+        * It's used to store all the data created by the users. 
+        * During table creation, the DBA should declare a Tablespace in which store all the Table info. If no Tablespace is mentioned, all the data related to the table is stored in the USERS tablespace. 
+    6. **EXAMPLE:**
+        * Contains all the sample schemas that are installed when you create the database. 
+
+
+## ONLINE/OFFLINE TABLESPACES
+* **ONLINE:**
+    * The Tablespace is up and running. 
+    * The Oracle Database **can** read/write from such tablespace.
+* **OFFLINE:**
+    * The Tablespace is offline.
+    * The Oracle Database **can not** read/write from such tablespace. 
+    * Main objectives:
+        + Offline Tablespace backup
+        * Recover an individual tablespace or datafile
+        * Move a datafile withouth closing the database.
+
+## ADDING SPACE TO A DATABASE
+* You can add more space to any database doing any of the following: 
+    * Create a new tablespace
+    * Add a datafile to an existing tablespace: 
+        * ALTER TABLESPACE tbs1
+
+        ADD DATAFILE '/disk1/dev/data/data02.dbf'
+
+        SIZE 50m
+
+        AUTOEXTEND ON
+
+        NEXT 512k
+
+        MAXSIZE 250M;
+    * Increace the size of an existing data file:
+        * ALTER database
+
+        DATAFILE '/disk1/dev/data/data02.dbf'
+
+        RESIZE 100m;
+    * Configure dynamic growth data file using the AUTOEXTEND=ON sentence.
+
+## TABLESPACE QUERYS:
+* [**CREATE A TABLESPACE:**](https://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_7003.htm "Create a tablespace")
+    * CREATE TABLESPACE tbs1
+
+    DATAFILE '/disk1/dev/data/data01.dbf'
+
+    size 50m
+
+    autoextend on
+
+    next 512k
+
+    maxsize 250M;
+
 
 ## DBA
 * Changing the session:
@@ -527,3 +621,5 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 	* PL/SQL
 		1. DBMS_OUTPUT.ENABLE(1000000); 
 		2. DBMS_OUTPUT.ENABLE (buffer_size => NULL); 
+
+

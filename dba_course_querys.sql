@@ -2,6 +2,17 @@
 -- UDEMY DBA COURSE QUERYS--
 ---
 
+-- open the orclpdb connection
+
+alter pluggable database open; 
+
+alter session set container=orclpdb;
+
+select name, con_id from v$pdbs;
+
+show con_name; 
+
+
 CREATE TABLE SALES
 (
 customer_id NUMBER,
@@ -186,8 +197,22 @@ autoextend on
 next 512k
 maxsize 250M;
 
+
+
+
+CREATE TABLESPACE tbs_creado
+DATAFILE 'C:\APP\APEIRON\ORADATA\ORCL\ORCLPDB\TABLESPACE_USERS.DBF'
+size 10m
+
+autoextend on
+next 512k
+maxsize 250M;
+
+
 select FILE_NAME, FILE_ID, TABLESPACE_NAME, BYTES/1024/1024, BLOCKS, STATUS, RELATIVE_FNO, AUTOEXTENSIBLE, MAXBYTES/1024/1024, INCREMENT_BY, USER_BYTES/1024/1024, USER_BLOCKS, 
 ONLINE_STATUS, LOST_WRITE_PROTECT from dba_data_files;
+
+select * from dba_data_files;
 
 
 select FILE_NAME, FILE_ID, TABLESPACE_NAME, BYTES/1024/1024
@@ -199,13 +224,36 @@ DROP TABLE HR.student;
 
 CREATE TABLE hr.student(sno number, sname varchar2(100)) tablespace tbs1;
 
+CREATE TABLE hr.student(sno number, sname varchar2(100)) tablespace TBS_CREADO;
+
+
 BEGIN
 FOR i in 1..1000000
 LOOP
-INSERT INTO hr.student VALUES (i,'Azeem Rules')
+INSERT INTO hr.student VALUES (i,'Azeem Rules');
 END LOOP;
 COMMIT;
 END; 
 
 
 select * from user_objects where OBJECT_NAME LIKE 'ST%';
+
+
+select * from hr.student
+
+select count(*) from hr.student -- total soportado: 372,046
+
+BEGIN
+FOR i in 1..1000000
+LOOP
+INSERT INTO hr.student VALUES (i,'Azeem Rules');
+END LOOP;
+COMMIT;
+EXCEPTION
+WHEN OTHERS THEN
+dbms_output.put_line('Error');
+dbms_output.put_line(sqlcode);
+dbms_output.put_line(sqlerrm);
+END; 
+
+INSERT INTO hr.student VALUES (9999,'Azeem Rules');

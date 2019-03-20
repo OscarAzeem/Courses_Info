@@ -4,9 +4,12 @@
 
 -- open the orclpdb connection
 
-alter pluggable database open; 
 
 alter session set container=orclpdb;
+
+alter pluggable database open; 
+
+
 
 select name, con_id from v$pdbs;
 
@@ -197,6 +200,36 @@ autoextend on
 next 512k
 maxsize 250M;
 
+DROP TABLESPACE tbs1 INCLUDING CONTENTS AND DATAFILES;
+
+CREATE TABLESPACE tbs2
+DATAFILE 'C:\APP\XMY9080\ORADATA\ORCL\ORCLPDB\USERS_CREATED2.DBF'
+size 10m
+REUSE
+autoextend on
+next 512k
+maxsize 250M;
+
+
+DROP TABLESPACE TBS2;
+
+DROP TABLESPACE TBS2 INCLUDING CONTENTS AND DATAFILES;
+
+
+-- adding a datafile to the tablespace TBS2
+
+ALTER TABLESPACE TBS2
+ADD DATAFILE 'C:\APP\XMY9080\ORADATA\ORCL\ORCLPDB\USERS_CREATED3.DBF'
+size 10m
+
+
+ALTER DATABASE
+DATAFILE 'C:\APP\XMY9080\ORADATA\ORCL\ORCLPDB\USERS_CREATED3.DBF'
+RESIZE 100m;
+
+
+
+commit;
 
 
 
@@ -214,6 +247,19 @@ ONLINE_STATUS, LOST_WRITE_PROTECT from dba_data_files;
 
 select * from dba_data_files;
 
+ALTER TABLESPACE TBS2_RENAMED DROP DATAFILE 'C:\APP\XMY9080\ORADATA\ORCL\ORCLPDB\USERS_CREATED3.DBF' INCLUDING CONTENTS AND DATAFILES;
+
+ ALTER TABLESPACE TBS2 RENAME TO TBS2_RENAMED;
+
+
+ALTER TABLESPACE TBS2_RENAMED OFFLINE;
+
+ALTER TABLESPACE TBS2_RENAMED ONLINE;
+
+ALTER DATABASE RENAME FILE 'C:\APP\XMY9080\ORADATA\ORCL\ORCLPDB\USERS_CREATED3.DBF' TO 'C:\APP\XMY9080\ORADATA\ORCL\ORCLPDB\USERS_CREATED3_RENAMED.DBF';
+
+C:\APP\XMY9080\ORADATA\ORCL\ORCLPDB\USERS_CREATED3.DBF
+
 
 select FILE_NAME, FILE_ID, TABLESPACE_NAME, BYTES/1024/1024
 
@@ -222,7 +268,7 @@ BUILDING A TABLE AND INSERTING VALUES
 
 DROP TABLE HR.student;
 
-CREATE TABLE hr.student(sno number, sname varchar2(100)) tablespace tbs1;
+CREATE TABLE hr.student(sno number, sname varchar2(100)) tablespace tbs2;
 
 CREATE TABLE hr.student(sno number, sname varchar2(100)) tablespace TBS_CREADO;
 
@@ -257,3 +303,69 @@ dbms_output.put_line(sqlerrm);
 END; 
 
 INSERT INTO hr.student VALUES (9999,'Azeem Rules');
+
+----------------
+
+SELECT TABLESPACE_NAME, FILE_ID, BLOCK_ID, BYTES/1024/1024, BLOCKS, RELATIVE_FNO FROM dba_free_space;
+
+SELECT * FROM dba_free_space;
+
+select * from dba_data_files;
+
+
+
+select
+	tablespace_name,
+	curr_size,
+	max_size,
+	free_size,
+	curr_size-free_size used_size,
+	pct_free,
+	round(((max_size-(curr_size-free_size))/max_size)*100,2) pct_free_total,
+	free_chunks,
+	largest_chunk
+from
+	(select 
+		ts.tablespace_name,
+		round(dbf.bytes/1024/1024,2) curr_size,
+		round(dbf.maxbytes/1024/1024) max_size,
+		nvl(round(fs.bytes/1024/1024,2),0) free_size,
+		round((nvl(fs.bytes,0)/dbf.bytes)*100,2) pct_free,
+		nvl(fs.free_chunks,0) free_chunks,
+		nvl(round(fs.largest_chunk/1024/1024,2),0) largest_chunk
+	 from
+		dba_tablespaces ts,
+		(select
+			tablespace_name,
+			sum(bytes) bytes, 
+			sum(greatest(maxbytes,bytes)) maxbytes
+		 from
+			(select tablespace_name,bytes,maxbytes from dba_data_files)
+		 group by tablespace_name
+		) dbf,
+		(select
+			tablespace_name, 
+			sum(bytes) bytes,
+			count(*) free_chunks,
+			max(bytes) largest_chunk
+		 from dba_free_space
+		 group by tablespace_name
+		) fs
+	 where ts.tablespace_name=dbf.tablespace_name
+	   and ts.tablespace_name=fs.tablespace_name(+)
+	)
+order by pct_free desc;
+
+
+-------------------
+
+
+ SHOW PARAMETER db_block_size;
+ 
+ 
+ select * from dba_temp_files;
+ 
+ 
+CREATE TEMPORARY TABLESPACE TEMP_TBS_CREADO TEMPFILE 'C:\APP\XMY9080\ORADATA\ORCL\ORCLPDB\TEMP_TBS_CREADO.DBF' SIZE 10M;
+
+SELECT * FROM DATABASE_PROPERTIES WHERE PROPERTY_NAME='DEFAULT_TEMP_TABLESPACE';

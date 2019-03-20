@@ -528,7 +528,8 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
     5. Data Block: 
         * 8Kb size.  
         * A data block is the smallest unit of storage in an Oracle database. In contrast, at the physical, operating system level, all data is stored in bytes. 
-        * 
+        * **SHOW THE DB BLOCK SIZE:**
+            * SHOW PARAMETER db_block_size;
 * **TABLESPACES TYPES**
     1. **PERMANENT**:
         * It's used to stored all the permanent data, i.e. Table data, indexes. 
@@ -568,10 +569,23 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
         * Recover an individual tablespace or datafile
         * Move a datafile withouth closing the database.
 
+
+## TABLESPACES WITH DIFFERENT BLOCK SIZES
+* Default block size: 8KB
+* Main motivations to have bigger block size:
+    * Due to indexes (because of serial nature of index range scans)
+    * Larger tables that are the target to full table scans
+    * Tables with large objects (LOB's, BLOB's, CLOB's)
+    * Tables with large rows that might lead to chained/migrated rows
+    * Temporary tablespace for sorting
+
+## TEMPORARY TABLESPACE MANAGEMENT 
+* Whenever you JOIN two large tables and the Oracle Database can't have enough RAM memory then it allocate space in the temporary tablespace. 
+
 ## ADDING SPACE TO A DATABASE
 * You can add more space to any database doing any of the following: 
     1. Create a new tablespace
-    2. Add a datafile to an existing tablespace: 
+    2. [Add a datafile to an existing tablespace:](http://www.dba-oracle.com/t_alter_tablespace_add_datafile.htm) 
         * ALTER TABLESPACE tbs1
 
         ADD DATAFILE '/disk1/dev/data/data02.dbf'
@@ -584,12 +598,16 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 
         MAXSIZE 250M;
     3. Increace the size of an existing data file:
-        * ALTER database
+        * ALTER DATABASE
 
         DATAFILE '/disk1/dev/data/data02.dbf'
 
         RESIZE 100m;
     4. Configure dynamic growth data file using the AUTOEXTEND=ON sentence.
+
+
+
+
 
 ## TABLESPACE QUERYS:
 * [**CREATE A TABLESPACE:**](https://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_7003.htm "Create a tablespace")
@@ -604,6 +622,9 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
     next 512k
 
     maxsize 250M;
+* **CREATING A TABLESPACE WITH A DIFFERENT BLOCK SIZE THAN DEFAULT:**
+    * CREATE TABLESPACE [TABLESPACE_NAME] ['DATAFILE_NAME'] SIZE 10M BLOCKSIZE 16K;
+    * NOTE: to change the blocksize of a Tablespace it should be declared first at Database level
 * **CREATE A TABLESPACE WITH AN EXISTING .DBF FILE:**
     * You should add **REUSE** after the **SIZE** sentence.
     * CREATE TABLESPACE tbs2
@@ -724,8 +745,26 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
         * Notice: 
             * Using the INCLUDING CONTENTS AND DATAFILES option also with the DROP TABLESPACE sentence, the .DBF file from such tablespace is physically removed from the OS.
             * If a transaction is currently active from an object which uses any .DBF file related to such TABLESPACE, the .DBF file can't be removed from the OS until the transaction finishes. 
-
-
+* **RENAMING AN EXISTING TABLESPACE:**
+    * ALTER TABLESPACE [TABLESPACE_NAME] RENAME TO [NEW_NAME_TABLESPACE];
+* **RENAMING AN EXISTING DATA FILE (.DBF):**
+    * NOTE: To rename an existing datafile, the Tablespace belonging to such DataFile should be offline: 
+        * Manually you should rename the  ['DATA_FILE_NAME'] TO ['DATA_FILE_NEW_NAME'] using the OS navigator
+    * ALTER DATABASE RENAME FILE ['DATA_FILE_NAME'] TO ['DATA_FILE_NEW_NAME'];
+* **SETTING OFFLINE A TABLESPACE:**
+    * ALTER TABLESPACE [TABLESPACE_NAME] OFFLINE;
+* **SETTING ONLINE A TABLESPACE:**
+    * ALTER TABLESPACE [TABLESPACE_NAME] ONLINE;
+* **REMOVE A DATAFILE FROM AN EXISTING TABLESPACE:**
+    * ALTER TABLESPACE [TABLESPACE_NAME] DROP DATAFILE '[DATAFILE_NAME]';
+    * Note: Only works with empty datafiles. 
+* **SHOW THE TEMPORARY TABLESPACES:**
+    * SELECT * from dba_temp_files;
+* **CREATE A TEMPORARY TABLESPACE:**
+    * CREATE TEMPORARY TABLESPACE [TEMPORARY_TABLESPACE_NAME] TEMPFILE ['DATA_FILE_NAME'] SIZE 10M;
+* **SHOW THE DEFAULT TEMPORARY (TEMP) TABLESPACE:**
+    * SELECT * FROM DATABASE_PROPERTIES WHERE PROPERTY_NAME='DEFAULT_TEMP_TABLESPACE';
+* 
 
 ## DBA
 * Changing the session:
@@ -745,7 +784,11 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 	* PL/SQL
 		1. DBMS_OUTPUT.ENABLE(1000000); 
 		2. DBMS_OUTPUT.ENABLE (buffer_size => NULL); 
-
+* **CHANGING THE DEFAULT BLOCK SIZE AT DATABASE LEVEL:**
+    * ALTER SYSTEM SET DB_16K_CACHE_SIZE=60M SCOPE=both;
+* **SHOW ALL DATABASE PROPERTIES:**
+    * SELECT * FROM DATABASE_PROPERTIES;
+* 
 
 ### SQLPLUS
 * **CHANGING THE OUTPUT FORMAT:**

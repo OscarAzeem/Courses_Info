@@ -514,6 +514,9 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 * A tablespace has at least **one Data File** that is used to store data to the associated tablespace. 
 * A tablespace stores not only table data but all Database objects (indexes, views, materialized view, sequences, etc.). 
 * A tablespace can have **multiple Data Files** but a Data File it's associated **to only one** Tablespace. 
+* When any object is created if no TABLESPACE is explicity specify in their declaration, such object is stored in the USERS TABLESPACE.
+    * You can see such USERS DEFAULT TABLESPACE with the following query: 
+        * SELECT * FROM DATABASE_PROPERTIES WHERE PROPERTY_NAME='DEFAULT_PERMANENT_TABLESPACE';
 * A Data File it's stored in a Storage System (NFS, Exadata, SAN, Raw, File System)
 * **EFECTS OF DELETE VS TRUNCTABLE TABLE ON A TABLESPACE:**
     * When deleting a table using the *DELETE* clause, the space taken for such rows remains untouch. The rows remains but the space is shown as available to be used for new rows. In other words the table is still full but with the space available, therefore, it could be not shown in the **dba_free_space** view.
@@ -579,8 +582,23 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
     * Tables with large rows that might lead to chained/migrated rows
     * Temporary tablespace for sorting
 
-## TEMPORARY TABLESPACE MANAGEMENT 
+## TEMPORARY TABLESPACE 
 * Whenever you JOIN two large tables and the Oracle Database can't have enough RAM memory then it allocate space in the temporary tablespace. 
+
+### TEMPORARY TABLESPACE GROUP
+* Temporary tablespace groups allow an Oracle dtabase to write to **multiple temp tablespace simultaneously.**
+* A user is assigned to a group of temp tablespaces instead of a single temporary tablespace.
+* It allows a single SQL operation to use multiple temporary tablespaces for **sorting**
+* Example:
+    * CREATE TEMPORARY TABLESPACE TEMP1
+
+    TEMPFILE '/disk1/dev/data/temp01.dbf'
+
+    SIZE 50m
+
+    TABLESPACE GROUP tempgroup1;
+* 
+
 
 ## ADDING SPACE TO A DATABASE
 * You can add more space to any database doing any of the following: 
@@ -606,6 +624,10 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
     4. Configure dynamic growth data file using the AUTOEXTEND=ON sentence.
 
 
+## To review. 20/03/2019
+* [Tablespaces info](https://amitzil.wordpress.com/2016/03/23/tablespaces-free-space-and-stuff/)
+* [Managing Defragmentation and shrink](https://www.oracle.com/technetwork/articles/database/fragmentation-table-shrink-tips-2330997.html)
+* [Oracle Alter Table](http://www.dba-oracle.com/t_alter_table_move_index_constraint.htm)
 
 
 
@@ -761,10 +783,13 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 * **SHOW THE TEMPORARY TABLESPACES:**
     * SELECT * from dba_temp_files;
 * **CREATE A TEMPORARY TABLESPACE:**
-    * CREATE TEMPORARY TABLESPACE [TEMPORARY_TABLESPACE_NAME] TEMPFILE ['DATA_FILE_NAME'] SIZE 10M;
+    * CREATE **TEMPORARY** TABLESPACE [TEMPORARY_TABLESPACE_NAME] **TEMPFILE** ['DATA_FILE_NAME'] SIZE 10M;
 * **SHOW THE DEFAULT TEMPORARY (TEMP) TABLESPACE:**
     * SELECT * FROM DATABASE_PROPERTIES WHERE PROPERTY_NAME='DEFAULT_TEMP_TABLESPACE';
-* 
+* **CHANGING THE DEFAULT TEMPORARY (TEMP) TABLESPACE:**
+    * ALTER DATABASE DEFAULT TEMPORARY TABLESPACE [NEW_TEMPORARY_TABLESPACE_NAME]
+* **SHOW ALL THE TEMPORARY TABLESPACE GROUPS:**
+    * SELECT * FROM dba_tablespace_groups;
 
 ## DBA
 * Changing the session:

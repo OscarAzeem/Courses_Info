@@ -13,6 +13,8 @@ alter pluggable database open;
 
 select name, con_id from v$pdbs;
 
+select * from v$pdbs;
+
 show con_name; 
 
 

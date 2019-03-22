@@ -17,6 +17,8 @@ DELETE FROM hr.table_tbs1_error_allocate;
 
 DROP TABLE hr.table_tbs1_error_allocate;
 
+-- LlENADO DE LA TABLA: table_tbs1_error_allocate
+
 DECLARE 
 Uppercase_letter char(10);
 Lowercase_letter char(10);
@@ -45,6 +47,47 @@ dbms_output.put_line(sqlerrm);
 END;
 
 COMMIT;
+
+-- Borrado de Bloques aleatorios en la tabla: table_tbs1_error_allocate
+
+select count(*) from hr.table_tbs1_error_allocate WHERE NAME LIKE 'a%';
+
+select count(*) from hr.table_tbs1_error_allocate WHERE NAME LIKE 'z%';
+
+DELETE from hr.table_tbs1_error_allocate WHERE NAME LIKE 'a%';
+
+DELETE from hr.table_tbs1_error_allocate WHERE NAME LIKE 'z%';
+
+---
+-- Calculo de Tiempo con un order by string last_name
+
+-- Antes del Shrink
+
+DECLARE
+Inicio TIMESTAMP;
+Fin TIMESTAMP;
+--Cursor para guardar el order by
+
+BEGIN
+SELECT SYSTIMESTAMP INTO Inicio FROM DUAL;
+dbms_output.put_line(Inicio);
+
+
+
+
+
+SELECT SYSTIMESTAMP INTO Fin FROM DUAL;
+
+
+EXCEPTION
+WHEN OTHERS THEN
+dbms_output.put_line('OTHERS EXCEPTION');
+dbms_output.put_line(sqlcode);
+dbms_output.put_line(sqlerrm);
+END;
+
+-- Despues del Shrink
+
 
 
 select SYSTIMESTAMP FROM DUAL;

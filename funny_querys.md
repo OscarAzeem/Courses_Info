@@ -539,7 +539,8 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
     2. **UNDO:**
         * It's used to stored all the undo data, when rollback a transaction if neccesary. 
     3. **TEMPORARY:** 
-        * It's used to stored all the temporary data, for example, when you are running a sql statement this tablespace is used to store sort or Join operations. 
+        * It's used to stored all the temporary data, for example, when you are running a sql statement this tablespace is **used to store sort or Join operations.**
+        * [The temporary tablespace called TEMP](https://stackoverflow.com/questions/11839576/ora-01652-unable-to-extend-temp-segment-by-in-tablespace "TEMP tablespace") which is used internally by database for operations like distinct, joins,etc. Since my query(which has 4 joins) fetches almost 50 million records the TEMP tablespace does not have that much space to occupy all data. Hence the query fails even though my tablespace has free space
 * **DEFAULT TABLESPACES:**
     1. **SYSTEM:**
         * It's used by the Oracle server to manage the database. Contains the data dictionary and tables that contain administrative information about the database. 
@@ -665,6 +666,8 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 
 * **SHOW ALL DBA DATA FILES OF EACH TABLESPACE:**
     * SELECT * FROM dba_data_files;
+* **SHOW TABLESPACES INFO:**
+    * SELECT * FROM dba_tablespaces;
 * **SHOW THE FREE SPACE OF ALL TABLESPACES:**
     * SELECT * FROM dba_free_space;
     * Notice, if no free space is available for any Tablespace, it won't appear in the query results. 
@@ -815,9 +818,14 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
     * SELECT * FROM DATABASE_PROPERTIES;
 * 
 
-### SQLPLUS
+## RANDOM QUERYS
+* [GENERATE RANDOM VALUES (INT, STRINGS)](https://oracle-base.com/articles/misc/dbms_random "Random values")
+* **[GENERATE RANDOM STRINGS](https://docs.oracle.com/cd/B19306_01/appdev.102/b14258/d_random.htm#i996825 "Random strings")**
+    * **DBMS_RANDOM.string('l',10)**
+
+## SQLPLUS
 * **CHANGING THE OUTPUT FORMAT:**
     * SET LINESIZE 150;
     * COLUMN TABLESPACE_NAME FORMAT A30
     * COLUMN FILE_NAME FORMAT A50
-* 
+

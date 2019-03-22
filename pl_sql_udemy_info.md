@@ -221,13 +221,6 @@ alter user hr identified by hr account unlock;
 
 
 
-
-
-
-
-
-
-
 ## Exceptions
 * You'll have an exception when the select statement returns none or more than a single record
 * 

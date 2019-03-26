@@ -604,11 +604,14 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 
 ## TEMPORARY TABLESPACE 
 * Whenever you JOIN two large tables and the Oracle Database can't have enough RAM memory then it allocate space in the temporary tablespace. 
+* **[SOLVING THE ORA-01652 UNABLE TO EXTEND *TEMP* SEGMENT PROBLEM:](http://www.dba-oracle.com/t_temp_tablespace_100_percent_full.htm "Ora-01652 problem")**
+    * 
+
 
 ### TEMPORARY TABLESPACE GROUP
 * [Temporary Tablespace Groups](http://www.dba-oracle.com/t_temporary_tablespace_groups.htm "TEMP groups")
     * **ADD A TEMPORARY TABLESPACE TO A TEMPORARY TABLESPACE GROUP:**
-        * 
+        * ALTER TABLESPACE [TEMP_TABLSEPACE_NAME] TABLESPACE GROUP [TEMP_TABLESPACE_GROUP_NAME];
 * Temporary tablespace groups allow an Oracle dtabase to write to **multiple temp tablespace simultaneously.**
 * A user is assigned to a group of temp tablespaces instead of a single temporary tablespace.
 * It allows a single SQL operation to use multiple temporary tablespaces for **sorting**
@@ -815,6 +818,10 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
     * ALTER DATABASE DEFAULT TEMPORARY TABLESPACE [NEW_TEMPORARY_TABLESPACE_NAME]
 * **SHOW ALL THE TEMPORARY TABLESPACE GROUPS:**
     * SELECT * FROM dba_tablespace_groups;
+* **[ALTER AN EXISTING TEMP DATAFILE FROM A TEMP TABLESPACE TO AUTOEXTEND ON](https://www.databasejournal.com/features/oracle/autoextend-oracle-database-file-sizes.html "ALTER AUTOEXTEND"):**
+    * ALTER DATABASE **TEMPFILE** 'C:\APP\XMY9080\ORADATA\ORCL\TEMP1_DATAFILE_TEMPGROUP1.DBF' AUTOEXTEND **ON** maxsize 2000M;
+* **ALTER AN EXISTING DATAFILE FROM A TABLESPACE TO AUTOEXTEND ON:**
+    *  ALTER DATABASE **DATAFILE** 'C:\APP\XMY9080\ORADATA\ORCL\DATAFILE.DBF' AUTOEXTEND **ON** maxsize 2000M;
 
 ## DBA
 * Changing the session:

@@ -240,6 +240,25 @@ Common oracle knowledge
     * ALTER TABLE table_name
 ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 
+
+## ORACLE INDEXES 
+* [Oracle Indexes](https://docs.oracle.com/cd/B28359_01/server.111/b28310/indexes003.htm#ADMIN11723 "Oracle indexes")
+    * **CREATE AN INDEX OUTSIDE OF INTEGRITY CONSTRAINTS:**
+        * CREATE INDEX [INDEX_NAME] ON [TABLE_NAME]<(COLUMN_TABLE_NAME)>
+
+        TABLESPACE [TABLESPACE_NAME]
+
+        STORAGE (INITIAL 20K 
+
+        NEXT 20K
+
+        PCTINCREACE 75);
+
+* **CREATING AN UNIQUE INDEX:**
+    * CREATE **UNIQUE** INDEX [INDEX_NAME] ON [TABLE_NAME]<(COLUMN_TABLE_NAME)>
+
+    TABLESPACE [TABLESPACE_NAME];
+
 ## General Info: 
 
 * [Oracle Grant](https://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_9013.htm "Oracle grant")
@@ -587,6 +606,9 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 * Whenever you JOIN two large tables and the Oracle Database can't have enough RAM memory then it allocate space in the temporary tablespace. 
 
 ### TEMPORARY TABLESPACE GROUP
+* [Temporary Tablespace Groups](http://www.dba-oracle.com/t_temporary_tablespace_groups.htm "TEMP groups")
+    * **ADD A TEMPORARY TABLESPACE TO A TEMPORARY TABLESPACE GROUP:**
+        * 
 * Temporary tablespace groups allow an Oracle dtabase to write to **multiple temp tablespace simultaneously.**
 * A user is assigned to a group of temp tablespaces instead of a single temporary tablespace.
 * It allows a single SQL operation to use multiple temporary tablespaces for **sorting**

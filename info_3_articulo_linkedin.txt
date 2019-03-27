@@ -1,0 +1,85 @@
+MOVING A TABLE FROM A TABLESPACE TO A SECOND TABLESPACE TO AVOID TABLESPACE FRAGMENTATION IN AN ORACLE SERVER
+
+**SOLVING TABLESPACE FRAGMENTATION USING ALTER TABLE MOVE TABLESPACE COMMAND IN AN ORACLE SERVER**
+
+https://docs.oracle.com/cd/E11882_01/server.112/e25523/parallel002.htm
+
+0) Real case fragmented table
+* https://stackoverflow.com/questions/26607565/release-unused-space-of-users-tablespace-in-oracle
+* Cuando no se pueden ingresar nuevos registros en un tablespace que había sido lleno pero fue borrado con un DELETE?
+* 
+
+
+1) create tablespace1 and tablespace2 bigger than tablespace1
+2) create a table with an INDEX in tablespace1
+3) load table
+4) Insert new row to get the full tablespace error
+5) Move table to another tablespace
+6) Insert the new row and avoid the tablespace error
+7) Observer the index behavior 
+8) [Rebuild the index](https://stackoverflow.com/questions/18327671/how-to-move-table-from-one-tablespace-to-another-in-oracle-11g "Rebuild the index")
+9) [Defragment the TABLESPACE](https://www.oracle.com/technetwork/articles/database/fragmentation-table-shrink-tips-2330997.html "TABLESPACE FRAGMENTATION")
+10) 
+
+
+ I never thought that a frequent “shrink table” command would cause such a fragmentation so quickly.
+
+ Cause fragmentation in tablespace1 with the shrink table command. 
+
+ Load 10,000,000 rows into table
+
+Review Merge command
+subcolumns
+encontrar el indice de la coincidencia
+
+
+ My path: 
+ 1.- Artículo en Linkedin
+ 2.- Terminar PL/SQL curso
+ 3.- Terminar DBA curso
+ 4.- Teradata Libro - DataWarehouse 
+
+
+ Prueba:
+
+ Crear un tablespace1
+ Crear una tabla en tablespace1
+ Crear un tablespace2 usando (REUSE) el DBF del tablespace1
+
+ ¿Qué pasa con los objetos dentro? 
+
+ Oracle No permite usar un DBF de un tablespace1 en un segundo tablespace2, a menos que no haya un tablespace asociado a tablespace1 (debido a un drop tablespace)
+
+
+# Nuevo articulo:
+# IMPROVING QUERY PERFORMANCE IN AN ORACLE SERVER USING THE SHRINK COMMAND TO DEALLOCATE SPACE 
+# Segundo Artículo:
+# SOLVING FRAGMENTATION PROBLEMS DUE TO THE SHRINK COMMAND IN AN ORACLE SERVER 
+
+
+# IMPROVING QUERY PERFORMANCE IN AN ORACLE SERVER USING THE SHRINK COMMAND TO DEALLOCATE SPACE 
+1. How rows are stored in a tablespace
+	1. High Water Mark (HWM)
+2. Differences between DELETE and Truncate when Erasing data
+	1. Creating table
+	2. Load table
+	3. Delete
+		1. Reviewing free space
+	4. Truncate
+		1. Reviewing free space
+3. Prerrequisites
+	1. Creating a tablespace of 1000Mb 
+	2. Creating table in such tablespace and store 10,000,000 records
+	3. Creating a TEMP tablespace group TEMP_GROUP_TABLESPACES
+	4. Creating a bigger Temporary tablespace TEMP_EXTENDED
+	5. Adding TEMP_EXTENDED to TEMP_GROUP_TABLESPACES
+4. Query performance before Shrink Command
+	1. Select time without the UNIQUE_INDEX_NAME_COLUMN index
+	2. Creating an unique index UNIQUE_INDEX_NAME_COLUMN in the name column 
+	3. select time with the UNIQUE_INDEX_NAME_COLUMN index 
+5. Query performance after shrink command:
+	1. Enabling Row movement
+	2. Enabling the Shrink Command 
+	3. Select time with the Broken index 
+	4. Rebuild the UNIQUE_INDEX_NAME_COLUMN index
+	5. Select time with the rebuilded index 

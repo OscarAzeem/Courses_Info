@@ -258,6 +258,8 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
     * CREATE **UNIQUE** INDEX [INDEX_NAME] ON [TABLE_NAME]<(COLUMN_TABLE_NAME)>
 
     TABLESPACE [TABLESPACE_NAME];
+* **DROPPING AN INDEX:**
+    * DROP INDEX [INDEX_NAME];
 
 ## General Info: 
 
@@ -603,9 +605,10 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
     * Temporary tablespace for sorting
 
 ## TEMPORARY TABLESPACE 
-* Whenever you JOIN two large tables and the Oracle Database can't have enough RAM memory then it allocate space in the temporary tablespace. 
+* Whenever you JOIN two large tables, sort or create a cursor the Oracle Database will allocate space in the temporary tablespace (TEMP)
 * **[SOLVING THE ORA-01652 UNABLE TO EXTEND *TEMP* SEGMENT PROBLEM:](http://www.dba-oracle.com/t_temp_tablespace_100_percent_full.htm "Ora-01652 problem")**
-    * 
+    * You should add more space to the **Temporary** tablespace or set ON the autoextend option. 
+        * alter database TEMPFILE 'C:\APP\XMY9080\ORADATA\ORCL\TEMP1_DATAFILE_TEMPGROUP1.DBF' **autoextend on** maxsize 2000M;
 
 
 ### TEMPORARY TABLESPACE GROUP
@@ -648,6 +651,15 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 
         RESIZE 100m;
     4. Configure dynamic growth data file using the AUTOEXTEND=ON sentence.
+
+
+## ROW MOVEMENT AND SHRINK COMMAND
+* [ROW MOVEMENT AND SHRINK COMMAND](http://www.dba-oracle.com/t_alter_table_shrink_space_command.htm "Row movement and shrink command")
+    * To execute the **SHRINK COMMAND** it's neccessary that the table in which it'll be executed it's enabled the **ROW MOVEMENT**
+        * ALTER TABLE [TABLE_NAME] ENABLE ROW MOVEMENT;
+    * Executing the shrink command:
+        * ALTER TABLE [TABLE_NAME] SHRINK SPACE; 
+    * Note: After executing the **SHRINK COMMAND** the indexes related to such table will be broken and must be rebuild o created again. 
 
 
 ## To review. 20/03/2019

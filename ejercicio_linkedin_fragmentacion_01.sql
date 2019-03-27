@@ -15,7 +15,9 @@ TEMPFILE 'C:\APP\XMY9080\ORADATA\ORCL\TEMP1_DATAFILE_TEMPGROUP1.DBF'
 SIZE 500m
 TABLESPACE GROUP tempgroup1;
 
+-- creando más espacio temporal para TEMP1, debido al error: ORA-01652: unable to extend temp segment by 128 in tablespace TEMP1
 
+alter database TEMPFILE 'C:\APP\XMY9080\ORADATA\ORCL\TEMP1_DATAFILE_TEMPGROUP1.DBF' autoextend on maxsize 2000M;
 
 
 ALTER TABLESPACE tbs1_error_allocate
@@ -43,6 +45,7 @@ CREATE TABLE hr.table_tbs1_error_allocate(consecutive_id number, id number, name
 
 CREATE UNIQUE INDEX index_error_allocate ON hr.table_tbs1_error_allocate(name) TABLESPACE tbs1_error_allocate;
 
+DROP INDEX index_error_allocate;
 
 select * from hr.table_tbs1_error_allocate;
 
@@ -169,6 +172,7 @@ Tiempototal_hora:=Fin_hora-Inicio_hora;
 Tiempototal_minuto:=Fin_minuto-Inicio_minuto;
 Tiempototal_segundo:=Fin_segundo-Inicio_segundo;
 
+dbms_output.put_line('Tiempo SELECT cursor no index: ');
 dbms_output.put_line ('Inicio: ' ||Inicio_hora || ':' || Inicio_minuto || ':' || Inicio_segundo);
 dbms_output.put_line ('Fin: ' ||Fin_hora || ':' || Fin_minuto || ':' || Fin_segundo);
 dbms_output.put_line('Tiempo Transcurrido: ' || Tiempototal_hora|| ':' || Tiempototal_minuto || ':' || Tiempototal_segundo);
@@ -176,6 +180,7 @@ dbms_output.put_line('Tiempo Transcurrido: ' || Tiempototal_hora|| ':' || Tiempo
 
 EXCEPTION
 WHEN OTHERS THEN
+dbms_output.put_line('Tiempo SELECT cursor: ');
 dbms_output.put_line('OTHERS EXCEPTION');
 dbms_output.put_line(sqlcode);
 dbms_output.put_line(sqlerrm);
@@ -183,9 +188,35 @@ END;
 
 -- Despues del Shrink
 
+-- Activando el movimiento de fila en la tabla:
+
+alter table  hr.table_tbs1_error_allocate enable row movement;
+
+-- Activando el shrink space command
+
+alter table hr.table_tbs1_error_allocate shrink space; -- 1849.63 seconds -> 30 minutos ->1735 -> 28 min
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+-------- TEMP QUERYS ------------
+---------------------------------
 
 select SYSTIMESTAMP FROM DUAL;
 

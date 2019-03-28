@@ -80,6 +80,7 @@ encontrar el indice de la coincidencia
 5. Query performance after shrink command:
 	1. Enabling Row movement
 	2. Enabling the Shrink Command 
+		1. Considerations with the index after the Shrink command
 	3. Select time with the Broken index 
 	4. Rebuild the UNIQUE_INDEX_NAME_COLUMN index
 	5. Select time with the rebuilded index 

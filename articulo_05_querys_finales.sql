@@ -1,0 +1,59 @@
+CREATE TABLESPACE TBS_TABLE_DELETE
+DATAFILE 'C:\APP\XMY9080\ORADATA\ORCL\TBS_TABLE_DELETE.DBF'
+size 10m
+REUSE;
+
+DROP TABLESPACE TBS_TABLE_DELETE INCLUDING CONTENTS AND DATAFILES;
+
+CREATE TABLE hr.TABLE_DELETE(consecutive_id number, id number, name char(20), last_name char(20)) tablespace TBS_TABLE_DELETE;
+
+
+CREATE TABLESPACE TBS_TABLE_TRUNCATE
+DATAFILE 'C:\APP\XMY9080\ORADATA\ORCL\TBS_TABLE_TRUNCATE.DBF'
+size 10m
+REUSE;
+
+DROP TABLESPACE TBS_TABLE_TRUNCATE INCLUDING CONTENTS AND DATAFILES;
+
+
+CREATE TABLE hr.TABLE_TRUNCATE(consecutive_id number, id number, name char(20), last_name char(20)) tablespace TBS_TABLE_TRUNCATE;
+
+
+SELECT TABLESPACE_NAME, FILE_ID, BLOCK_ID, BYTES/1024/1024 BYTES_MB, BLOCKS, RELATIVE_FNO 
+FROM dba_free_space
+WHERE TABLESPACE_NAME IN ('TBS_TABLE_DELETE','TBS_TABLE_TRUNCATE');
+
+
+SELECT TABLESPACE_NAME, BYTES/1024/1024 BYTES_MB
+FROM dba_free_space
+WHERE TABLESPACE_NAME IN ('TBS_TABLE_DELETE','TBS_TABLE_TRUNCATE');
+
+SELECT TABLESPACE_NAME, BYTES/1024/1024 BYTES_MB FROM dba_data_files
+WHERE TABLESPACE_NAME IN ('TBS_TABLE_DELETE','TBS_TABLE_TRUNCATE');
+
+
+
+DECLARE 
+Uppercase_letter char(10);
+Lowercase_letter char(10);
+Random_number number;
+Final_length number:=100000000;
+Consecutive_number number:=1;
+i number:=1;
+BEGIN
+  FOR i IN 1 .. Final_length LOOP
+    Lowercase_letter:=dbms_random.string('l',10);
+    Uppercase_letter:=dbms_random.string('u',10);
+    Random_number:=round(DBMS_RANDOM.value(1,300));
+    INSERT INTO hr.TABLE_DELETE VALUES(i, Random_number, Lowercase_letter, Uppercase_letter);
+    INSERT INTO hr.TABLE_TRUNCATE VALUES(i, Random_number, Lowercase_letter, Uppercase_letter);
+  END LOOP;
+EXCEPTION
+WHEN OTHERS THEN
+dbms_output.put_line(sqlerrm);
+END;
+
+
+SELECT TABLESPACE_NAME, BYTES/1024/1024 BYTES_MB
+FROM dba_free_space
+WHERE TABLESPACE_NAME IN ('TBS_TABLE_DELETE','TBS_TABLE_TRUNCATE');

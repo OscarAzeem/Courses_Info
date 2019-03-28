@@ -58,8 +58,8 @@ encontrar el indice de la coincidencia
 
 
 # IMPROVING QUERY PERFORMANCE IN AN ORACLE SERVER USING THE SHRINK COMMAND TO DEALLOCATE SPACE 
-1. How rows are stored in a tablespace
-	1. High Water Mark (HWM)
+1. How the Oracle server saves new data allocating space on a Tablespace
+	1. Performance Problems due to the High Water Mark
 2. Differences between DELETE and Truncate when Erasing data
 	1. Creating table
 	2. Load table
@@ -67,6 +67,13 @@ encontrar el indice de la coincidencia
 		1. Reviewing free space
 	4. Truncate
 		1. Reviewing free space
+----------------------
+3. Shrink command
+	1. Shrink command introduction
+4. Building the Environment
+
+
+
 3. Prerrequisites
 	1. Creating a tablespace of 1000Mb 
 	2. Creating table in such tablespace and store 10,000,000 records

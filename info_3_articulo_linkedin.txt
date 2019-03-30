@@ -70,17 +70,19 @@ encontrar el indice de la coincidencia
 ----------------------
 3. Shrink command
 	1. Shrink command introduction
-4. Building the Environment
+4. Shrink command query times
+	1. Introduction
+	2. Building the Environment
+		1. Creating a tablespace of 1000Mb 
+		2. Creating table in such tablespace and store 10,000,000 records
+		3. Creating a TEMP tablespace group TEMP_GROUP_TABLESPACES
+		4. Creating a bigger Temporary tablespace TEMP_EXTENDED
+		5. Adding TEMP_EXTENDED to TEMP_GROUP_TABLESPACES
 
+-----------------------------------------------------
 
-
-3. Prerrequisites
-	1. Creating a tablespace of 1000Mb 
-	2. Creating table in such tablespace and store 10,000,000 records
-	3. Creating a TEMP tablespace group TEMP_GROUP_TABLESPACES
-	4. Creating a bigger Temporary tablespace TEMP_EXTENDED
-	5. Adding TEMP_EXTENDED to TEMP_GROUP_TABLESPACES
 4. Query performance before Shrink Command
+
 	1. Select time without the UNIQUE_INDEX_NAME_COLUMN index
 	2. Creating an unique index UNIQUE_INDEX_NAME_COLUMN in the name column 
 	3. select time with the UNIQUE_INDEX_NAME_COLUMN index 

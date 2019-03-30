@@ -197,7 +197,109 @@ alter table  hr.table_tbs1_error_allocate enable row movement;
 alter table hr.table_tbs1_error_allocate shrink space; -- 1849.63 seconds -> 30 minutos ->1735 -> 28 min
 
 
+----------------
 
+CREATE TABLESPACE TBS_TABLE_DELETE
+DATAFILE 'C:\APP\XMY9080\ORADATA\ORCL\TBS_TABLE_DELETE.DBF'
+size 10m
+REUSE;
+
+DROP TABLESPACE TBS_TABLE_DELETE INCLUDING CONTENTS AND DATAFILES;
+
+CREATE TABLE hr.TABLE_DELETE(consecutive_id number, id number, name char(20), last_name char(20)) tablespace TBS_TABLE_DELETE;
+
+
+CREATE TABLESPACE TBS_TABLE_TRUNCATE
+DATAFILE 'C:\APP\XMY9080\ORADATA\ORCL\TBS_TABLE_TRUNCATE.DBF'
+size 10m
+REUSE;
+
+DROP TABLESPACE TBS_TABLE_TRUNCATE INCLUDING CONTENTS AND DATAFILES;
+
+
+CREATE TABLE hr.TABLE_TRUNCATE(consecutive_id number, id number, name char(20), last_name char(20)) tablespace TBS_TABLE_TRUNCATE;
+
+
+SELECT TABLESPACE_NAME, FILE_ID, BLOCK_ID, BYTES/1024/1024 BYTES_MB, BLOCKS, RELATIVE_FNO 
+FROM dba_free_space
+WHERE TABLESPACE_NAME IN ('TBS_TABLE_DELETE','TBS_TABLE_TRUNCATE');
+
+
+SELECT TABLESPACE_NAME, BYTES/1024/1024 BYTES_MB
+FROM dba_free_space
+WHERE TABLESPACE_NAME IN ('TBS_TABLE_DELETE','TBS_TABLE_TRUNCATE');
+
+SELECT TABLESPACE_NAME, BYTES/1024/1024 BYTES_MB FROM dba_data_files
+WHERE TABLESPACE_NAME IN ('TBS_TABLE_DELETE','TBS_TABLE_TRUNCATE');
+
+
+
+DECLARE 
+Uppercase_letter char(10);
+Lowercase_letter char(10);
+Random_number number;
+Final_length number:=10000000;
+Consecutive_number number:=1;
+i number:=1;
+BEGIN
+  FOR i IN 1 .. Final_length LOOP
+    Lowercase_letter:=dbms_random.string('l',10);
+    Uppercase_letter:=dbms_random.string('u',10);
+    Random_number:=round(DBMS_RANDOM.value(1,300));
+    INSERT INTO HR.TABLE_SHRINK_COMMAND  VALUES(i, Random_number, Lowercase_letter, Uppercase_letter);
+  END LOOP;
+EXCEPTION
+WHEN OTHERS THEN
+dbms_output.put_line(sqlerrm);
+END;
+/
+
+
+
+SELECT TABLESPACE_NAME, BYTES/1024/1024 BYTES_MB
+FROM dba_free_space
+WHERE TABLESPACE_NAME IN ('TBS_TABLE_DELETE','TBS_TABLE_TRUNCATE');
+
+
+
+DECLARE
+start_time TIMESTAMP;
+end_time TIMESTAMP;
+duration_time INTERVAL DAY(1) TO SECOND(4);
+--Cursor DECLARATION
+CURSOR CURSOR_ORDER_BY IS SELECT * FROM HR.TABLE_SHRINK_COMMAND ORDER BY name ASC; 
+--Table Type to Fetch CURSOR_ORDER_BY
+TYPE type_table_tbs1 IS TABLE OF HR.TABLE_SHRINK_COMMAND%ROWTYPE  INDEX BY BINARY_INTEGER;
+t_shrink_command type_table_tbs1;
+BEGIN
+    SELECT SYSTIMESTAMP INTO start_time FROM DUAL;
+    OPEN CURSOR_ORDER_BY;
+    FETCH CURSOR_ORDER_BY BULK COLLECT INTO t_shrink_command;
+    SELECT SYSTIMESTAMP INTO end_time FROM DUAL;
+    duration_time:=end_time-start_time;
+    dbms_output.put_line('Duration Time: ' || duration_time);
+EXCEPTION
+WHEN OTHERS THEN
+dbms_output.put_line(sqlcode);
+dbms_output.put_line(sqlerrm);
+END;
+
+
+DELETE from HR.TABLE_SHRINK_COMMAND WHERE NAME LIKE 'a%';
+
+DELETE from HR.TABLE_SHRINK_COMMAND WHERE NAME LIKE 'v%';
+
+DELETE from HR.TABLE_SHRINK_COMMAND WHERE NAME LIKE 'z%';
+
+DELETE from HR.TABLE_SHRINK_COMMAND WHERE NAME LIKE 'd%';
+
+DELETE from HR.TABLE_SHRINK_COMMAND WHERE NAME LIKE 'h%';
+
+EXPLAIN PLAN FOR SELECT * FROM HR.TABLE_SHRINK_COMMAND ORDER BY name ASC;
+
+SELECT COUNT(*) FROM HR.TABLE_SHRINK_COMMAND;
+
+COMMIT;
 
 
 
@@ -298,4 +400,27 @@ SELECT * FROM DATABASE_PROPERTIES WHERE PROPERTY_NAME='DEFAULT_TEMP_TABLESPACE';
 
 ALTER DATABASE DEFAULT TEMPORARY TABLESPACE tempgroup1ds
 
+---
+duration time
 
+DECLARE
+start_time TIMESTAMP;
+end_time TIMESTAMP;
+duration_time INTERVAL DAY(1) TO SECOND(4);
+--Cursor DECLARATION
+CURSOR CURSOR_ORDER_BY IS SELECT * FROM HR.TABLE_SHRINK_COMMAND ORDER BY name ASC; 
+--Table Type to Fetch CURSOR_ORDER_BY
+TYPE type_table_tbs1 IS TABLE OF HR.TABLE_SHRINK_COMMAND%ROWTYPE  INDEX BY BINARY_INTEGER;
+t_shrink_command type_table_tbs1;
+BEGIN
+    SELECT SYSTIMESTAMP INTO start_time FROM DUAL;
+    OPEN CURSOR_ORDER_BY;
+    FETCH CURSOR_ORDER_BY BULK COLLECT INTO t_shrink_command;
+    SELECT SYSTIMESTAMP INTO end_time FROM DUAL;
+    duration_time:=end_time-start_time;
+    dbms_output.put_line('Duration Time: ' || duration_time);
+EXCEPTION
+WHEN OTHERS THEN
+dbms_output.put_line(sqlcode);
+dbms_output.put_line(sqlerrm);
+END;

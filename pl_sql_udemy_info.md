@@ -26,6 +26,9 @@
 * Oracle Enterprise Manager Database Express URL: https://localhost:5500/em
 * 
 
+## Printing on SQL/PLUS
+* You have to type the command, to redirige the output:
+    * set serveroutput on size 30000;
 
 ## configuration file to make the configurations
 * Path: C:\app\DatabaseOracle\product\12.2.0\dbhome_1\network\admin

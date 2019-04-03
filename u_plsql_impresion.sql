@@ -4843,4 +4843,50 @@ COMPOUND TRIGGER
     END AFTER STATEMENT;
 END;     
 
+----------------------------------------------------------------
+----- MUTATING TABLES
+---------------------------------------------------------------
+
+DROP TABLE customers;
+
+CREATE TABLE customers
+(
+    cust_id number,
+    cust_name varchar2(100)
+);
+
+SELECT MAX(cust_id) from customers;
+SELECT nvl(max(cust_id),0) from customers;
+
+CREATE OR REPLACE TRIGGER customers_seq
+BEFORE INSERT
+ON
+hr.customers
+FOR EACH ROW
+DECLARE 
+v_max_id number;
+BEGIN
+    SELECT nvl(max(cust_id),0) +1
+    INTO v_max_id
+    from customers;
+    
+    :new.cust_id:=v_max_id;
+end;
+
+-- INSERTING VALUES INTO CUSTOMERS
+
+INSERT INTO customers (cust_name) VALUES ('oracle');
+
+select * from customers;
+
+INSERT INTO customers (cust_name) VALUES ('azeem');
+
+select * from customers;
+
+INSERT INTO customers(cust_name) 
+select first_name
+from employees;
+
+
+
 

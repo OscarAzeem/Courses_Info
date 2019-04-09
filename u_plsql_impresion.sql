@@ -4887,6 +4887,150 @@ INSERT INTO customers(cust_name)
 select first_name
 from employees;
 
+---
+/*
+I want to create a trigger that prevents insert/update any employee with JOB=IT_PROG
+with his salary out of ranges of IT_PROG
+*/
+
+select * from employees where job_id='IT_PROG'
+ORDER BY SALARY DESC;
+
+SELECT COUNT(*) FROM employees
+
+--- creating a trigger wich fires every insert/update 
+-- two triggers, one for each one
+
+
+CREATE OR REPLACE TRIGGER tgr_hr_employees_before_insert_row_it_prog
+
+
+insert into hr.employees values (258,'Azeem','Becerril','azeemmm',590,'11-JAN-06','IT_PROG',11000,null,102,60);
+
+	 CONSTRAINT "EMP_JOB_FK" FOREIGN KEY ("JOB_ID")
+	  REFERENCES "HR"."JOBS" ("JOB_ID") ENABLE, 
+
+
+select dbms_metadata.get_ddl('TABLE', employees) from user_tables;
+
+-- CREATING THE TRIGGER FOR AUDIT
+CREATE OR REPLACE TRIGGER tgr_hr_employees_before_insert_row_it_prog
+BEFORE INSERT OR UPDATE OF SALARY
+ON hr.EMPLOYEES
+FOR EACH ROW
+DECLARE
+max_salary number;
+min_salary number;
+BEGIN -- begin the trigger body
+    select max(SALARY) INTO max_salary from hr.employees where job_id='IT_PROG';
+    select min(SALARY) INTO min_salary FROM hr.employees where job_id='IT_PROG';
+    dbms_output.put_line(max_salary);
+    dbms_output.put_line(min_salary);
+    IF INSERTING OR UPDATING THEN 
+    dbms_output.put_line('Entering inserting/updating');
+    --/*
+        IF :new.SALARY>max_salary OR :new.SALARY<min_salary THEN
+        raise_application_error(-20030,'min sal: '||min_salary || ' max sal: ' || max_salary);
+        ELSE 
+            dbms_output.put_line('Values ok');
+        END IF;
+    END IF;
+    --*/
+    --END IF;
+END; 
+
+
+----------------------------------------------------------------
+----- MUTATING TABLES / EXCERCISE 
+---------------------------------------------------------------
+
+select * from employees where job_id='IT_PROG'
+ORDER BY SALARY DESC;
+
+CREATE OR REPLACE TRIGGER IT_PROG_range
+BEFORE
+INSERT OR UPDATE
+ON HR.EMPLOYEES
+FOR EACH ROW
+WHEN (new.job_id='IT_PROG')--TRIGGER ACTIVE when a certain condiction meets the requirements
+DECLARE
+v_min_IT_PROG number;
+v_max_IT_PROG number;
+BEGIN
+    dbms_output.put_line('trigger IT_PROG_range fired');
+    SELECT min(salary), max(salary)
+    INTO v_min_IT_PROG, v_max_IT_PROG
+    FROM HR.EMPLOYEES
+    WHERE job_id=:new.job_id;
+    
+    IF :new.salary NOT BETWEEN v_min_IT_PROG AND v_max_IT_PROG then
+    raise_application_error(-20300,'invalid range');
+    END IF;
+END;
+    
+    
+INSERT INTO HR.EMPLOYEES
+(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER, HIRE_DATE, JOB_ID, SALARY, COMMISSION_PCT, MANAGER_ID, DEPARTMENT_ID)
+VALUES
+(900,'NADIA','AH','T@T',NULL,SYSDATE,'IT_PROG',1500,0,NULL,90);
+
+/*
+When updating the UPDATE clause does a SELECT statement on the desired table,
+so all records are "retained" by the first UPDATE clause. 
+If a clause inside any trigger does a SELECT in any record previously retained, 
+the oracle server will retrieve the ORA-04091: table HR.EMPLOYEES is mutating, trigger/function may not see it
+error
+*/
+
+
+
+UPDATE HR.EMPLOYEES
+SET SALARY=600
+WHERE EMPLOYEE_ID=107;
+
+
+/* 
+SOLUTION TO MUTATING TABLE
+*/
+
+CREATE OR REPLACE TRIGGER IT_PROG_range
+FOR
+INSERT OR UPDATE
+ON HR.EMPLOYEES
+WHEN (new.job_id='IT_PROG')
+COMPOUND TRIGGER
+-- variables declaration
+v_min_IT_PROG number;
+v_max_IT_PROG number;
+    BEFORE STATEMENT IS
+    BEGIN
+        SELECT min(salary), max(salary)
+        INTO v_min_IT_PROG, v_max_IT_PROG
+        FROM hr.employees
+        where job_id='IT_PROG';
+    END BEFORE STATEMENT;
+    
+    BEFORE EACH ROW IS
+    BEGIN
+        IF :new.salary NOT BETWEEN v_min_IT_PROG and v_max_IT_PROG then
+        raise_application_error(-20300,'trigger: invalid range');
+        END IF;
+    END BEFORE EACH ROW;
+    
+END;    
+
+--------------------
+
+UPDATE HR.EMPLOYEES
+SET SALARY=600
+WHERE EMPLOYEE_ID=107;
+
+/* 
+Now when you do any update or insert THE before statement grigger will be
+executed first and stores the MAX and MIN into variables.
+These variables will be used later in the BEFORE each row trigger.
+so it will be like separate transactions
+*/
 
 
 

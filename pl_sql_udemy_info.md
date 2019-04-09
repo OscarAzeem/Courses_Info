@@ -1552,6 +1552,22 @@ EXCEPTION
 
 END;
 
+### TRIGGER WHEN CONDITION
+* A trigger at a bigger level can be fired due to an Schema or Table. 
+* At a lower level a trigger can be fired due to certain **row condiction**, similiar to a *WHERE* clause.
+* EXAMPLE:
+    * CREATE OR REPLACE TRIGGER IT_PROG_range
+    
+    BEFORE
+    
+    INSERT OR UPDATE
+    
+    ON HR.EMPLOYEES
+    
+    FOR EACH ROW
+    
+    **WHEN (new.job_id='IT_PROG')**
+
 
 ## Trigger constraints priority
 * First the database will check the following constraints in the following order:
@@ -1580,18 +1596,19 @@ raise_application_error(-20012,'UPDATE not allowed now');
 END IF;
 
 ## OLD AND NEW QUALIFIERS
-1. INSERT CASE (there will be just new values, no old ones)
+* The *OLD* and *NEW* qualifiers can be used, only in conjuntion with the **OF** sentence, after the *BEFORE INSERT OR UPDATE* option. The ***OF*** sentence gives the opportunity to use new, or old values. 
+1. **INSERT CASE** (there will be just new values, no old ones)
     * Insert into dept (deptno, dname) values (1,'IT');
     * New values:
         * :new.deptno=1
         * :new.dname='IT'
-2. UPDATE CASE (there will be new and old values)
+2. **UPDATE CASE** (there will be new and old values)
     * UPDATE DEPT
 
     SET dname='IT dept' -> **new value**-> :new.dname
 
     WHERE deptno=1 -> **old value** -> :old.deptno
-3. DELETE CASE (all the columns are old values, there is no new)
+3. **DELETE CASE** (all the columns are old values, there is no new)
 
 
 ## Trigger-Firing Sequence:
@@ -1665,7 +1682,9 @@ END IF;
 * 
 
 
-
+### Mutating Table (Compound trigger)
+* One of the main uses for the Compound trigger is the Mutating Table
+* 
 
 
 

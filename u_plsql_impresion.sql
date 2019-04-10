@@ -4913,6 +4913,10 @@ insert into hr.employees values (258,'Azeem','Becerril','azeemmm',590,'11-JAN-06
 
 select dbms_metadata.get_ddl('TABLE', employees) from user_tables;
 
+-- DROPPING TRIGER:
+DROP TRIGGER tgr_hr_employees_before_insert_row_it_prog;
+
+
 -- CREATING THE TRIGGER FOR AUDIT
 CREATE OR REPLACE TRIGGER tgr_hr_employees_before_insert_row_it_prog
 BEFORE INSERT OR UPDATE OF SALARY
@@ -5022,7 +5026,7 @@ END;
 --------------------
 
 UPDATE HR.EMPLOYEES
-SET SALARY=600
+SET SALARY=6000
 WHERE EMPLOYEE_ID=107;
 
 /* 
@@ -5032,5 +5036,6 @@ These variables will be used later in the BEFORE each row trigger.
 so it will be like separate transactions
 */
 
+SELECT XID, STATUS FROM V$TRANSACTION;
 
 

@@ -319,6 +319,12 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
     * Permissions to execute an external procedure (not propietary): 
         * With the account procedure owner: 
             * GRANT EXECUTE ON [PROCEDURE_PACKAGE_NAME] TO [USER_NAME];
+* Grant permissions to the *SYS v$ view:* 
+    * Oracle v$ views are named V_$VIEWNAME and they have synonyms in format V$VIEWNAME and you can’t give privilage on a synonym.
+    * Example:
+        * grant select on v_$session to hr;
+    * Grant permissions to transactions view: **V$TRANSACTION;**
+        *  grant select on V_$TRANSACTION to HR;
 * Shows info about all objects:
     * SELECT * from ALL_OBJECTS;
 * Shows procedures/functions/packages content:
@@ -347,6 +353,15 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
     * **DEPENDING** on your assigned database privileges:
         * select * from DBA_TRIGGERS;
         * select * from USER_TRIGGERS;
+
+
+## SYS V$VIEW_NAME
+* Show all sessions:
+    * select * from V$session;
+* Show all Transactions:
+    * select * from V$TRANSACTION;
+* Show locked tables:
+    * select * from v$lock
 
 ## Partitions
 * Table partitions: Dividing table into multiple pieces. 

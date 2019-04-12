@@ -307,11 +307,13 @@ alter user hr identified by hr account unlock;
 
 
 ## PL/SQL TABLES:
+* Whe can store Query results in a PL/SQL Table, but we **can't modify** the original values obtained by the query selected table. 
 * When using an user defined data type, i.e PL/SQL table in this case, the data type declaration should be given whithin the DECLARE or IS section.
 * Objects of type TABLE are called PL/SQL tables, which are modeled as (but not the same as) database [PL/SQL table](https://docs.oracle.com/cd/A57673_01/DOC/server/doc/PLS23/ch4.htm "PL/SQL table")
 * its primary key gives you array-like access to rows
 * Think of the **key and rows as the index and elements of a one-dimensional array.**
-* PL/SQL table is an ordered collection of elements of the same type
+* ***PL/SQL table is an ordered collection of elements of the same type***
+    * Such *type* can be a record with multiple types inside, a %ROWTYPE with every type of a certain table. Just all rows need to be the same *"type"*
     * Each element has a unique index number that determines its position in the ordered collection
 * **PL/SQL tables differ from arrays** in two important ways
     * First: 
@@ -369,7 +371,9 @@ alter user hr identified by hr account unlock;
     INDEX BY BINARY_INTEGER;
 
 * With a PL/SQL table of records, you use the following syntax to reference fields in a record:
-    * plsql_table_name(index).field_name
+    * plsql_table_name(**index**).field_name
+    * Example:
+        * emp(**i.job_id**).minsal:=i.min_sal;
 * the following IF statement references a field in the record stored by the first element of the PL/SQL table emp_tab: 
     
     DECLARE
@@ -1684,7 +1688,41 @@ END IF;
 
 ### Mutating Table (Compound trigger)
 * One of the main uses for the Compound trigger is the Mutating Table
-* 
+* The compound trigger is a solution for the mutating table problem (when a trigger is triggered by a select due to a where clause, and inside such triggered trigger it does again a select clause)
+
+
+## Comparing Database Triggers to stored procedures
+* **Triggers:**
+    * Defined with CREATE TRIGGER
+    * Data dictionary contains source code in **USER_TRIGGERS**
+    * Implicitly invoked by DML
+    * COMMIT, SAVEPOINT, and ROLLBACK are not allowed 
+* **Procedures:**
+    * Defined with CREATE PROCEDURE
+    * Data dictionar y contains source code in USERS_SOURCE
+    * EMPLICITLY INVOKED
+    * COMMIT, SAVEPOINT, and ROLLBACK are allowed. 
+
+## Creating DDL Triggers (Schema or Database)
+* A trigger can be defined on the table, view, schema (schema owner), or database (all users).
+
+### Sintaxis
+* CREATE [OR REPLACE] TRIGGER {trigger_name}
+
+    BEFORE | AFTER --TIMING
+    
+    [ddl_event [OR ddl_event2 OR ...]]
+    
+    ON [DATABASE | SCHEMA]
+    
+    TRIGER_BODY;
+* **
+
+* Sample DDL events:
+    * **CREATE|ALTER|DROP:**
+        * Fires When:
+            * Any database object is created|altered|dropepd using the CREATE|ALTER|DROP command;
+    * **
 
 
 

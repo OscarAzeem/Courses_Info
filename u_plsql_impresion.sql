@@ -5039,3 +5039,168 @@ so it will be like separate transactions
 SELECT XID, STATUS FROM V$TRANSACTION;
 
 
+/*
+----------------------------------------------------------------
+-----  USING COMPOUND TRIGGER & TABLE TYPE TO SOLVE MUTATING TRIGGER
+---------------------------------------------------------------
+*/
+
+select * from employees
+where job_id='IT_PROG'
+ORDER BY SALARY;
+
+DROP TRIGGER IT_PROG_range;
+
+select job_id, min(salary), max(salary),count(*)
+from employees
+group by job_id
+order by 1;
+
+CREATE OR REPLACE TRIGGER salary_range
+BEFORE
+INSERT OR UPDATE
+ON hr.employees
+FOR EACH ROW
+DECLARE
+v_min_sal number;
+v_max_sal number;
+BEGIN
+    SELECT MIN(SALARY), MAX(SALARY)
+    INTO v_min_sal, v_max_sal
+    FROM employees
+    where job_id=:new.job_id;
+    
+    if :new.salary not between v_min_sal and v_max_sal then
+    raise_application_error(-20300,'raised application: invalid range');
+    end if;
+end;
+
+
+select * from employees
+where job_id='IT_PROG'
+ORDER BY SALARY;
+
+
+UPDATE HR.EMPLOYEES
+set SALARY=6000
+WHERE employee_id=107;
+
+
+---------------------------------------------------------------
+
+CREATE OR REPLACE TRIGGER salary_range
+FOR
+INSERT OR UPDATE
+ON HR.EMPLOYEES
+COMPOUND TRIGGER
+    --begin the DECLARE SECTION--
+    TYPE job_t is record(minsal number, maxsal number);
+    TYPE emp_t is table of job_t index by varchar2(100);
+    emp emp_t;
+    BEFORE STATEMENT IS
+        BEGIN --doing a for in an explicit cursor
+            FOR i IN(
+                SELECT job_id, min(salary) min_sal, max(salary) max_sal
+                from HR.EMPLOYEES
+                group by job_id order by 1
+                )
+                LOOP
+                emp(i.job_id).minsal:=i.min_sal; ---> the emp(i.job_id) is building the index or is built automatically due to the first column (job_id) in the select statement
+                emp(i.job_id).maxsal:=i.max_sal;
+                END LOOP;
+    END BEFORE STATEMENT;
+    
+    BEFORE EACH ROW IS
+    BEGIN
+    if :new.salary not between emp(:new.job_id).minsal and emp(:new.job_id).maxsal then
+    raise_application_error (-20300,'trigger: invalid range');
+    END IF;
+    END BEFORE EACH ROW;
+END;
+
+
+---------------------------------------------------------------
+
+select * from HR.EMPLOYEES
+
+
+WHERE employee_id=107;
+
+
+UPDATE HR.EMPLOYEES
+set SALARY=100
+WHERE employee_id=107;
+
+
+/*
+----------------------------------------------------------------
+-----  MUTATING TABLE AND ON DELETE CASCADE
+---------------------------------------------------------------
+*/
+
+DROP TABLE DPET1;
+
+CREATE TABLE DPET1
+(
+    DEPTNO NUMBER,
+    DNAME VARCHAR2(100),
+    CONSTRAINT DPET1_PK PRIMARY KEY (DEPTNO)
+);
+
+INSERT INTO DPET1 (DEPTNO,DNAME)
+VALUES(1,'HR DEPT');
+INSERT INTO DPET1 (DEPTNO,DNAME)
+VALUES(2,'PO DEPT');
+
+select * from HR.DPET1;
+
+
+COMMIT;
+
+DROP TABLE EMP1;
+
+CREATE TABLE EMP1
+(
+    EMPID NUMBER PRIMARY KEY,
+    ENAME VARCHAR2(100),
+    DEPTNO NUMBER,
+    CONSTRAINT EMP1_FK FOREIGN KEY (DEPTNO) REFERENCES HR.DPET1(DEPTNO) ON DELETE CASCADE
+);
+
+
+INSERT INTO EMP1 VALUES(1,'oscar','1');
+INSERT INTO EMP1 VALUES(2,'azeem','1');
+INSERT INTO EMP1 VALUES(3,'becerril','1');
+INSERT INTO EMP1 VALUES(4,'rania','2');
+INSERT INTO EMP1 VALUES(5,'lara','2');
+
+COMMIT;
+
+ROLLBACK;
+
+SELECT  * FROM EMP1;
+
+DELETE FROM DPET1
+WHERE DEPTNO=1;
+
+
+CREATE OR REPLACE TRIGGER EMP1_t
+BEFORE
+DELETE
+ON EMP1
+FOR EACH ROW
+DECLARE
+minv number;
+BEGIN
+    SELECT MIN(EMPID)
+    INTO minv
+    FROM EMP1;
+END;
+
+
+DELETE FROM DPET1
+WHERE DEPTNO=1;
+
+
+
+

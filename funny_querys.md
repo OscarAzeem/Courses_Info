@@ -71,6 +71,12 @@ mysql> source backup-file.sql;
 
 
 # Teradata 
+## [Teradata Database Data Dictionary attributes:](https://docs.teradata.com/reader/oiS9ixs2ypIQvjTUOJfgoA/IWBAjOWwSlE5SLswfe_6Gw "Data dictionary")
+* **[SPOOL:](https://docs.teradata.com/reader/u8~Pwz3BmiO8RrPCsqF7bQ/obhnM3wzTkPdGCe9ZrlNoQ "Teradata Spool")**
+    * Defines the maximum amount of space available to the user for intermediate query results,  volatile tables, or formatted answer sets to queries.
+    The spool space specified in a profile takes precedence over spool space specified in a CREATE USER statement.
+* **
+* 
 
 ## TERADATA DDL definition
 * [Teradata Primary Index](http://www.teradatawiki.net/2013/08/Teradata-Primary-Index.html "Teradata primary index info")
@@ -165,6 +171,22 @@ WHERE CONDITION='CONDITION';
 
 
 
+## TERADATA CREATE COMMAND
+* **[CREATING USERS AND GRATING PRIVILEGES](https://docs.teradata.com/reader/u8~Pwz3BmiO8RrPCsqF7bQ/n7MECvaDeRfH1milApRIdg "Creating users and granting privileges")**
+* **[CREATE USER:](https://docs.teradata.com/reader/u8~Pwz3BmiO8RrPCsqF7bQ/HkONjPwbd0wA6n3gTuJA2A "Create uer teradata")**
+    * You must create a Teradata user with CREATE FUNCTION and EXECUTE FUNCTION access rights.
+        * Example:
+            * CREATE user test AS password=test perm = 200000000, SPOOL = 100000000;
+    * Steps to Crate an User:
+        2. Creating a database (similar to an schema in Oracle):
+            * CREATE DATABASE myDB AS PERM = 500e+06; -- 0.5 GB ```nomodeset```
+        1. Creating an user (the created database can be the default database for the new user):
+            * CREATE USER sysdba AS PERM=1e+09, PASSWORD=mypassword; -- 1 GB
+
+
+## TERADATA GRANT COMMAND
+* **[CONNECTION AND PRIVILEGES](https://docs.teradata.com/reader/u8~Pwz3BmiO8RrPCsqF7bQ/HLlDxftcO9jcWSAHaAtLkw "Grant connection and privileges Teradata")**
+* 
 
 # ORACLE
 Common oracle knowledge

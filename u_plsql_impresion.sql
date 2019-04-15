@@ -5317,7 +5317,9 @@ select * from log_table;
 
 select sysTIMESTAMP FROM DUAL;
 
+DROP TRIGGER logon_t;
 
+DROP TRIGGER logoff_t;
 
 
 

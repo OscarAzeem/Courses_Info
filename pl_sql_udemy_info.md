@@ -1703,26 +1703,81 @@ END IF;
     * EMPLICITLY INVOKED
     * COMMIT, SAVEPOINT, and ROLLBACK are allowed. 
 
-## Creating DDL Triggers (Schema or Database)
+## Creating DDL Triggers (Schema)
 * A trigger can be defined on the table, view, schema (schema owner), or database (all users).
 
-### Sintaxis
-* CREATE [OR REPLACE] TRIGGER {trigger_name}
-
-    BEFORE | AFTER --TIMING
-    
-    [ddl_event [OR ddl_event2 OR ...]]
-    
-    ON [DATABASE | SCHEMA]
-    
-    TRIGER_BODY;
-* **
-
+* Sintaxis
+```
+CREATE [OR REPLACE] TRIGGER {trigger_name}
+BEFORE | AFTER --TIMING
+[ddl_event [OR ddl_event2 OR ...]]
+ON [DATABASE | SCHEMA]
+TRIGER_BODY;
+```
 * Sample DDL events:
     * **CREATE|ALTER|DROP:**
         * Fires When:
             * Any database object is created|altered|dropepd using the CREATE|ALTER|DROP command;
-    * **
+
+
+## Creating DDL Triggers - Database Event level
+* Sintaxis:
+```
+CREATE [OR REPLACE] TRIGGER {trigger_name}
+BEFORE | AFTER --TIMING
+[ddl_event [OR ddl_event2 OR ...]]
+ON [DATABASE_NAME]
+TRIGER_BODY;
+```
+* Trigggering an user event:
+    * CREATE, ALTER, or DROP
+    * Logging on or off
+* Triggering database or system event:
+    * Shutting down or starting up the database
+    * A specific error (or any error) being raised
+* **Database Event:**
+    * AFTER SERVERERROR 
+        * Triggers Fires When:
+            * An Oracle error is raised
+    * AFTER LOGON
+        * Triggers Fires When:
+            * A user logs on to the database (Can be on schema also)
+    * BEFORE LOGOFF
+        * Triggers Fires When:
+            * A user logs off the database (Can be on schema also)
+    * AFTER STARTUP
+        * Triggers Fires When:
+            * The database is opened **(Only database)**
+    * BEFORE SHUTDOWN
+        * Triggers Fires When:
+            * The database is shut down normally **(Only database)**
+
+## CALL Statement in Triggers
+* From the Call statement, a trigger can call a Stored Procedure, moreover, it can pass the new trigger parameters into such procedure: ```CALL P1(:new.emp_id)```
+* Sintaxis: 
+* Example procedure:
+```
+
+
+
+### Trigger Problems
+* Problem: **[Oracle Trigger on Schema not being triggered by other users besides the Schema owner](https://stackoverflow.com/questions/1640317/oracle-trigger-on-schema-not-being-triggered-by-other-users-besides-the-schema-o "Oracle ddl trigger triggered only by the owner user")**
+    * "The trigger fires whenever any user connected as schema initiates the triggering event."
+    * (emphasis mine)
+    * So, the trigger only logs DDL issue when connected AS USER1, not when DDL is performed on the schema USER1.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

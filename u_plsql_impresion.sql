@@ -5202,5 +5202,124 @@ DELETE FROM DPET1
 WHERE DEPTNO=1;
 
 
+---------------------------
+
+
+/*
+----------------------------------------------------------------
+-----  CREATING DDL TRIGGERS
+---------------------------------------------------------------
+*/
+
+DROP TRIGGER before_create_trigger;
+
+
+CREATE OR REPLACE TRIGGER before_create_trigger
+BEFORE CREATE
+ON SCHEMA
+BEGIN
+IF to_number(to_char(sysdate,'hh24')) not between 12 and 16 then
+raise_application_error(-20001,'Trigger error: Create not Allowed now');
+END IF;
+END; 
+
+
+CREATE TABLE t2 (value1 number);
+
+CREATE OR REPLACE VIEW x_y AS SELECT * FROM HR.EMPLOYEES;
+
+
+---------------------------
+---------------------------------------------------------------
+
+/*
+----------------------------------------------------------------
+-----  AFTER CREATE -  DDL TRIGGERS
+---------------------------------------------------------------
+*/
+
+
+DROP TABLE ddl_log;
+
+CREATE TABLE ddl_log (
+operation varchar2(30),
+obj_owner varchar2(30),
+object_name varchar2(30),
+attempt_by varchar2(30),
+attempt_date DATE);
+
+
+
+CREATE OR REPLACE TRIGGER before_create_trigger
+AFTER DDL
+ON SCHEMA
+    BEGIN
+        INSERT INTO ddl_log
+        SELECT ora_sysevent, ora_dict_obj_owner,
+        ora_dict_obj_name,USER,SYSDATE
+        FROM DUAL;
+        dbms_output.put_line('trigger before_create_trigger firded');
+    END;    
+
+
+SELECT * FROM ddl_log;
+
+SELECT * FROM hr.sys_tabl1;
+
+CREATE TABLE tabl1(n number);
+
+CREATE TABLE tabl2(n number);
+
+DROP TABLE tabl2;
+
+ALTER TABLE tabl1
+add x number;
+
+DROP TABLE tabl1;
+
+
+---------------------------------------------------------------
+
+/*
+----------------------------------------------------------------
+-----  SYSTEM EVENT TRIGGER -  DDL TRIGGERS
+---------------------------------------------------------------
+*/
+
+DROP TABLE log_table;
+
+CREATE TABLE log_table
+(
+user_id varchar2(100),
+log_date date,
+action varchar2(100)
+);
+
+CREATE OR REPLACE TRIGGER logon_t
+AFTER
+LOGON
+ON DATABASE
+BEGIN
+INSERT INTO log_table VALUES (USER, SYSDATE, 'LOGON');
+END;
+
+CREATE OR REPLACE TRIGGER logoff_t
+BEFORE
+LOGOFF
+ON DATABASE
+BEGIN
+INSERT INTO log_table VALUES (USER, SYSDATE, 'LOGOFF');
+END;
+
+
+select * from log_table;
+
+
+select sysTIMESTAMP FROM DUAL;
+
+
+
+
+
 
 

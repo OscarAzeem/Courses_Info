@@ -748,89 +748,51 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 * **SHOW ALL INFO ABOUT ALL TABLESPACES:**
     * This query is taken from [**HERE**](https://amitzil.wordpress.com/2016/03/23/tablespaces-free-space-and-stuff/ "Tablespaces cool info")
     * Query:
-        * select
-        
-        tablespace_name,
-        
-        curr_size,
-        
-        max_size,
-        
-        free_size,
-        
-        curr_size-free_size used_size,
-        
-        pct_free,
-        
-        round(((max_size-(curr_size-free_size))/max_size)*100,2) pct_free_total,
-        
-        free_chunks,
-        
-        largest_chunk
-        
-        from
-        
-        (select 
-        
-        ts.tablespace_name,
-        
-        round(dbf.bytes/1024/1024,2) curr_size,
-        
-        round(dbf.maxbytes/1024/1024) max_size,
-        
-        nvl(round(fs.bytes/1024/1024,2),0) free_size,
-        
-        round((nvl(fs.bytes,0)/dbf.bytes)*100,2) pct_free,
-        
-        nvl(fs.free_chunks,0) free_chunks,
-        
-        nvl(round(fs.largest_chunk/1024/1024,2),0) largest_chunk
-        
-        from
-        
-        dba_tablespaces ts,
-        
-        (select
-        
-        tablespace_name,
-        
-        sum(bytes) bytes, 
-        
-        sum(greatest(maxbytes,bytes)) maxbytes
-        
-        from
-        
-        (select tablespace_name,bytes,maxbytes from dba_data_files)
-        
-        group by tablespace_name
-        
-        ) dbf,
-        
-        (select
-        
-        tablespace_name, 
-        
-        sum(bytes) bytes,
-        
-        count(*) free_chunks,
-        
-        max(bytes) largest_chunk
-        
-        from dba_free_space
-        
-        group by tablespace_name
-        
-        ) fs
-        
-        where ts.tablespace_name=dbf.tablespace_name
-        
-        and ts.tablespace_name=fs.tablespace_name(+)
-        
-        )
-        
-        order by pct_free desc;
 
+```
+select
+tablespace_name,
+curr_size,
+max_size,
+free_size,
+curr_size-free_size used_size,
+pct_free,
+round(((max_size-(curr_size-free_size))/max_size)*100,2) pct_free_total,
+free_chunks,
+largest_chunk
+from
+(select 
+ts.tablespace_name,
+round(dbf.bytes/1024/1024,2) curr_size,
+round(dbf.maxbytes/1024/1024) max_size,
+nvl(round(fs.bytes/1024/1024,2),0) free_size,
+round((nvl(fs.bytes,0)/dbf.bytes)*100,2) pct_free,
+nvl(fs.free_chunks,0) free_chunks,
+nvl(round(fs.largest_chunk/1024/1024,2),0) largest_chunk
+from
+dba_tablespaces ts,
+(select
+tablespace_name,
+sum(bytes) bytes, 
+sum(greatest(maxbytes,bytes)) maxbytes
+from
+(select tablespace_name,bytes,maxbytes from dba_data_files)
+group by tablespace_name
+) dbf,
+(select
+tablespace_name, 
+sum(bytes) bytes,
+count(*) free_chunks,
+max(bytes) largest_chunk
+from dba_free_space
+group by tablespace_name
+) fs
+where ts.tablespace_name=dbf.tablespace_name
+and ts.tablespace_name=fs.tablespace_name(+)
+)
+order by pct_free desc;
 
+```
 * **ASSIGNING A TABLESPACE TO A CERTAIN TABLE WHEN CREATING:**
     * CREATE TABLE [SCHEMA].[TABLE] ([COLUMN_NAME] [DATA_TYPE]) **TABLESPACE** [TABLESPACE_NAME]
 * **DROPPING A TABLESPACE:**
@@ -872,6 +834,9 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 * **ALTER AN EXISTING DATAFILE FROM A TABLESPACE TO AUTOEXTEND ON:**
     *  ALTER DATABASE **DATAFILE** 'C:\APP\XMY9080\ORADATA\ORCL\DATAFILE.DBF' AUTOEXTEND **ON** maxsize 2000M;
 
+
+
+
 ## DBA
 * Changing the session:
     * alter session set container=orclpdb;
@@ -895,6 +860,9 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 * **SHOW ALL DATABASE PROPERTIES:**
     * SELECT * FROM DATABASE_PROPERTIES;
 * 
+
+### Auditing command
+* **[Auditing database Activity](https://docs.oracle.com/cd/E11882_01/server.112/e10575/tdpsg_auditing.htm#TDPSG50000 "Auditing command")**
 
 ## RANDOM QUERYS
 * [GENERATE RANDOM VALUES (INT, STRINGS)](https://oracle-base.com/articles/misc/dbms_random "Random values")

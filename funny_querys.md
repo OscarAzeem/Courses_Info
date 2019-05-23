@@ -169,6 +169,12 @@ SELECT * FROM DatabaseNameReference.TableNameReference
 
 WHERE CONDITION='CONDITION';
 
+* Add a new column to a pre-existing table
+    * ALTER TABLE RETAIL.EMPLOYEE ADD NewCol CHAR(25)
+* Change the column name to a pre-existing table
+    * alter table your_db.your_table RENAME job_code TO depart_number;
+* Granting ALL TABLE permissons to an user
+    * GRANT ALL PRIVILEGES ON [ESQUEMA].[TABLE] TO [USER]
 
 
 ## TERADATA CREATE COMMAND

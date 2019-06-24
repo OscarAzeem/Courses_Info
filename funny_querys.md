@@ -126,7 +126,7 @@ mysql> source backup-file.sql;
  ORDER BY DatabaseName, CreateTimeStamp;
 
  * Show all user privileges:
-
+```
  SELECT
 A.ROLENAME,
 A.GRANTEE,
@@ -156,6 +156,7 @@ DBA.ACCESSRIGHT_REF D
 ON
 B.ACCESSRIGHT=D.ACCESSRIGHT
 ; 
+```
 
 * Create table as other table: 
 
@@ -881,3 +882,109 @@ order by pct_free desc;
     * COLUMN TABLESPACE_NAME FORMAT A30
     * COLUMN FILE_NAME FORMAT A50
 
+
+# [OLAP - SQL](https://www.ibm.com/developerworks/community/blogs/fredho66/entry/sql_olap_functions_in_informix1?lang=en "Olap functions")
+* OLAP is ***OnLine Analytical Processing*** (as opposed to OnLine Transaction Processing – OLTP).
+* It usually works with multi-dimensional databases requiring frequent roll-up, roll-down and slicing and dicing.
+* OLAP is the overall encompassing term for the type of processing to be done, there are specific functions known as SQL OLAP functions that are supported by different database systems and/or BI tools
+* SQL OLAP they adhere to and extend the *ANSI SQL-99* standards, known as the “Elementary OLAP” package
+
+## Window Partition
+*  A window partition is a set of rows that are grouped together for the **purpose** of applying an OLAP function, as defined by one or more columns in a special ***OVER()*** clause.
+* The OLAP function is applied to every row, but is calculated with respect to the rows in the partition. If **no** partition is specified, the OLAP function is computed over the **complete intermediate result set.**
+* A window partition is a subset of rows returned by a query, 
+* Non-analytic functions compute their calculations with respect to every row in the result set. 
+* An OLAP function in a query is **applied** with respect to the **contents of its window partitions.**
+* You can *define window* partitions according to the values in a *single dimension* or you can specify *multiple dimensions*. For example, you could partition the rows based on city and state values or month, quarter, and year values.
+* General Sintaxis:
+```
+Olap_function () over (partition by col1, col2…)
+```
+    * Example:
+        * The stores are ranked according to their sales totals *for each value;* as the date changes, the ranking values are reset. Multiple sets of ranked values (1 to n) are computed within a single query expression.
+        * 
+```
+Select date, store_name, sum(dollars) as sales_dols,
+rank () over (partition by date order by sales_dols desc) as date_rank
+from period, store, sales
+where period.perkey = sales.perkey
+and store.storekey = sales.storekey
+and state = “CA”
+group by date, store_name
+order by date;
+```
+
+## The OVER() Clause
+* The **OLAP OVER** clause differentiates **OLAP functions** from other analytic or reporting functions
+* Depending on the type of OLAP function in question (ranking, aggregation, etc.), the OVER clause is subject to different usage rules. 
+* The OVER clause has three distinct *CLAUSES* (capabilities):
+    1. ***PARTITION BY***:
+        * For Defining window partitions
+    2. ***ORDER BY***:
+        * For Ordering rows within partitions
+        * The ORDER BY clause for an OLAP function defines the expressions for sorting rows ***within*** window partitions; however, the ORDER BY clause can be used without a preceding PARTITION BY clause, in which case the sort specification ensures that the OLAP function is applied to a meaningful (and intended) ordering of the intermediate result set.
+        * The ORDER BY clause,  is a prerequisite for the *ranking family of OLAP functions.*
+        * In the case of OLAP aggregations, the ORDER BY clause is not required in general, but it is a prerequisite to defining a window frame. 
+            * The partitioned rows must be sorted before the appropriate aggregate values can be computed for each frame
+        * Example:  the window partition is defined by the “Dimension” column. The five rows that contain the value “A” comprise a window, as do the five rows for “B” and “C”. The Meaure column is the input data for an OLAP RANK function; the rows within each partition are ordered by the Measure values. When the RANK function is applied, it is calculated over each partition. The Measure values are ranked 1 through 5 within each partition.
+
+ The OLAP ROW_NUMBER function is also calculated in this example, without a PARRITION BY clause, to produce consecutive row numbers for the entire result set
+```
+Select row_number() over () as row,
+dimension,
+measure,
+rank () over (partition by dimension order by measure)
+as Olap_rank
+from …;
+```
+    3. ***ROWS/RANGE specification:***
+        * For Defining window frames 
+
+## Window Frames
+* For non-ranking OLAP functions, such as aggregations, you can define a ***window frame***
+* A window frame defines a set of rows within a window partition.
+* When a window frame is defined, **the OLAP function is computed with respect to the contents of this moving frame rather than the fixed contents of the whole partition.**
+* The definition of a window frame can be:
+    1. Row-based (ROWS specification)
+        * The reference point for all window frames in the **current row**. 
+        * The SQL OLAP syntax provides mechanisms for defining a row-based window frame as ¨**any number of rows preceding and/or following the current row.**
+        * Example: The following example applies these rules to a specific set of values, showing the OLAP AVG function that would be calculated for each row. The sliding calculations produce a moving average with an interval of three rows or fewer, depending on which row is the current one.
+```
+Select row_number () over () as row,
+dimension,
+measure,
+avg (measure) over (partition by dimension)
+order by measure
+rows between current row and 2 following) as OLAP_AVG
+from …
+```
+    2. Value-based (RANGE specification).
+        * The SQL OLAP syntax also supports another kind of window frame, **whose limits are defined in terms of a value-based or range-based set of rows rather than a specific sequence of rows**.
+        * A frame could be defined as the set of rows with Year values some number of years preceding or following the current row’s year.
+        * Example:
+```
+select row_number() over () as row,
+dimension,
+year,
+measure,
+avg (measure) over (partition by dimension
+order by year asc
+range between current row and 1 preceding ) as olap_avg
+from …
+```
+
+## [QUALIFY OLAP](https://docs.oracle.com/cd/E57185_01/HIRUG/ch12s04s04s09.html "Qualify olap")
+* Filters results of a previously computed OLAP function according to user-specified conditions.
+* Example: 
+```
+SELECT COL_1
+,SUBSTR(COL_2,1,18) AS COD
+FROM SCHEMA.TABLE1
+QUALIFY ROW_NUMBER() OVER (PARTITION BY COD ORDER BY FECHA ASC) = 1
+```
+* Example 2:
+```
+SELECT TRUNC(FECHA,'MONTH') AS FECHA_TRUNCADA
+MAX(FECHA) OVER ()   AS MAX_FECHA
+from SCHEMA.TABLA
+```

@@ -71,12 +71,45 @@ mysql> source backup-file.sql;
 
 
 # Teradata 
+## Teradata Mode (BTET) vs. ANSI Mode
+Teradata systems have the ability to use either of these two modes:
+    1. Teradata mode:
+        * **Not** case sensitive for data comparisons
+        * **Allows truncations** of displayed data
+        * Transactions are **Commited implicitly**
+        * CREATE TABLE defaults to [**SET**](http://lakshmikishore.blogspot.com/2010/12/table-type-specifications-of-set-vs.html "Teradata Set")
+    2. ANSI mode:
+        * **Case sensitive** for data comparisons
+        * **Forbids truncation** of displayed data
+        * Transactions emplicitly require a **Commit Work**
+        * CREATE TABLE defaults to [**MULTISET**](http://lakshmikishore.blogspot.com/2010/12/table-type-specifications-of-set-vs.html "Teradata multiset")
+* **
 ## [Teradata Database Data Dictionary attributes:](https://docs.teradata.com/reader/oiS9ixs2ypIQvjTUOJfgoA/IWBAjOWwSlE5SLswfe_6Gw "Data dictionary")
 * **[SPOOL:](https://docs.teradata.com/reader/u8~Pwz3BmiO8RrPCsqF7bQ/obhnM3wzTkPdGCe9ZrlNoQ "Teradata Spool")**
     * Defines the maximum amount of space available to the user for intermediate query results,  volatile tables, or formatted answer sets to queries.
     The spool space specified in a profile takes precedence over spool space specified in a CREATE USER statement.
 * **
-* 
+* [AMP:](http://lakshmikishore.blogspot.com/2010/09/amp.html "Teradata AMP")
+    * AMP, acronym for "Access Module Processor," is the type of VPROC (*Virtual Processor*) used to manage the database, handle file tasks and *manipulate the disk subsystem* in the multi-tasking and possibly parallel-processing environment of the Teradata Database.
+    * ***Each AMP is an instance of the database management software responsible for accessing and manipulating data.***
+    * Every AMP is *allowed a part* of the database to manage, and *a part of the physical disk space* to keep its set of database tables
+    * Usually, the **AMP** obtains its portion of the disk space by **being associated with a virtual disk (vdisk)**
+    * The AMP handles its disk reading / writing by using its file system software, *which converts AMP steps (i.e., the steps from PEs) into physical data block requests.*
+    * The AMPs are responsible to access and manipulate the data so as to complete the request processing. There may be mutiple AMPs on one node, and the **communication among the AMPs is controlled by the BYNET.**
+    * The functions of AMP can be classified as the following:
+       1. BYNET interface, or Boardless BYNET interface;
+       2. **Database management:**
+             1. Locking;
+             2. Joining;
+             3. Sorting;
+             4. Aggregation;
+             5. Output data conversion;
+             6. Disk space management;
+             7. Accounting;
+             8. Journaling; 
+       3. File-subsystem management;
+       4. Disk-subsystem management. 
+
 
 ## TERADATA DDL definition
 * [Teradata Primary Index](http://www.teradatawiki.net/2013/08/Teradata-Primary-Index.html "Teradata primary index info")

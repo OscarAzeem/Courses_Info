@@ -8,7 +8,9 @@
 * Master user: sys as sysdba
 * Password (SYS-USER): masterdatabaseoracle
     * Or can be: masteroracledatabase (sorry)
-* alter pluggable database all open;
+```sql
+alter pluggable database all open;
+```
 
 ## Instalation Oracle 12c
 * Create and Configure a database

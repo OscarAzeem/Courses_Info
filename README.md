@@ -17,18 +17,17 @@ WHERE CONDITION='CONDITION';
 # MySQL
 ## MySQL DDL definition
 * [MySQL Data types](http://www.mysqltutorial.org/mysql-data-types.aspx "Mysql data types")
-    * Select current timestamp: 
+* Select current timestamp: 
 ```sql
 select CURRENT_TIMESTAMP from dual;
 ```
 
 * [Show table definition](https://stackoverflow.com/questions/898688/how-to-get-database-structure-in-mysql-via-query "Mysql ddl table definition")
-	* Statement: **DESCRIBE** (only shows type, and primary key)
+* Statement: **DESCRIBE** (only shows type, and primary key)
 ```sql
 DESCRIBE [TABLE_NAME];
 ```
-
-	* Statement: **SHOW CREATE TABLE** (shows the complete table definition):
+* Statement: **SHOW CREATE TABLE** (shows the complete table definition):
 ```sql
 SHOW CREATE TABLE [TABLE_NAME];
 ```
@@ -71,15 +70,15 @@ mysql> source backup-file.sql;
 CREATE [USER] IDENTIFIED BY [PASSWORD_USER];
 ```
 * [Grant Permissions](https://dev.mysql.com/doc/refman/8.0/en/grant.html "Grant Mysql8.0 reference manual")
-    * GRANT ALL:
+* GRANT ALL:
 ```sql
 GRANT ALL ON [SCHEMA].[TABLE | * ] TO ['USER']
 ```
-    * GRANT CREATE on any database and any table:
+* GRANT CREATE on any database and any table:
 ```sql
 GRANT CREATE ON * . * TO ['USER'];
 ```
-    * Show Table definition: 
+* Show Table definition: 
 ```sql
 SHOW CREATE TABLE [SCHEMA].[TABLE]
 ```
@@ -287,19 +286,17 @@ select dbms_metadata.get_ddl('TABLE', table_name) from user_tables;
 
 ## NLS (National Language Support) (Solves ORA-01861 ERROR)
 * [Show the NLS default oracle value](http://www.java2s.com/Code/Oracle/Date-Timezone/NLSDATEFORMATFindoutsystemdefaultdataformat.htm "NLS default")
-    * 
 ```sql
 SELECT value FROM v$nls_parameters WHERE parameter ='NLS_DATE_FORMAT';
 ```
-    * Default **NLS**:
+* Default **NLS**:
 ```sql
 ALTER SESSION SET NLS_DATE_FORMAT='DD-MON-YYYY HH24:MI:SS';
 ```
-    * NLS - Teradata **NSL**:
+* NLS - Teradata **NSL**:
 ```sql
 ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS';
 ```
-
 * [NLS (National Language Support)](https://docs.oracle.com/cd/B28359_01/server.111/b28298/ch3globenv.htm "NLS") parameters that determine the locale-specific behavior on both the client and the server. 
 *  NLS parameters can be specified in the following ways:
 * As initialization parameters on the server. 
@@ -312,7 +309,7 @@ ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS';
 ```sql
 ALTER SESSION SET NLS_SORT = FRENCH;
 ```
-    * Example altering NSL_DATE_LANGUAGE parameter session: 
+* Example altering NSL_DATE_LANGUAGE parameter session: 
 ```sql
 ALTER SESSION SET NLS_DATE_LANGUAGE = AMERICAN;
 ```
@@ -339,7 +336,7 @@ select * from NLS_INSTANCE_PARAMETERS
 ```
 * **NLS_DATABASE_PARAMETERS:**
     * shows the values of the NLS parameters for the database. The values are stored in the database.
-    * Example: 
+  	* Example: 
 ```sql
 select * from NLS_DATABASE_PARAMETERS;
 ```

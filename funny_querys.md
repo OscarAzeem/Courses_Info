@@ -1,31 +1,37 @@
 # Create table as other table: 
 
+```sql
 CT DatabaseName.TableName as DatabaseNameReference.TableNameReference with no data;
+```
 
 # Insert values INSERT INTO - SELECT
 
+```sql
 INSERT INTO DatabaseName.TableName
-
 SELECT * FROM DatabaseNameReference.TableNameReference
-
 WHERE CONDITION='CONDITION';
-
+```
 
 # MySQL
 ## MySQL DDL definition
 * [MySQL Data types](http://www.mysqltutorial.org/mysql-data-types.aspx "Mysql data types")
     * Select current timestamp: 
-        * select CURRENT_TIMESTAMP from dual;
+```sql
+select CURRENT_TIMESTAMP from dual;
+```
 * [Show table definition](https://stackoverflow.com/questions/898688/how-to-get-database-structure-in-mysql-via-query "Mysql ddl table definition")
     * Statement: **DESCRIBE** (only shows type, and primary key)
-        * DESCRIBE [TABLE_NAME];
+```sql
+DESCRIBE [TABLE_NAME];
+```
     * Statement: **SHOW CREATE TABLE** (shows the complete table definition):
-        * SHOW CREATE TABLE [TABLE_NAME];
-
+```sql
+SHOW CREATE TABLE [TABLE_NAME];
+```
 
 ## General Knowledge
 * You can't put SHOW statements inside a subquery. **The only statement that can go in a subquery is SELECT.**
-* When creating a table with the sentences: CREATE TABLE_BACKUP AS SELECT * FROM TABLE_ORIGINAL, the MySQL server doesn't add the **PRIMARY KEYS** belonging to the TABLE_ORIGINAL
+* When creating a table with the sentences: ``` CREATE  TABLE_BACKUP AS SELECT * FROM TABLE_ORIGINAL ```, the MySQL server doesn't add the **PRIMARY KEYS** belonging to the TABLE_ORIGINAL
 * Considerations when using (and creating) indexes: 
     * Every time a **PRIMARY KEY** is declared as a constraint in a column table, also is automatically created an **UNIQUE INDEX** for such column table
     * However, when declaring an **UNIQUE INDEX** in a column table no **PRIMARY KEY** is build in such column table. 
@@ -36,15 +42,13 @@ WHERE CONDITION='CONDITION';
 * 
 
 ## Start the MySQL Server
+```bash
 1. $ sudo service mysql start
 2. $ mysql -u root -p 
-
-* Load a .sql file: 
-
+#  Load a .sql file: 
 mysql> use db_name;
-
 mysql> source backup-file.sql;
-
+```
 * Change the Database and Table Name to case insensitive (by default some environments has the Case senstive option ON by default)
 1. Edit: 
     * sudo nano /etc/mysql/my.cnf
@@ -59,17 +63,22 @@ mysql> source backup-file.sql;
 ## MySQL DBA Querys
 * **When Grating you can use Wildcards.**
 * [Create an user](https://dev.mysql.com/doc/refman/8.0/en/create-user.html "Create an user on MySQL"): 
-    * CREATE [USER] IDENTIFIED BY [PASSWORD_USER];
+```sql
+CREATE [USER] IDENTIFIED BY [PASSWORD_USER];
+```
 * [Grant Permissions](https://dev.mysql.com/doc/refman/8.0/en/grant.html "Grant Mysql8.0 reference manual")
     * GRANT ALL:
-        * GRANT ALL ON [SCHEMA].[TABLE | * ] TO ['USER']
+```sql
+GRANT ALL ON [SCHEMA].[TABLE | * ] TO ['USER']
+```
     * GRANT CREATE on any database and any table:
-        * GRANT CREATE ON * . * TO ['USER'];
-* Show Table definition: 
-    * SHOW CREATE TABLE [SCHEMA].[TABLE]
-* 
-
-
+```sql
+GRANT CREATE ON * . * TO ['USER'];
+```
+    * Show Table definition: 
+```sql
+SHOW CREATE TABLE [SCHEMA].[TABLE]
+```
 # Teradata 
 ## Teradata Mode (BTET) vs. ANSI Mode
 Teradata systems have the ability to use either of these two modes:
@@ -118,29 +127,24 @@ Teradata systems have the ability to use either of these two modes:
         * If you try and insert a row with a Primary Index value that is already in the table, the row will be rejected. 
         * **An UPI enforces UNIQUENESS for a column (or columns)**
         * **SQL SINTAXIS**
-            * CREATE TABLE sample_1
-            
-             (col_a INT
-            
-             ,col_b INT
-            
-             ,col_c INT)
-            
-            **UNIQUE PRIMARY INDEX** (col_b);
+```sql
+CREATE TABLE sample_1
+(col_a INT
+,col_b INT
+,col_c INT)
+UNIQUE PRIMARY INDEX (col_b);
+```
     * **Non-Unique Primary Index (NUPI)**
         * A Non-Unique Primary Index (NUPI) means that the values for the selected column can be non-unique. 
         * **Duplicate values can exist.**
         * **SQL SINTAXIS**
-            * CREATE TABLE sample_2
-            
-             (col_x INT
-            
-             ,col_y INT
-            
-             ,col_z INT)
-            
-            **PRIMARY INDEX** (col_x);
-
+```sql
+CREATE TABLE sample_2
+(col_x INT
+,col_y INT
+,col_z INT)
+PRIMARY INDEX (col_x);
+```
 * [Teradata Create Table *SET* VS *MULTISET*](http://www.teradatatech.com/?p=782 "Set vs Multiset Teradata")
     * When a Table is created if not explicity declared, by default is a SET table. 
     * A SET table force Teradata to **check for the duplicate rows every time a new row is inserted or updated in the table.** This is an overhead on the resource if we need to insert massive amount of rows.
@@ -148,18 +152,16 @@ Teradata systems have the ability to use either of these two modes:
         * If we are inserting data using ***INSERT into SEL from clause*** then SET table check for duplicate rows will removed automatically and there will be no DUPLICATE ROW ERROR.
     *  **MULTISET**
         * If we are inserting data using ***INSERT into VALUES clause*** then SET table check for duplicate rows will not be removed automatically and there will be DUPLICATE ROW ERROR.
-
-
-
 * Getting Databases and tables info -- Teradata
-
+```sql
  SELECT DatabaseName,TableName, CreatorName, CreateTimeStamp, LastAlterName FROM dbc.columns
  GROUP BY (DatabaseName,TableName, CreatorName, CreateTimeStamp, LastAlterName)
  where DatabaseName NOT IN ('DBC','dbcmngr')
  ORDER BY DatabaseName, CreateTimeStamp;
+ ```
 
  * Show all user privileges:
-```
+```sql
  SELECT
 A.ROLENAME,
 A.GRANTEE,
@@ -190,39 +192,46 @@ ON
 B.ACCESSRIGHT=D.ACCESSRIGHT
 ; 
 ```
-
 * Create table as other table: 
-
+```sql
 CT DatabaseName.TableName as DatabaseNameReference.TableNameReference with no data;
-
+```
 * Insert values INSERT INTO - SELECT
-
+```sql
 INSERT INTO DatabaseName.TableName
-
 SELECT * FROM DatabaseNameReference.TableNameReference
-
 WHERE CONDITION='CONDITION';
-
+```
 * Add a new column to a pre-existing table
-    * ALTER TABLE RETAIL.EMPLOYEE ADD NewCol CHAR(25)
+```sql
+ALTER TABLE RETAIL.EMPLOYEE ADD NewCol CHAR(25)
+```
 * Change the column name to a pre-existing table
-    * alter table your_db.your_table RENAME job_code TO depart_number;
+```sql
+alter table your_db.your_table RENAME job_code TO depart_number;
+```
 * Granting ALL TABLE permissons to an user
-    * GRANT ALL PRIVILEGES ON [ESQUEMA].[TABLE] TO [USER]
-
+```sql
+GRANT ALL PRIVILEGES ON [ESQUEMA].[TABLE] TO [USER]
+```
 
 ## TERADATA CREATE COMMAND
 * **[CREATING USERS AND GRATING PRIVILEGES](https://docs.teradata.com/reader/u8~Pwz3BmiO8RrPCsqF7bQ/n7MECvaDeRfH1milApRIdg "Creating users and granting privileges")**
 * **[CREATE USER:](https://docs.teradata.com/reader/u8~Pwz3BmiO8RrPCsqF7bQ/HkONjPwbd0wA6n3gTuJA2A "Create uer teradata")**
-    * You must create a Teradata user with CREATE FUNCTION and EXECUTE FUNCTION access rights.
+    * You must create a Teradata user with ``` CREATE FUNCTION``` and ``` EXECUTE FUNCTION ```  access rights.
         * Example:
-            * CREATE user test AS password=test perm = 200000000, SPOOL = 100000000;
+```sql
+CREATE user test AS password=test perm = 200000000, SPOOL = 100000000;
+```
     * Steps to Crate an User:
         2. Creating a database (similar to an schema in Oracle):
-            * CREATE DATABASE myDB AS PERM = 500e+06; -- 0.5 GB ```nomodeset```
+```sql
+CREATE DATABASE myDB AS PERM = 500e+06; -- 0.5 GB nomodeset
+```
         1. Creating an user (the created database can be the default database for the new user):
-            * CREATE USER sysdba AS PERM=1e+09, PASSWORD=mypassword; -- 1 GB
-
+```sql
+CREATE USER sysdba AS PERM=1e+09, PASSWORD=mypassword; -- 1 GB
+```
 
 ## TERADATA GRANT COMMAND
 * **[CONNECTION AND PRIVILEGES](https://docs.teradata.com/reader/u8~Pwz3BmiO8RrPCsqF7bQ/HLlDxftcO9jcWSAHaAtLkw "Grant connection and privileges Teradata")**
@@ -230,7 +239,7 @@ WHERE CONDITION='CONDITION';
 
 # ORACLE
 Common oracle knowledge
-* When creating a table with the sentences: CREATE TABLE_BACKUP AS SELECT * FROM TABLE_ORIGINAL, the ORACLE server doesn't add the **PRIMARY KEYS** belonging to the TABLE_ORIGINAL
+* When creating a table with the sentences: ``` CREATE TABLE_BACKUP AS SELECT * FROM TABLE_ORIGINAL ``` , the ORACLE server doesn't add the **PRIMARY KEYS** belonging to the TABLE_ORIGINAL
 * When an user doesn't have rights to see o query a table/view/procedure the server will retrieve the following sentence: ORA-00942: table or view does not exist, even if the squema object exists. 
     * You can't see any tables because the USER doesn't [**OWN**](https://www.thatjeffsmith.com/archive/2013/03/why-cant-i-see-my-tables-in-oracle-sql-developer/ "Cool info about the user rights") any tables.
 * An User could have **USER RIGHTS (USER_SYS_PRIVS)** and rights granted by their  **GRANTED_ROLE (user_role_privs)**. When using *Dynamic SQL (execute immediate)* the user should have the rights for the SQL STATEMENTS declared within the procedure. 
@@ -260,9 +269,13 @@ create table t1 (
 ```
 * [Describe the **basic ddl info** about a schema object definition (table,view,sp)](https://docs.oracle.com/javadb/10.8.3.0/tools/rtoolsijcomrefdescribe.html "Describe an object")
     * Describe : 
-        * DESCRIBE [SCHEMA].[TABLE]
+```sql
+DESCRIBE [SCHEMA].[TABLE]
+```
 * [Describe the **full ddl info** ](https://stackoverflow.com/questions/19564989/how-to-extract-table-definitions-using-sql-or-toad "Full Oracle DDL definition")
-    *  select dbms_metadata.get_ddl('TABLE', table_name) from user_tables;
+```sql
+select dbms_metadata.get_ddl('TABLE', table_name) from user_tables;
+```
 * [Oracle Primary Keys](https://www.techonthenet.com/oracle/primary_keys.php "Oracle Primary Keys")
 * [Creating Oracle Tables](http://ramkedem.com/en/oracle-create-table-statement/ "Creating Oracle tables"), when creating a table, the not null sentence should be always at the end of the row.
     * [Creating Oracle not null columns](http://www.oracletutorial.com/oracle-basics/oracle-not-null/ "Oracle not null columns")
@@ -292,64 +305,78 @@ ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS';
 * With the ALTER SESSION statement:
     * You can use NLS parameters that are set in an ALTER SESSION statement **to override the default values that are set for the session in the initialization parameter file or set by the client with environment variables**
     * Example: 
-        * ALTER SESSION SET NLS_SORT = FRENCH;
+```sql
+ALTER SESSION SET NLS_SORT = FRENCH;
+```
     * Example altering NSL_DATE_LANGUAGE parameter session: 
-        * ALTER SESSION SET NLS_DATE_LANGUAGE = AMERICAN;
+```sql
+ALTER SESSION SET NLS_DATE_LANGUAGE = AMERICAN;
+```
 * In SQL functions:
     * You can use NLS parameters explicitly to hardcode NLS behavior within a SQL function. This practice overrides the default values that are set for the session in the initialization parameter file, set for the client with environment variables, or set for the session by the ALTER SESSION statement
     * Example: 
-        * TO_CHAR(hiredate, 'DD/MON/YYYY', 'nls_date_language = FRENCH')
-
+```sql
+TO_CHAR(hiredate, 'DD/MON/YYYY', 'nls_date_language = FRENCH')
+```
 
 ### NLS Data Dictionary Views
 * You can query the NSL parameters with the following sentences:
 * **NLS_SESSION_PARAMETERS**
     * shows the NLS parameters and their values for the session that is querying the view. It does not show information about the character set.
     * Example:
-        * select * from nls_session_parameters
+```sql
+select * from nls_session_parameters
+```
 * **NLS_INSTANCE_PARAMETERS:**
     * shows the current NLS instance parameters that have been explicitly set and the values of the NLS instance parameters
     * Example:
-        * select * from NLS_INSTANCE_PARAMETERS
+```sql
+select * from NLS_INSTANCE_PARAMETERS
+```
 * **NLS_DATABASE_PARAMETERS:**
     * shows the values of the NLS parameters for the database. The values are stored in the database.
     * Example: 
-        * select * from NLS_DATABASE_PARAMETERS;
-
+```sql
+select * from NLS_DATABASE_PARAMETERS;
+```
 
 
 ## Alter command
 * [Oracle add column](https://www.techonthenet.com/oracle/tables/alter_table.php "Add a new column in oracle server")
-    * ALTER TABLE customers
-
-    ADD customer_name varchar2(45);
+```sql
+ALTER TABLE customers
+ADD customer_name varchar2(45);
+```
 * [Oracle rename a column table](https://www.geeksforgeeks.org/sql-alter-rename/ "Oracle rename column table")
-    * ALTER TABLE [table_name] RENAME COLUMN [old_name] TO [new_name];
-
+```sql
+ALTER TABLE [table_name] RENAME COLUMN [old_name] TO [new_name];
+```
 * [Oracle adding a primary key constraint](https://www.techonthenet.com/oracle/primary_keys.php "Oracle adding a PK constraint")
-    * ALTER TABLE table_name
+```sql
+ALTER TABLE table_name
 ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
-
+```
 
 ## ORACLE INDEXES 
 * [Oracle Indexes](https://docs.oracle.com/cd/B28359_01/server.111/b28310/indexes003.htm#ADMIN11723 "Oracle indexes")
     * **CREATE AN INDEX OUTSIDE OF INTEGRITY CONSTRAINTS:**
-        * CREATE INDEX [INDEX_NAME] ON [TABLE_NAME]<(COLUMN_TABLE_NAME)>
-
-        TABLESPACE [TABLESPACE_NAME]
-
-        STORAGE (INITIAL 20K 
-
-        NEXT 20K
-
-        PCTINCREACE 75);
+```sql
+CREATE INDEX [INDEX_NAME] ON [TABLE_NAME]<(COLUMN_TABLE_NAME)>
+TABLESPACE [TABLESPACE_NAME]
+STORAGE (INITIAL 20K 
+NEXT 20K
+PCTINCREACE 75);
+```
 
 * **CREATING AN UNIQUE INDEX:**
-    * CREATE **UNIQUE** INDEX [INDEX_NAME] ON [TABLE_NAME]<(COLUMN_TABLE_NAME)>
-
-    TABLESPACE [TABLESPACE_NAME];
+```sql
+CREATE UNIQUE INDEX [INDEX_NAME] ON [TABLE_NAME]<(COLUMN_TABLE_NAME)>
+TABLESPACE [TABLESPACE_NAME];
+```
 * **DROPPING AN INDEX:**
-    * DROP INDEX [INDEX_NAME];
+```sql
+DROP INDEX [INDEX_NAME];
+```
 
 ## General Info: 
 
@@ -359,99 +386,172 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 * [Oracle Synonyms](https://www.thatjeffsmith.com/archive/2013/03/why-cant-i-see-my-tables-in-oracle-sql-developer/ "Cool info about synonyms")
     * A SYNONYM is like a shortcut or pointer or link, it allows you to reference an object in the database by a different name
     * Everytime you have been granted any type or right (select, update, etc) to an squema object different from yours, a synonym is created in order to **QUERY** the object outside your default schema. Now you have a synonym who has the rights to execute a certain right to an object, but you dont have directly the rights to such object because you are not the owner .
-    * 
-
 
 ## General Queries
 * Show [Explain Plan FOR](https://docs.oracle.com/cd/B10500_01/server.920/a96533/ex_plan.htm "Expalin plan paps")
     * Example: 
-        * EXPLAIN PLAN FOR SELECT * FROM [TABLE];
+```sql
+EXPLAIN PLAN FOR SELECT * FROM [TABLE];
+```
 * Show Current version:
-    * SELECT * FROM V$VERSION
+```sql
+SELECT * FROM V$VERSION
+```
 * Create Table with the same structure as other table (with no data): 
-	* CREATE TABLE [table_name] AS SELECT * FROM [ESCHEMA].[TABLE] WHERE 1=0; -- select no value
+```sql
+CREATE TABLE [table_name] AS SELECT * FROM [ESCHEMA].[TABLE] WHERE 1=0; -- select no value
+```
 	* Example:
-		* create table test_table as select * from hr.employees where 1=0;
+```sql
+create table test_table as select * from hr.employees where 1=0;
+```
 * Create table with the same structure and data from other table: 
-	* CREATE TABLE [table_name] AS SELECT * FROM [ESCHEMA].[TABLE]; 
+```sql
+CREATE TABLE [table_name] AS SELECT * FROM [ESCHEMA].[TABLE]; 
+```
 	* Example:
-		* create table test_table as select * from hr.employees;
+```sql
+create table test_table as select * from hr.employees;
+```
 * Limit the result subset:
-    * select * from [esquema.table] where ROWNUM <= [number_limit]
+```sql
+select * from [esquema.table] where ROWNUM <= [number_limit]
+```
 * Getting the current user (show user):
-    * select user from dual;
+```sql
+select user from dual;
+```
 * Shows all directories:
-    * select * from ALL_DIRECTORIES;
+```sql
+select * from ALL_DIRECTORIES;
+```
 * Shows permissions for tables, squemas: 
-    * SELECT * FROM all_tab_privs
+```sql
+SELECT * FROM all_tab_privs
+```
 * Create or Replace:
-    * CREATE OR REPLACE [NAME]
+```sql
+CREATE OR REPLACE [NAME]
+```
     * works on functions, procedures, packages, types, synonyms, trigger and views. **THIS DOES NOT WORK ON TABLES, MATERIALIZED VIEWS, DATABASE LINKS**
 * Shows all user privileges:
-    *  select * from USER_SYS_PRIVS;
+```sql
+ select * from USER_SYS_PRIVS;
+ ```
 * Shows roles you've been granted
-    * select * from user_role_privs;
+```sql
+select * from user_role_privs;
+```
 * Shows which privileges each role gives you in role_sys_privs  (with the role name as the grantee):
-    * select * from role_sys_privs;
+```sql
+select * from role_sys_privs;
+```
 * Shows all the privileges granted to the user.
-    * select * from session_privs;
+```sql
+select * from session_privs;
+```
 * Grant permissions to an user: 
     * Create: 
-        * grant CREATE ANY TABLE TO HR;
+```sql
+grant CREATE ANY TABLE TO HR;
+```
     * DROP:
-        * grant DROP ANY TABLE TO HR;
+```sql
+grant DROP ANY TABLE TO HR;
+```
     * Alter a database:
-    	* grant ALTER DATABASE TO HR;
+```sql
+grant ALTER DATABASE TO HR;
+```
     * Select:
-        * GRANT SELECT ON [esquema.table] TO [user_name]
+```sql
+GRANT SELECT ON [esquema.table] TO [user_name]
+```
 	* Create a session and connect to database:
-	    * GRANT CREATE SESSION, CONNECT TO [user_name];
+```sql
+GRANT CREATE SESSION, CONNECT TO [user_name];
+```
     * Permissions to execute an external procedure (not propietary): 
         * With the account procedure owner: 
-            * GRANT EXECUTE ON [PROCEDURE_PACKAGE_NAME] TO [USER_NAME];
+```sql
+GRANT EXECUTE ON [PROCEDURE_PACKAGE_NAME] TO [USER_NAME];
+```
 * Grant permissions to the *SYS v$ view:* 
     * Oracle v$ views are named V_$VIEWNAME and they have synonyms in format V$VIEWNAME and you can’t give privilage on a synonym.
     * Example:
-        * grant select on v_$session to hr;
+```sql
+grant select on v_$session to hr;
+```
     * Grant permissions to transactions view: **V$TRANSACTION;**
-        *  grant select on V_$TRANSACTION to HR;
+```sql
+grant select on V_$TRANSACTION to HR;
+```
 * Shows info about all objects:
-    * SELECT * from ALL_OBJECTS;
+```sql
+SELECT * from ALL_OBJECTS;
+```
 * Shows procedures/functions/packages content:
-    * select * from user_source;
+```sql
+select * from user_source;
+```
 * Shows which procedures/packages/functions have execute permissions for an user:
-    * select * from user_tab_privs;
+```sql
+select * from user_tab_privs;
+```
 * Shows all the objects owned by the USER:
-    * select * from user_objects;
+```sql
+select * from user_objects;
+```
 * Shows detailed info about the triggers owned by the user:
-    * select * from user_triggers;
+```sql
+select * from user_triggers;
+```
 * Shows the content of the database objects that were given permission to execute to a certain user, but such user is not the owner. 
-    * SELECT * FROM all_source WHERE name = '[Procedure|Package|Function]' ORDER BY TYPE, LINE;
+```sql
+SELECT * FROM all_source WHERE name = '[Procedure|Package|Function]' ORDER BY TYPE, LINE;
+```
 * [SET_SQUEMA (Default schema)](https://docs.oracle.com/javadb/10.6.2.1/ref/rrefsqlj32268.html "The default schema for a certain user")
     * By default the 'default schema name' it is the user you use to log in. [GET_SQUEMA (GET Default schema)](https://dba.stackexchange.com/questions/131995/what-is-the-name-of-the-default-schema-in-oracle "GET Default schema")
     * You can query it as belows:
-        * select sys_context('USERENV', 'CURRENT_SCHEMA') from dual;
+```sql
+select sys_context('USERENV', 'CURRENT_SCHEMA') from dual;
+```
     * Changing the default schema: 
-        * alter session set current_schema=USER2;
+```sql
+alter session set current_schema=USER2;
+```
 * Revoke permissons SELECT|INSERT|UPDATE|DELETE to a TABLE TO certain user:
-    * REVOKE  [INSERT|DELETE|UPDATE] ON ESQUEMA.TABLE FROM USER;
+```sql
+REVOKE  [INSERT|DELETE|UPDATE] ON ESQUEMA.TABLE FROM USER;
+```
         * Example: REVOKE  INSERT,DELETE,UPDATE ON HR.HR_TABLE FROM FORD;
 * Show the error message of an SQL error: 
-	* dbms_output.put_Line(sqlerrm([error_Number]));
+```sql
+dbms_output.put_Line(sqlerrm([error_Number]));
+```
 * Show all the **Triggers** (independent of the database privileges)
-    * select * from all_triggers;
+```sql
+select * from all_triggers;
+```
     * **DEPENDING** on your assigned database privileges:
-        * select * from DBA_TRIGGERS;
-        * select * from USER_TRIGGERS;
-
+```sql
+select * from DBA_TRIGGERS;
+select * from USER_TRIGGERS;
+```
 
 ## SYS V$VIEW_NAME
 * Show all sessions:
-    * select * from V$session;
+```sql
+select * from V$session;
+```
 * Show all Transactions:
-    * select * from V$TRANSACTION;
+```sql
+select * from V$TRANSACTION;
+```
 * Show locked tables:
-    * select * from v$lock
+```sql
+select * from v$lock
+```
 
 ## Partitions
 * Table partitions: Dividing table into multiple pieces. 
@@ -463,176 +563,131 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 
 ### QUERYING PARTITIONS
 * **QUERYING SPECIFIC PARTITIONS CONTENT**:
-    * SELECT * FROM [TABLE] PARTITION([PARTITION_NAME]) WHERE=[CONDITIONS]
+```sql
+SELECT * FROM [TABLE] PARTITION([PARTITION_NAME]) WHERE=[CONDITIONS]
+```
 * **SHOW all tab partitions (metadata table):**
-    * SELECT * FROM ALL_TAB_PARTITIONS
+```sql
+SELECT * FROM ALL_TAB_PARTITIONS
+```
 * **SHOW all partitions from a specifyc table:**
-    * SELECT * FROM ALL_TAB_PARTITIONS WHERE TABLE_NAME='[TABLE_NAME]'
+```sql
+SELECT * FROM ALL_TAB_PARTITIONS WHERE TABLE_NAME='[TABLE_NAME]'
+```
 * **ADDING A NEW PARTITION**:
     * A partition can be added when **NO other partition** has been declared before with an upper bound. The partition PARTITION sales_pmax VALUES LESS THAN (MAXVALUE), always adds a bigger value and no new partitions can be created. To create a new partition you have to delete the MAXVALUE partition. 
     * [Creating partition example:](https://www.enterprisedb.com/de/docs/en/10.0/Ora_Compat_Dev_Guide/Database_Compatibility_for_Oracle_Developers_Guide.1.106.html "Partition alter example") 
-        * ALTER TABLE SALES ADD PARTITION p10 VALUES LESS THAN(TO_DATE ('2016-01-01', 'YYYY-MM-DD'));
+```sql
+ALTER TABLE SALES ADD PARTITION p10 VALUES LESS THAN(TO_DATE ('2016-01-01', 'YYYY-MM-DD'));
+```
 * **DROPPING A PARTITION:**
-    * ALTER TABLE [TABLE] DROP PARTITION [PARTITION_NAME];
+```sql
+ALTER TABLE [TABLE] DROP PARTITION [PARTITION_NAME];
+```
+
 ### Partitioning Methods
 * When creating partitions you need to use the TO_DATE function to convert DATES to the specific DATE used by the NSL_DATE_LANGUAGE parameter.
 
 * **Range Partitioning:**
     * Partitioning technique where data is stored separately in different sub-tables based on the data range
     * Example:
-    * CREATE TABLE SALES
+```sql
+CREATE TABLE SALES
+(
+customer_id NUMBER,
+order_date DATE,
+order_amount number,
+region varchar2(10)
+)
+PARTITION BY RANGE (order_date)
+(
+PARTITION sales_p1507 VALUES LESS THAN (TO_DATE('2015-07-01',' YYYY-MM-DD'))
+PARTITION sales_p1508 VALUES LESS THAN (TO_DATE('2015-08-01',' YYYY-MM-DD')),
+PARTITION sales_pmax VALUES LESS THAN (MAXVALUE)
+);
+```
 
-    (
-
-    customer_id NUMBER,
-
-    order_date DATE,
-
-    order_amount number,
-
-    region varchar2(10)
-
-    )
-
-    PARTITION BY RANGE (order_date)
-
-    (
-
-    PARTITION sales_p1507 VALUES LESS THAN (TO_DATE('2015-07-01',' YYYY-MM-DD')),
-
-    PARTITION sales_p1508 VALUES LESS THAN (TO_DATE('2015-08-01',' YYYY-MM-DD')),
-
-    PARTITION sales_pmax VALUES LESS THAN (MAXVALUE)
-
-    );
 
 * **List Partitioning:**
     * List partitioning is a partitioning technique where you specify a list of discrete values for the partitioning key in the description for each partition.
         * Example: 
-        * CREATE TABLE SALES_PARTITION_LIST
-
-        (
-
-        customer_id NUMBER,
-        
-        order_date DATE,
-        
-        order_amount NUMBER,
-        
-        region varchar2(10)
-        
-        )
-
-        PARTITION BY LIST (region)
-
-        (
-
-        PARTITION partition_east VALUES ('east'),
-        
-        PARTITION partition_west VALUES ('west'),
-        
-        PARTITION partition_nort_south VALUES ('north', 'south')
-
-        );
+```sql
+CREATE TABLE SALES_PARTITION_LIST
+(
+customer_id NUMBER,
+order_date DATE,
+order_amount NUMBER,
+region varchar2(10)
+)
+PARTITION BY LIST (region)
+(
+PARTITION partition_east VALUES ('east'),
+PARTITION partition_west VALUES ('west'),
+PARTITION partition_nort_south VALUES ('north', 'south')
+);
+```
 * **Hash Partitioning:**
     * Hash partitioning is a partitioning technique where a hash key is used to distribute rows evenly across the different partitions (sub-tables). **You can't explicity declare partitions** 
     * This is typically used where rangets aren't appropiate, i.e. customer id, product ID, etc.
     * Example:
-        * CREATE TABLE SALES_PARTITION_HASH
-
-        (
-        
-        customer_id NUMBER,
-        
-        order_date DATE,
-        
-        order_amount number,
-        
-        region varchar2(10)
-
-        )
-
-        PARTITION BY HASH(customer_id)
-
-        (
-
-        PARTITION c1,
-
-        PARTITION c2,
-
-        PARTITION c3,
-
-        PARTITION c4
-
-        );
-
-
+```sql
+CREATE TABLE SALES_PARTITION_HASH
+(
+customer_id NUMBER,
+order_date DATE,
+order_amount number,
+region varchar2(10)
+)
+PARTITION BY HASH(customer_id)
+(
+PARTITION c1,
+PARTITION c2,
+PARTITION c3,
+PARTITION c4
+);
+```
 * **Composite Partitioning**
     * Composite partitioning is a partitioning technique that combines some of the other partitioning methods.
     * Example: 
-        * CREATE TABLE SALES_PARTITION_COMPOSITE_PARTITION
-
-        (
-        
-        customer_id NUMBER,
-        
-        order_date DATE,
-        
-        order_amount number,
-        
-        region varchar2(10)
-
-        )
-
-        PARTITION BY RANGE(order_date)
-        
-        SUBPARTITION BY HASH(customer_id) SUBPARTITIONS 4
-        
-        (
-        
-        PARTITION partition_julio VALUES LESS THAN (TO_DATE('2015-07-01', 'YYYY-MM-DD')),
-        
-        PARTITION partition_agosto VALUES LESS THAN (TO_DATE('2015-08-01', 'YYYY-MM-DD')),
-        
-        PARTITION partition_septiembre VALUES LESS THAN (TO_DATE('2015-09-01', 'YYYY-MM-DD')),
-        
-        PARTITION partition_pmax VALUES LESS THAN (MAXVALUE)
-        
-        );
+```sql
+CREATE TABLE SALES_PARTITION_COMPOSITE_PARTITION
+(
+customer_id NUMBER,
+order_date DATE,
+order_amount number,
+region varchar2(10)
+)
+PARTITION BY RANGE(order_date)
+SUBPARTITION BY HASH(customer_id) SUBPARTITIONS 4
+(
+PARTITION partition_julio VALUES LESS THAN (TO_DATE('2015-07-01', 'YYYY-MM-DD')),
+PARTITION partition_agosto VALUES LESS THAN (TO_DATE('2015-08-01', 'YYYY-MM-DD')),
+PARTITION partition_septiembre VALUES LESS THAN (TO_DATE('2015-09-01', 'YYYY-MM-DD')),
+PARTITION partition_pmax VALUES LESS THAN (MAXVALUE)
+);
+```
 
 * **INTERVAL PARTITIONING:**
     * Interval partitioning is an enhancement to range partitioning in Oracle 11g and Interval partitioning.
     * Automatically creates time-based partition as new data is added **instead** of saving it in the **MAXVALUE** partition.
     * You have the specify the interval quantity with the clause **INTERVAL**
     * Example:
-        * CREATE TABLE SALES_PARTITION_BY_INTERVAL
-
-        (
-        
-        customer_id NUMBER,
-        
-        order_date DATE,
-        
-        order_amount number,
-        
-        region varchar2(10)
-
-        )
-
-        PARTITION BY RANGE(order_date)
-        
-        **INTERVAL(NUMTOYMINTERVAL(1,'MONTH'))**
-        
-        (
-        
-        PARTITION partition_julio VALUES LESS THAN (TO_DATE('2015-07-01', 'YYYY-MM-DD')),
-        
-        PARTITION partition_agosto VALUES LESS THAN (TO_DATE('2015-08-01', 'YYYY-MM-DD')),
-        
-        PARTITION partition_septiembre VALUES LESS THAN (TO_DATE('2015-09-01', 'YYYY-MM-DD'))
-        
-        );        
-
+```sql
+CREATE TABLE SALES_PARTITION_BY_INTERVAL
+(
+customer_id NUMBER,
+order_date DATE,
+order_amount number,
+region varchar2(10)
+)
+PARTITION BY RANGE(order_date)
+INTERVAL(NUMTOYMINTERVAL(1,'MONTH'))
+(
+PARTITION partition_julio VALUES LESS THAN (TO_DATE('2015-07-01', 'YYYY-MM-DD')),
+PARTITION partition_agosto VALUES LESS THAN (TO_DATE('2015-08-01', 'YYYY-MM-DD')),
+PARTITION partition_septiembre VALUES LESS THAN (TO_DATE('2015-09-01', 'YYYY-MM-DD'))
+);
+```
 
 ## TABLESPACES
 * A tablespace **logically** organizes data will it's being physically stored in **Data Files**
@@ -642,7 +697,9 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 * A tablespace can have **multiple Data Files** but a Data File it's associated **to only one** Tablespace. 
 * When any object is created if no TABLESPACE is explicity specify in their declaration, such object is stored in the USERS TABLESPACE.
     * You can see such USERS DEFAULT TABLESPACE with the following query: 
-        * SELECT * FROM DATABASE_PROPERTIES WHERE PROPERTY_NAME='DEFAULT_PERMANENT_TABLESPACE';
+```sql
+SELECT * FROM DATABASE_PROPERTIES WHERE PROPERTY_NAME='DEFAULT_PERMANENT_TABLESPACE';
+```
 * A Data File it's stored in a Storage System (NFS, Exadata, SAN, Raw, File System)
 * **EFECTS OF DELETE VS TRUNCTABLE TABLE ON A TABLESPACE:**
     * When deleting a table using the *DELETE* clause, the space taken for such rows remains untouch. The rows remains but the space is shown as available to be used for new rows. In other words the table is still full but with the space available, therefore, it could be not shown in the **dba_free_space** view.
@@ -658,7 +715,9 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
         * 8Kb size.  
         * A data block is the smallest unit of storage in an Oracle database. In contrast, at the physical, operating system level, all data is stored in bytes. 
         * **SHOW THE DB BLOCK SIZE:**
-            * SHOW PARAMETER db_block_size;
+```sql
+SHOW PARAMETER db_block_size;
+```
 * **TABLESPACES TYPES**
     1. **PERMANENT**:
         * It's used to stored all the permanent data, i.e. Table data, indexes. 
@@ -724,46 +783,44 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 * A user is assigned to a group of temp tablespaces instead of a single temporary tablespace.
 * It allows a single SQL operation to use multiple temporary tablespaces for **sorting**
 * Example:
-    * CREATE TEMPORARY TABLESPACE TEMP1
-
-    TEMPFILE '/disk1/dev/data/temp01.dbf'
-
-    SIZE 50m
-
-    TABLESPACE GROUP tempgroup1;
-* 
-
+```sql
+CREATE TEMPORARY TABLESPACE TEMP1
+TEMPFILE '/disk1/dev/data/temp01.dbf'
+SIZE 50m
+TABLESPACE GROUP tempgroup1;
+```
 
 ## ADDING SPACE TO A DATABASE
 * You can add more space to any database doing any of the following: 
     1. Create a new tablespace
     2. [Add a datafile to an existing tablespace:](http://www.dba-oracle.com/t_alter_tablespace_add_datafile.htm) 
-        * ALTER TABLESPACE tbs1
-
-        ADD DATAFILE '/disk1/dev/data/data02.dbf'
-
-        SIZE 50m
-
-        AUTOEXTEND ON
-
-        NEXT 512k
-
-        MAXSIZE 250M;
+```sql
+ALTER TABLESPACE tbs1
+ADD DATAFILE '/disk1/dev/data/data02.dbf'
+SIZE 50m
+AUTOEXTEND ON
+NEXT 512k
+MAXSIZE 250M;
+```
     3. Increace the size of an existing data file:
-        * ALTER DATABASE
-
-        DATAFILE '/disk1/dev/data/data02.dbf'
-
-        RESIZE 100m;
+```sql
+ALTER DATABASE
+DATAFILE '/disk1/dev/data/data02.dbf'
+RESIZE 100m;
+```
     4. Configure dynamic growth data file using the AUTOEXTEND=ON sentence.
 
 
 ## ROW MOVEMENT AND SHRINK COMMAND
 * [ROW MOVEMENT AND SHRINK COMMAND](http://www.dba-oracle.com/t_alter_table_shrink_space_command.htm "Row movement and shrink command")
     * To execute the **SHRINK COMMAND** it's neccessary that the table in which it'll be executed it's enabled the **ROW MOVEMENT**
-        * ALTER TABLE [TABLE_NAME] ENABLE ROW MOVEMENT;
+```sql
+ALTER TABLE [TABLE_NAME] ENABLE ROW MOVEMENT;
+```
     * Executing the shrink command:
-        * ALTER TABLE [TABLE_NAME] SHRINK SPACE; 
+```sql
+ALTER TABLE [TABLE_NAME] SHRINK SPACE; 
+```
     * Note: After executing the **SHRINK COMMAND** the indexes related to such table will be broken and must be rebuild o created again. 
 
 
@@ -776,48 +833,48 @@ ADD CONSTRAINT constraint_name PRIMARY KEY (column1, column2, ... column_n);
 
 ## TABLESPACE QUERYS:
 * [**CREATE A TABLESPACE:**](https://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_7003.htm "Create a tablespace")
-    * CREATE TABLESPACE tbs1
-
-    DATAFILE '/disk1/dev/data/data01.dbf'
-
-    size 50m
-
-    autoextend on
-
-    next 512k
-
-    maxsize 250M;
+```sql
+CREATE TABLESPACE tbs1
+DATAFILE '/disk1/dev/data/data01.dbf'
+size 50m
+autoextend on
+next 512k
+maxsize 250M;
+```
 * **CREATING A TABLESPACE WITH A DIFFERENT BLOCK SIZE THAN DEFAULT:**
-    * CREATE TABLESPACE [TABLESPACE_NAME] ['DATAFILE_NAME'] SIZE 10M BLOCKSIZE 16K;
+```sql
+CREATE TABLESPACE [TABLESPACE_NAME] ['DATAFILE_NAME'] SIZE 10M BLOCKSIZE 16K;
+```
     * NOTE: to change the blocksize of a Tablespace it should be declared first at Database level
 * **CREATE A TABLESPACE WITH AN EXISTING .DBF FILE:**
     * You should add **REUSE** after the **SIZE** sentence.
-    * CREATE TABLESPACE tbs2
-
-    DATAFILE 'C:\APP\XMY9080\ORADATA\ORCL\ORCLPDB\USERS_CREATED2.DBF'
-
-    size 5m
-
-    **REUSE**
-
-    autoextend on
-
-    next 512k
-
-    maxsize 250M;
-
+```sql
+CREATE TABLESPACE tbs2
+DATAFILE 'C:\APP\XMY9080\ORADATA\ORCL\ORCLPDB\USERS_CREATED2.DBF'
+size 5m
+REUSE
+autoextend on
+next 512k
+maxsize 250M;
+```
 * **SHOW ALL DBA DATA FILES OF EACH TABLESPACE:**
-    * SELECT * FROM dba_data_files;
+```sql
+SELECT * FROM dba_data_files;
+```
 * **SHOW TABLESPACES INFO:**
-    * SELECT * FROM dba_tablespaces;
+```sql
+SELECT * FROM dba_tablespaces;
+```
 * **SHOW THE FREE SPACE OF ALL TABLESPACES:**
-    * SELECT * FROM dba_free_space;
+```sql
+SELECT * FROM dba_free_space;
+```
     * Notice, if no free space is available for any Tablespace, it won't appear in the query results. 
 * **SHOW ALL INFO ABOUT ALL TABLESPACES:**
     * This query is taken from [**HERE**](https://amitzil.wordpress.com/2016/03/23/tablespaces-free-space-and-stuff/ "Tablespaces cool info")
     * Query:
 
-```
+```sql
 select
 tablespace_name,
 curr_size,
@@ -862,10 +919,14 @@ order by pct_free desc;
 
 ```
 * **ASSIGNING A TABLESPACE TO A CERTAIN TABLE WHEN CREATING:**
-    * CREATE TABLE [SCHEMA].[TABLE] ([COLUMN_NAME] [DATA_TYPE]) **TABLESPACE** [TABLESPACE_NAME]
+```sql
+CREATE TABLE [SCHEMA].[TABLE] ([COLUMN_NAME] [DATA_TYPE]) **TABLESPACE** [TABLESPACE_NAME]
+```
 * **DROPPING A TABLESPACE:**
     * *Dropping a Tablespace with no info inside*: 
-        * DROP TABLESPACE [TABLESPACE_NAME];
+```sql
+DROP TABLESPACE [TABLESPACE_NAME];
+```
         * Notice: 
             * When you delete a tablespace using the DROP sentence only, physically the Data File (.DBF) for such Tablespace remains untouch in the OS. If you want to delete the .DBF file also, you should use the DROP setence with INCLUDING CONTENTS AND DATAFILES. 
             * When deleting a tablespace **all the related objects to such tablespace (tables, views) are also deleted.**
@@ -875,35 +936,56 @@ order by pct_free desc;
             * Using the INCLUDING CONTENTS AND DATAFILES option also with the DROP TABLESPACE sentence, the .DBF file from such tablespace is physically removed from the OS.
             * If a transaction is currently active from an object which uses any .DBF file related to such TABLESPACE, the .DBF file can't be removed from the OS until the transaction finishes. 
 * **RENAMING AN EXISTING TABLESPACE:**
-    * ALTER TABLESPACE [TABLESPACE_NAME] RENAME TO [NEW_NAME_TABLESPACE];
+```sql
+ALTER TABLESPACE [TABLESPACE_NAME] RENAME TO [NEW_NAME_TABLESPACE];
+```
 * **RENAMING AN EXISTING DATA FILE (.DBF):**
     * NOTE: To rename an existing datafile, the Tablespace belonging to such DataFile should be offline: 
         * Manually you should rename the  ['DATA_FILE_NAME'] TO ['DATA_FILE_NEW_NAME'] using the OS navigator
-    * ALTER DATABASE RENAME FILE ['DATA_FILE_NAME'] TO ['DATA_FILE_NEW_NAME'];
+```sql
+ALTER DATABASE RENAME FILE ['DATA_FILE_NAME'] TO ['DATA_FILE_NEW_NAME'];
+```
 * **SETTING OFFLINE A TABLESPACE:**
-    * ALTER TABLESPACE [TABLESPACE_NAME] OFFLINE;
+```sql
+ALTER TABLESPACE [TABLESPACE_NAME] OFFLINE;
+```
 * **SETTING ONLINE A TABLESPACE:**
-    * ALTER TABLESPACE [TABLESPACE_NAME] ONLINE;
+```sql
+ALTER TABLESPACE [TABLESPACE_NAME] ONLINE;
+```
 * **REMOVE A DATAFILE FROM AN EXISTING TABLESPACE:**
-    * ALTER TABLESPACE [TABLESPACE_NAME] DROP DATAFILE '[DATAFILE_NAME]';
+```sql
+ALTER TABLESPACE [TABLESPACE_NAME] DROP DATAFILE '[DATAFILE_NAME]';
+```
     * Note: Only works with empty datafiles. 
 * **SHOW THE TEMPORARY TABLESPACES:**
-    * SELECT * from dba_temp_files;
+```sql
+SELECT * from dba_temp_files;
+```
 * **CREATE A TEMPORARY TABLESPACE:**
-    * CREATE **TEMPORARY** TABLESPACE [TEMPORARY_TABLESPACE_NAME] **TEMPFILE** ['DATA_FILE_NAME'] SIZE 10M;
+```sql
+CREATE TEMPORARY TABLESPACE [TEMPORARY_TABLESPACE_NAME] TEMPFILE ['DATA_FILE_NAME'] SIZE 10M;
+```
 * **SHOW THE DEFAULT TEMPORARY (TEMP) TABLESPACE:**
-    * SELECT * FROM DATABASE_PROPERTIES WHERE PROPERTY_NAME='DEFAULT_TEMP_TABLESPACE';
+```sql
+SELECT * FROM DATABASE_PROPERTIES WHERE PROPERTY_NAME='DEFAULT_TEMP_TABLESPACE';
+```
 * **CHANGING THE DEFAULT TEMPORARY (TEMP) TABLESPACE:**
-    * ALTER DATABASE DEFAULT TEMPORARY TABLESPACE [NEW_TEMPORARY_TABLESPACE_NAME]
+```sql
+ALTER DATABASE DEFAULT TEMPORARY TABLESPACE [NEW_TEMPORARY_TABLESPACE_NAME]
+```
 * **SHOW ALL THE TEMPORARY TABLESPACE GROUPS:**
-    * SELECT * FROM dba_tablespace_groups;
+```sql
+SELECT * FROM dba_tablespace_groups;
+```
 * **[ALTER AN EXISTING TEMP DATAFILE FROM A TEMP TABLESPACE TO AUTOEXTEND ON](https://www.databasejournal.com/features/oracle/autoextend-oracle-database-file-sizes.html "ALTER AUTOEXTEND"):**
-    * ALTER DATABASE **TEMPFILE** 'C:\APP\XMY9080\ORADATA\ORCL\TEMP1_DATAFILE_TEMPGROUP1.DBF' AUTOEXTEND **ON** maxsize 2000M;
+```sql
+ALTER DATABASE TEMPFILE 'C:\APP\XMY9080\ORADATA\ORCL\TEMP1_DATAFILE_TEMPGROUP1.DBF' AUTOEXTEND ON maxsize 2000M;
+```
 * **ALTER AN EXISTING DATAFILE FROM A TABLESPACE TO AUTOEXTEND ON:**
-    *  ALTER DATABASE **DATAFILE** 'C:\APP\XMY9080\ORADATA\ORCL\DATAFILE.DBF' AUTOEXTEND **ON** maxsize 2000M;
-
-
-
+```sql
+ALTER DATABASE DATAFILE 'C:\APP\XMY9080\ORADATA\ORCL\DATAFILE.DBF' AUTOEXTEND ON maxsize 2000M;
+```
 
 ## DBA
 * Changing the session:
@@ -918,16 +1000,23 @@ order by pct_free desc;
 * Increaze the buffer size: 
 	* When facing the error: *RA-20000: ORU-10027: buffer overflow, limit of 2000 bytes*, you can increaze the buffer size as follows: 
 	* SQL PLUS: 
-		1. set serveroutput on size 1000000; (buffer up to 1,000,000)
-		2. set serveroutput on size unlimited; (unlimited)
+```python
+1. set serveroutput on size 1000000; (buffer up to 1,000,000)
+2. set serveroutput on size unlimited; (unlimited)
+```
 	* PL/SQL
-		1. DBMS_OUTPUT.ENABLE(1000000); 
-		2. DBMS_OUTPUT.ENABLE (buffer_size => NULL); 
+```python
+1. DBMS_OUTPUT.ENABLE(1000000); 
+2. DBMS_OUTPUT.ENABLE (buffer_size => NULL);
+``` 
 * **CHANGING THE DEFAULT BLOCK SIZE AT DATABASE LEVEL:**
-    * ALTER SYSTEM SET DB_16K_CACHE_SIZE=60M SCOPE=both;
+```python
+ALTER SYSTEM SET DB_16K_CACHE_SIZE=60M SCOPE=both;
+```
 * **SHOW ALL DATABASE PROPERTIES:**
-    * SELECT * FROM DATABASE_PROPERTIES;
-* 
+```python
+SELECT * FROM DATABASE_PROPERTIES;
+```
 
 ### Auditing command
 * **[Auditing database Activity](https://docs.oracle.com/cd/E11882_01/server.112/e10575/tdpsg_auditing.htm#TDPSG50000 "Auditing command")**
@@ -939,10 +1028,11 @@ order by pct_free desc;
 
 ## SQLPLUS
 * **CHANGING THE OUTPUT FORMAT:**
-    * SET LINESIZE 150;
-    * COLUMN TABLESPACE_NAME FORMAT A30
-    * COLUMN FILE_NAME FORMAT A50
-
+```python
+SET LINESIZE 150;
+COLUMN TABLESPACE_NAME FORMAT A30
+COLUMN FILE_NAME FORMAT A50
+```
 
 # [OLAP - SQL](https://www.ibm.com/developerworks/community/blogs/fredho66/entry/sql_olap_functions_in_informix1?lang=en "Olap functions")
 * OLAP is ***OnLine Analytical Processing*** (as opposed to OnLine Transaction Processing – OLTP).
@@ -958,13 +1048,12 @@ order by pct_free desc;
 * An OLAP function in a query is **applied** with respect to the **contents of its window partitions.**
 * You can *define window* partitions according to the values in a *single dimension* or you can specify *multiple dimensions*. For example, you could partition the rows based on city and state values or month, quarter, and year values.
 * General Sintaxis:
-```
+```sql
 Olap_function () over (partition by col1, col2…)
 ```
     * Example:
         * The stores are ranked according to their sales totals *for each value;* as the date changes, the ranking values are reset. Multiple sets of ranked values (1 to n) are computed within a single query expression.
-        * 
-```
+```sql
 Select date, store_name, sum(dollars) as sales_dols,
 rank () over (partition by date order by sales_dols desc) as date_rank
 from period, store, sales
@@ -990,7 +1079,7 @@ order by date;
         * Example:  the window partition is defined by the “Dimension” column. The five rows that contain the value “A” comprise a window, as do the five rows for “B” and “C”. The Meaure column is the input data for an OLAP RANK function; the rows within each partition are ordered by the Measure values. When the RANK function is applied, it is calculated over each partition. The Measure values are ranked 1 through 5 within each partition.
 
  The OLAP ROW_NUMBER function is also calculated in this example, without a PARRITION BY clause, to produce consecutive row numbers for the entire result set
-```
+```sql
 Select row_number() over () as row,
 dimension,
 measure,
@@ -1010,7 +1099,7 @@ from …;
         * The reference point for all window frames in the **current row**. 
         * The SQL OLAP syntax provides mechanisms for defining a row-based window frame as ¨**any number of rows preceding and/or following the current row.**
         * Example: The following example applies these rules to a specific set of values, showing the OLAP AVG function that would be calculated for each row. The sliding calculations produce a moving average with an interval of three rows or fewer, depending on which row is the current one.
-```
+```sql
 Select row_number () over () as row,
 dimension,
 measure,
@@ -1023,7 +1112,7 @@ from …
         * The SQL OLAP syntax also supports another kind of window frame, **whose limits are defined in terms of a value-based or range-based set of rows rather than a specific sequence of rows**.
         * A frame could be defined as the set of rows with Year values some number of years preceding or following the current row’s year.
         * Example:
-```
+```sql
 select row_number() over () as row,
 dimension,
 year,
@@ -1037,14 +1126,14 @@ from …
 ## [QUALIFY OLAP](https://docs.oracle.com/cd/E57185_01/HIRUG/ch12s04s04s09.html "Qualify olap")
 * Filters results of a previously computed OLAP function according to user-specified conditions.
 * Example: 
-```
+```sql
 SELECT COL_1
 ,SUBSTR(COL_2,1,18) AS COD
 FROM SCHEMA.TABLE1
 QUALIFY ROW_NUMBER() OVER (PARTITION BY COD ORDER BY FECHA ASC) = 1
 ```
 * Example 2:
-```
+```sql
 SELECT TRUNC(FECHA,'MONTH') AS FECHA_TRUNCADA
 MAX(FECHA) OVER ()   AS MAX_FECHA
 from SCHEMA.TABLA

@@ -22,11 +22,11 @@ WHERE CONDITION='CONDITION';
 select CURRENT_TIMESTAMP from dual;
 ```
 * [Show table definition](https://stackoverflow.com/questions/898688/how-to-get-database-structure-in-mysql-via-query "Mysql ddl table definition")
-    * Statement: **DESCRIBE** (only shows type, and primary key)
+	* Statement: **DESCRIBE** (only shows type, and primary key)
 ```sql
 DESCRIBE [TABLE_NAME];
 ```
-    * Statement: **SHOW CREATE TABLE** (shows the complete table definition):
+	* Statement: **SHOW CREATE TABLE** (shows the complete table definition):
 ```sql
 SHOW CREATE TABLE [TABLE_NAME];
 ```

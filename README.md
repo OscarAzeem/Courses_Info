@@ -988,6 +988,64 @@ ALTER DATABASE TEMPFILE 'C:\APP\XMY9080\ORADATA\ORCL\TEMP1_DATAFILE_TEMPGROUP1.D
 ALTER DATABASE DATAFILE 'C:\APP\XMY9080\ORADATA\ORCL\DATAFILE.DBF' AUTOEXTEND ON maxsize 2000M;
 ```
 
+## COMMAND SQLPLUS (ORACLE)
+* **Calling** the sqplus command (Domain Service Name):
+```sql
+sqlplus -s $USER/$PASSWORD_USER@$DomainServiceName @SQL_FILE_QUERY $FirstParameter $SecondParameter
+```
+    * Example:
+```sql
+sqplus -s HR/HR_PA12@EXTERNAL_HOST @$HOME/improved_query.sql $HOME/Output_text_file.txt $date_today
+```
+* **Calling** the sqlplus command (IP):
+```sql
+sqplus -s $USER/$PASSWORD_USER@$IP:$PORT/$DSN @SQL_FILE_QUERY $FirstParameter $SecondParameter
+```
+    * Example, be aware that the IP direction could be replaced by the Node name (inside the server host file)
+```sql
+sqlplus -s HR/dHR_PA12@192.168.1.15:1521/HRDSN @$HOME/improved_query.sql $HOME/Output_text_file.txt $date_today
+```
+
+* **Flat File SQLPLUS**
+    * Example: 
+```sql
+1  WHENEVER SQLERROR EXIT 1;
+2
+3  SET LINESIZE 3000;
+4  SET PAGESIZE 0;
+5  SET HEADING ON;
+6  SET FEEDBACK OFF;
+7  SET VERIFY OFF;
+8  SET DOC OFF;
+9  SET ECHO OFF;
+10  SET TRIMSPOOL ON;
+11  SET TERM OFF;
+12  SET COLSEP '|';
+13
+14  SPOOL &1;
+15
+16  select COL1,COL2,COL3 FROM HR.HR
+25  SPOOL OFF;
+26
+27  QUIT;
+```
+* [**SQLPLUS option parameters:**](https://dba.stackexchange.com/questions/54149/how-to-make-sqlplus-output-appear-in-one-line "sqlplus options")
+    * ```SET LINESIZE``` 
+        * Linesize the length of the line. In most cases the maximum value for linesize is 32767. You can find out your maximum value if you set LINESIZE to an invalid value and check the error message so ```SET LINESIZE 0``` may give SP2-0267: linesize option 0 out of range (1 through 32767) (1)
+    * ```SET TRIMSPOOL ON``` 
+        * otherwise every line in the spoolfile is filled up with blanks until the linesize is reached
+    * ```SET TRIMOUT ON``` 
+        * otherwise every line in the output is filled up with blanks until the linesize is reached. 
+    * ```SET WRAP OFF``` 
+        * Truncates the line if its is longer then LINESIZE. This should not happen if linesize is large enough.
+    * ```SET TERMOUT OFF``` 
+        * suppresses the printing of the results to the output. The lines are still written to the spool file. This may accelerate the exectution time of a statement a lot.
+    * ```SET PAGESIZE 0``` 
+        * to set an infinite pagesize and avoid headings , titles and so on.
+    * There are some other SET parameters concerning output (NUMWIDTH, NUMFORMAT, LONG, COLSEP) and performance (ARRAYSIZE, LONGCHUNKSIZE).
+
+[* **Formatting reports**](https://docs.oracle.com/cd/B19306_01/server.102/b14357/ch6.htm "formatting sqlplus reports")
+
 ## DBA
 * Changing the session:
     * alter session set container=orclpdb;

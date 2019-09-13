@@ -388,6 +388,7 @@ DROP INDEX [INDEX_NAME];
     * A SYNONYM is like a shortcut or pointer or link, it allows you to reference an object in the database by a different name
     * Everytime you have been granted any type or right (select, update, etc) to an squema object different from yours, a synonym is created in order to **QUERY** the object outside your default schema. Now you have a synonym who has the rights to execute a certain right to an object, but you dont have directly the rights to such object because you are not the owner .
 
+
 ## General Queries
 * Show [Explain Plan FOR](https://docs.oracle.com/cd/B10500_01/server.920/a96533/ex_plan.htm "Expalin plan paps")
     * Example: 
@@ -434,7 +435,7 @@ SELECT * FROM all_tab_privs
 ```sql
 CREATE OR REPLACE [NAME]
 ```
-    * works on functions, procedures, packages, types, synonyms, trigger and views. **THIS DOES NOT WORK ON TABLES, MATERIALIZED VIEWS, DATABASE LINKS**
+* works on functions, procedures, packages, types, synonyms, trigger and views. **THIS DOES NOT WORK ON TABLES, MATERIALIZED VIEWS, DATABASE LINKS**
 * Shows all user privileges:
 ```sql
  select * from USER_SYS_PRIVS;
@@ -474,6 +475,11 @@ GRANT CREATE SESSION, CONNECT TO [user_name];
 ```
     * Permissions to execute an external procedure (not propietary): 
         * With the account procedure owner: 
+    * Grant: **CREATE TABLE TO USER**
+        * ```GRANT CREATE ANY TABLE TO USUARIOA;```
+    * GRANT: **TABLESPACE ACCESS TO USER**
+        * When assigning a default TABLESPACE to an USER, such USER doesn't have space priviliges by default, it should be explicity declared, otherwise we get the [ORA-01950: no privileges on tablespace tips](http://www.dba-oracle.com/t_ora_01950_no+priviledges_on_tablespace_string.htm "ORA Tablespace error") error
+        * ```GRANT UNLIMITED TABLESPACE TO <username>```
 ```sql
 GRANT EXECUTE ON [PROCEDURE_PACKAGE_NAME] TO [USER_NAME];
 ```
@@ -917,25 +923,93 @@ where ts.tablespace_name=dbf.tablespace_name
 and ts.tablespace_name=fs.tablespace_name(+)
 )
 order by pct_free desc;
-
 ```
-* **ASSIGNING A TABLESPACE TO A CERTAIN TABLE WHEN CREATING:**
+* **CUSTOM QUERY TO SHOW ALL TABLESPACES INFO**
 ```sql
-CREATE TABLE [SCHEMA].[TABLE] ([COLUMN_NAME] [DATA_TYPE]) **TABLESPACE** [TABLESPACE_NAME]
+SELECT FILE_NAME, TABLESPACE_NAME, FILE_ID, 
+CASE WHEN FULL_DECLARED_GB IS NULL
+THEN 0
+ELSE FULL_DECLARED_GB
+END FULL_DECLARED_GB,
+AVAILABLE_BYTES_GB,
+CASE WHEN OCCUPIED_SIZE_GB IS NULL
+THEN 0
+ELSE OCCUPIED_SIZE_GB
+END OCCUPIED_SIZE_GB,
+STATUS, ONLINE_STATUS, ESTADO_TABLESPACE,
+CASE WHEN ESTADO_TABLESPACE = 'ESPACIO LLENO (0%)'
+THEN 1
+    WHEN ESTADO_TABLESPACE = 'ESPACIO CRITICO (<5%)'
+THEN 2
+    WHEN ESTADO_TABLESPACE = 'ESPACIO SEVERO (<20%)'
+THEN 3
+ELSE
+    4
+END FLAG_ESTADO
+FROM (
+    SELECT
+    TOT.FILE_NAME,
+    TOT.TABLESPACE_NAME, TOT.FILE_ID, 
+    TOT.FULL_DECLARED_GB, 
+    CASE WHEN FREE.AVAILABLE_BYTES_GB IS NULL
+    THEN 0
+    ELSE
+        FREE.AVAILABLE_BYTES_GB
+    END AVAILABLE_BYTES_GB, 
+    CASE WHEN (TOT.FULL_DECLARED_GB-FREE.AVAILABLE_BYTES_GB) IS NULL
+    THEN TOT.FULL_DECLARED_GB
+        ELSE (TOT.FULL_DECLARED_GB-FREE.AVAILABLE_BYTES_GB)
+    END OCCUPIED_SIZE_GB,
+    TOT.STATUS, TOT.ONLINE_STATUS,
+    CASE WHEN FREE.AVAILABLE_BYTES_GB IS NULL
+    THEN 'ESPACIO LLENO (0%)'
+    WHEN FREE.AVAILABLE_BYTES_GB <= (TOT.FULL_DECLARED_GB-FREE.AVAILABLE_BYTES_GB)*0.05
+    THEN 'ESPACIO CRITICO (<5%)'
+    WHEN FREE.AVAILABLE_BYTES_GB > (TOT.FULL_DECLARED_GB-FREE.AVAILABLE_BYTES_GB)*0.05
+    AND FREE.AVAILABLE_BYTES_GB <= (TOT.FULL_DECLARED_GB-FREE.AVAILABLE_BYTES_GB)*0.20
+    THEN 'ESPACIO SEVERO (<20%)'
+    ELSE 'ESPACIO DISPONIBLE (>20%)'
+    END ESTADO_TABLESPACE,
+    CASE WHEN FREE.AVAILABLE_BYTES_GB IS NULL
+    THEN 1
+    ELSE
+        0
+    END FLAG_ESTADO
+    FROM
+        (
+        SELECT 
+        FILE_NAME, FILE_ID, TABLESPACE_NAME, BYTES/1024/1024/1024 FULL_DECLARED_GB, BLOCKS, STATUS, RELATIVE_FNO, 
+        AUTOEXTENSIBLE, MAXBYTES/1024/1024/1024 MAXBYTES_SIZE_GB, MAXBLOCKS, INCREMENT_BY, USER_BYTES/1024/1024/1024 ACTUAL_SIZE_GB,
+        USER_BLOCKS, ONLINE_STATUS
+        FROM dba_data_files
+        ) TOT
+    LEFT JOIN
+        (
+    SELECT 
+    TABLESPACE_NAME, FILE_ID, SUM(BLOCK_ID) BLOCK_ID, SUM(BYTES/1024/1024/1024) AVAILABLE_BYTES_GB, SUM(BLOCKS) FREE_BLOCKS, RELATIVE_FNO
+    FROM dba_free_space
+    GROUP BY TABLESPACE_NAME, FILE_ID, RELATIVE_FNO
+        ) FREE
+    ON 
+    TOT.FILE_ID=FREE.FILE_ID
+    ) TBS_INFO
+    ORDER BY FLAG_ESTADO ASC, AVAILABLE_BYTES_GB ASC;
 ```
 * **DROPPING A TABLESPACE:**
     * *Dropping a Tablespace with no info inside*: 
 ```sql
 DROP TABLESPACE [TABLESPACE_NAME];
 ```
-        * Notice: 
-            * When you delete a tablespace using the DROP sentence only, physically the Data File (.DBF) for such Tablespace remains untouch in the OS. If you want to delete the .DBF file also, you should use the DROP setence with INCLUDING CONTENTS AND DATAFILES. 
-            * When deleting a tablespace **all the related objects to such tablespace (tables, views) are also deleted.**
-    * *Dropping a Tablespace with existing info:*
-        * DROP TABLESPACE [TABLESPACE_NAME] INCLUDING CONTENTS AND DATAFILES;
-        * Notice: 
-            * Using the INCLUDING CONTENTS AND DATAFILES option also with the DROP TABLESPACE sentence, the .DBF file from such tablespace is physically removed from the OS.
-            * If a transaction is currently active from an object which uses any .DBF file related to such TABLESPACE, the .DBF file can't be removed from the OS until the transaction finishes. 
+* Notice: 
+    * When you delete a tablespace using the DROP sentence only, physically the Data File (.DBF) for such Tablespace remains untouch in the OS. If you want to delete the .DBF file also, you should use the DROP setence with INCLUDING CONTENTS AND DATAFILES. 
+    * When deleting a tablespace **all the related objects to such tablespace (tables, views) are also deleted.**
+* *Dropping a Tablespace with existing info:*
+```sql
+DROP TABLESPACE [TABLESPACE_NAME] INCLUDING CONTENTS AND DATAFILES;
+```
+* Notice: 
+    * Using the INCLUDING CONTENTS AND DATAFILES option also with the DROP TABLESPACE sentence, the .DBF file from such tablespace is physically removed from the OS.
+    * If a transaction is currently active from an object which uses any .DBF file related to such TABLESPACE, the .DBF file can't be removed from the OS until the transaction finishes. 
 * **RENAMING AN EXISTING TABLESPACE:**
 ```sql
 ALTER TABLESPACE [TABLESPACE_NAME] RENAME TO [NEW_NAME_TABLESPACE];
@@ -987,6 +1061,11 @@ ALTER DATABASE TEMPFILE 'C:\APP\XMY9080\ORADATA\ORCL\TEMP1_DATAFILE_TEMPGROUP1.D
 ```sql
 ALTER DATABASE DATAFILE 'C:\APP\XMY9080\ORADATA\ORCL\DATAFILE.DBF' AUTOEXTEND ON maxsize 2000M;
 ```
+
+# ORACLE MANAGING DATABASES
+* [CREATE A DATABASE WITH THE CREATE STATEMENT](https://docs.oracle.com/cd/B28359_01/server.111/b28310/create003.htm#ADMIN11073 "create database with CREATE statement")
+    * 
+
 
 ## COMMAND SQLPLUS (ORACLE)
 * **Calling** the sqplus command (Domain Service Name):
@@ -1056,6 +1135,11 @@ sqlplus -s HR/dHR_PA12@192.168.1.15:1521/HRDSN @$HOME/improved_query.sql $HOME/O
     * select * from ALL_USERS;
     * DBA_USERS; describes all users of the database, and contains more columns than ALL_USERS
     * USER_USERS describes the current user, and contains more columns than ALL_USERS;
+
+### [ALTER USER](https://docs.oracle.com/cd/B28359_01/server.111/b28286/statements_4003.htm#SQLRF01103 "ALTER USER")
+* **Changing default tablespace to USER:**
+    * ```ALTER USER USUARIOA DEFAULT TABLESPACE TBS1_USUARIOA;```
+
 * Increaze the buffer size: 
 	* When facing the error: *RA-20000: ORU-10027: buffer overflow, limit of 2000 bytes*, you can increaze the buffer size as follows: 
 	* SQL PLUS: 

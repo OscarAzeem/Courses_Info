@@ -696,6 +696,38 @@ PARTITION partition_septiembre VALUES LESS THAN (TO_DATE('2015-09-01', 'YYYY-MM-
 );
 ```
 
+# [MERGE (UPSERT)](https://www.mssqltips.com/sqlservertip/1704/using-merge-in-sql-server-to-insert-update-and-delete-at-the-same-time/ "Merge")
+* The **merge** command is similar to the ```UPSERT``` (fusion of the words **UPDATE** and **INSERT**.) command of *Oracle* where it inserts rows that don't exist and updates the rows that do exist
+* With the introduction of the **MERGE** command, developers can more effectively handle common data warehousing scenarios, like checking whether a row exists, and then executing an ```INSERT``` or ```UPDATE``` or ```DELETE```
+* The ```MERGE``` statement basically **merges** data from a **source** result set to a **target** table based on a **condition** that you specify and if the **data** from the source already **exists** in the target or not. 
+* The new SQL command **combines** the sequence of conditional ```INSERT, UPDATE and DELETE``` commands in a single atomic statement, depending on the existence of a record. The new MERGE command looks like as below:
+```sql
+MERGE <target_table> [AS TARGET]
+USING <table_source> [AS SOURCE]
+ON <search_condition>
+[WHEN MATCHED 
+   THEN <merge_matched> ]
+[WHEN NOT MATCHED [BY TARGET]
+   THEN <merge_not_matched> ]
+[WHEN NOT MATCHED BY SOURCE
+   THEN <merge_matched> ];
+```
+* The **MERGE** statement basically works as **separate** ```INSERT, UPDATE, and DELETE``` statements **all within** the same statement. 
+* You specify a "Source" record set and a "Target" table and the join between the two.
+* You then specify the type of data modification that is to occur when the records between the two data are matched or are not matched. 
+* [Example with the HR oracle table](https://oracle-base.com/articles/9i/merge-statement "Merge Oracle")
+```sql
+MERGE INTO employees e
+    USING hr_records h
+    ON (e.id = h.emp_id)
+  WHEN MATCHED THEN
+    UPDATE SET e.address = h.address
+  WHEN NOT MATCHED THEN
+    INSERT (id, address)
+    VALUES (h.emp_id, h.address);
+```
+
+
 ## TABLESPACES
 * A tablespace **logically** organizes data will it's being physically stored in **Data Files**
 * A tablespace belongs to only one database

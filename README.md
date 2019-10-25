@@ -218,6 +218,21 @@ alter table your_db.your_table RENAME job_code TO depart_number;
 GRANT ALL PRIVILEGES ON [ESQUEMA].[TABLE] TO [USER]
 ```
 
+## TERADATA SHOW PROCEDURE
+* The SHOW PROCEDURE command has been added to the Teradata RDBMS. It returns the SPL source text of a stored procedure if the stored procedure is created with SPL option.
+```sql
+SHOW PROCEDURE [<db-name>.]<stored-procedure-name> ;
+```
+* The user may have any privilege on the containing database for the command to work. In order for this command to work, the SPL storage option must be enabled.
+
+## TERADATA CALLING A SP
+* You need to use the reserved word CALL
+```python
+CALL [DB.NAME].[STORED_PROCEDURE]
+```
+
+
+
 ## TERADATA CREATE COMMAND
 * **[CREATING USERS AND GRATING PRIVILEGES](https://docs.teradata.com/reader/u8~Pwz3BmiO8RrPCsqF7bQ/n7MECvaDeRfH1milApRIdg "Creating users and granting privileges")**
 * **[CREATE USER:](https://docs.teradata.com/reader/u8~Pwz3BmiO8RrPCsqF7bQ/HkONjPwbd0wA6n3gTuJA2A "Create uer teradata")**

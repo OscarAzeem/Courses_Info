@@ -253,7 +253,52 @@ CREATE USER sysdba AS PERM=1e+09, PASSWORD=mypassword; -- 1 GB
 
 ## TERADATA GRANT COMMAND
 * **[CONNECTION AND PRIVILEGES](https://docs.teradata.com/reader/u8~Pwz3BmiO8RrPCsqF7bQ/HLlDxftcO9jcWSAHaAtLkw "Grant connection and privileges Teradata")**
-* 
+
+## [Teradadata Grant SQL FORM](https://docs.teradata.com/reader/_8xbm6sJf81_NQ8TvKeDjA/uQ6iriYNItTDRz48hEpmAA "Teradata Grant SQL form")
+* [**Appendix privilege Teradata Dictionary**](https://docs.teradata.com/reader/_8xbm6sJf81_NQ8TvKeDjA/apUJtJU7MnZO2~1vJvo5PQ "Terdata privilege dictionary")
+* [**Teradata Grant privileges Example**](https://docs.teradata.com/reader/4BqRJU03~k5x8NonLTKSfw/VsLApcM3zUL4s4kUd_dWDA "Teradata grant examples")
+* Query para ver los permisos a una tabla en específico
+```SQL
+SELECT RoleName,DatabaseName,TableName,ColumnName,
+CASE TRIM(ACCESSRIGHT)
+WHEN 'AF' THEN 'ALTER FUNCTION '
+WHEN 'AP' THEN 'ALTER PROCEDURE '
+WHEN 'CF' THEN 'CREATE FUNCTION '
+WHEN 'CG' THEN 'CREATE TRIGGER '
+WHEN 'CM' THEN 'CREATE MACRO '
+WHEN 'CR' THEN 'CREATE ROLE '
+WHEN 'CT' THEN 'CREATE TABLE '
+WHEN 'CU' THEN 'CREATE USER '
+WHEN 'CV' THEN 'CREATE VIEW '
+WHEN 'D' THEN 'DELETE '
+WHEN 'DF' THEN 'DROP FUNCTION '
+WHEN 'DG' THEN 'DROP TRIGGER '
+WHEN 'DM' THEN 'DROP MACRO '
+WHEN 'DO' THEN 'DROP PROFILE '
+WHEN 'DR' THEN 'DROP ROLE '
+WHEN 'DT' THEN 'DROP TABLE '
+WHEN 'DU' THEN 'DROP USER '
+WHEN 'DV' THEN 'DROP VIEW '
+WHEN 'E' THEN 'EXECUTE '
+WHEN 'EF' THEN 'EXECUTE FUNCTION '
+WHEN 'I' THEN 'INSERT '
+WHEN 'IX' THEN 'INDEX '
+WHEN 'PC' THEN 'CREATE PROCEDURE '
+WHEN 'PD' THEN 'DROP PROCEDURE '
+WHEN 'PE' THEN 'EXECUTE PROCEDURE '
+WHEN 'R' THEN 'SELECT '
+WHEN 'SH' THEN 'SHOW '
+WHEN 'ST' THEN 'STATISTICS '
+WHEN 'U' THEN 'UPDATE '
+ELSE TRIM(ACCESSRIGHT)
+END PERMISO,
+GrantorName,
+CreateTimeStamp
+FROM DBC.ALLROLERIGHTS
+WHERE TableName in(
+'NOMBRE_TABLA'
+) 
+```
 
 # ORACLE
 Common oracle knowledge

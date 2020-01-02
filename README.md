@@ -82,7 +82,9 @@ GRANT CREATE ON * . * TO ['USER'];
 ```sql
 SHOW CREATE TABLE [SCHEMA].[TABLE]
 ```
+
 # Teradata 
+
 ## Teradata Mode (BTET) vs. ANSI Mode
 Teradata systems have the ability to use either of these two modes:
     1. Teradata mode:
@@ -300,6 +302,19 @@ WHERE TableName in(
 ) 
 ```
 
+## Teradata Date Functions: TO_DATE, LAST_DAY, TRUNC, ADD_MONTHS
+
+```SQL
+SELECT TO_DATE('21091219','YYYYMMDD'); -- 2109-12-19 00:00:00.000000
+SELECT LAST_DAY(TO_DATE('21091219','YYYYMMDD')); -- 2109-12-31 00:00:00.000000
+SELECT TRUNC(TO_DATE('21091219','YYYYMMDD'),'MM'); --2109-12-01 00:00:00.000000
+SELECT ADD_MONTHS(TO_DATE('21091219','YYYYMMDD'),-2); -- 2109-10-19 00:00:00.000000
+SELECT ADD_MONTHS(TO_DATE('21091219','YYYYMMDD'),-1*12); -- 2108-12-19 00:00:00.000000
+-- El Numero 1, en -1, menciona la cantidad de dias de historia a borrar. Se propone cambiar por una variable. N*12, dónde N son los meses de historia. 
+SELECT TRUNC(ADD_MONTHS(TO_DATE('21091219','YYYYMMDD'),-1*12),'MM'); --2108-12-01 00:00:00.000000
+SELECT LAST_DAY(TRUNC(ADD_MONTHS(TO_DATE('21091219','YYYYMMDD'),-1*12),'MM')); -- 2108-12-31 00:00:00.000000
+ ```
+
 # ORACLE
 Common oracle knowledge
 * When creating a table with the sentences: ``` CREATE TABLE_BACKUP AS SELECT * FROM TABLE_ORIGINAL ``` , the ORACLE server doesn't add the **PRIMARY KEYS** belonging to the TABLE_ORIGINAL
@@ -447,6 +462,45 @@ DROP INDEX [INDEX_NAME];
 * [Oracle Synonyms](https://www.thatjeffsmith.com/archive/2013/03/why-cant-i-see-my-tables-in-oracle-sql-developer/ "Cool info about synonyms")
     * A SYNONYM is like a shortcut or pointer or link, it allows you to reference an object in the database by a different name
     * Everytime you have been granted any type or right (select, update, etc) to an squema object different from yours, a synonym is created in order to **QUERY** the object outside your default schema. Now you have a synonym who has the rights to execute a certain right to an object, but you dont have directly the rights to such object because you are not the owner .
+
+## [Oracle Tablespace Quota](https://docs.oracle.com/en/database/oracle/oracle-database/12.2/dbseg/managing-security-for-oracle-database-users.html#GUID-62EEE321-01AF-4AF4-9210-A74476613A0A "Tablespace Quota")
+* By default, a user [has no quota](https://dba.stackexchange.com/questions/215473/user-quota-default-oracle "Default quota for user") on any tablespace in the database.
+* See quota by the **USER_TS_QUOTAS** view:
+```sql
+SELECT 
+TABLESPACE_NAME, 
+BYTES/1024/1024/1024 OCCUPIED_BYTES_GB,
+CASE WHEN MAX_BYTES=-1
+THEN 'UNLIMITED'
+ELSE
+TO_CHAR(MAX_BYTES/1024/1024/1024)
+END MAX_BYTES_GB,
+BLOCKS,
+MAX_BLOCKS,
+DROPPED
+FROM
+USER_TS_QUOTAS
+ORDER BY TABLESPACE_NAME DESC;
+```
+* See general quota by each user by the **DBA_TS_QUOTAS** view:
+```sql
+SELECT 
+TABLESPACE_NAME, 
+USERNAME OWNER,
+BYTES/1024/1024/1024 OCCUPIED_BYTES_GB,
+CASE WHEN MAX_BYTES=-1
+THEN 'UNLIMITED'
+ELSE
+TO_CHAR(MAX_BYTES/1024/1024/1024)
+END MAX_BYTES_GB,
+BLOCKS,
+MAX_BLOCKS,
+DROPPED
+FROM
+DBA_TS_QUOTAS
+ORDER BY TABLESPACE_NAME DESC, USERNAME DESC;
+```
+
 
 
 ## General Queries

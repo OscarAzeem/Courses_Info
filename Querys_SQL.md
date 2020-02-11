@@ -509,10 +509,6 @@ ORDER BY TABLESPACE_NAME DESC, USERNAME DESC;
 ```sql
 EXPLAIN PLAN FOR SELECT * FROM [TABLE];
 ```
-    * After that you should query the table: ```PLAN_TABLE_OUTPUT```
-```sql
-SELECT PLAN_TABLE_OUTPUT FROM TABLE(DBMS_XPLAN.DISPLAY())
-```
 * Show Current version:
 ```sql
 SELECT * FROM V$VERSION
@@ -549,22 +545,11 @@ select * from ALL_DIRECTORIES;
 ```sql
 SELECT * FROM all_tab_privs
 ```
-* Show the description of a certain role for a certain user: ```ROLE_TAB_PRIVS```
-```SQL
-SELECT * FROM ROLE_TAB_PRIVS WHERE ROLE = 'ROL_USR_NOMBRE';
-```
-* Show the description of a certain role grouped by schema:
-```sql
-SELECT ROLE_TAB_PRIVS.OWNER,ROLE_TAB_PRIVS.PRIVILEGE, COUNT(*) TOTAL
-FROM ROLE_TAB_PRIVS
-GROUP BY ROLE_TAB_PRIVS.OWNER,ROLE_TAB_PRIVS.PRIVILEGE
-ORDER BY ROLE_TAB_PRIVS.OWNER DESC, ROLE_TAB_PRIVS.PRIVILEGE DESC;
-```
 * Create or Replace:
-    * works on functions, procedures, packages, types, synonyms, trigger and views. **THIS DOES NOT WORK ON TABLES, MATERIALIZED VIEWS, DATABASE LINKS**
 ```sql
 CREATE OR REPLACE [NAME]
 ```
+* works on functions, procedures, packages, types, synonyms, trigger and views. **THIS DOES NOT WORK ON TABLES, MATERIALIZED VIEWS, DATABASE LINKS**
 * Shows all user privileges:
 ```sql
  select * from USER_SYS_PRIVS;

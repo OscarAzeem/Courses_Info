@@ -164,7 +164,16 @@ PRIMARY INDEX (col_x);
  where DatabaseName NOT IN ('DBC','dbcmngr')
  ORDER BY DatabaseName, CreateTimeStamp;
  ```
-
+ * Create table as:
+ CREATE TABLE test_employee_table 
+```sql
+AS (
+   SELECT
+      *
+   FROM employee e
+   )
+WITH DATA;
+```
  * Show all user privileges:
 ```sql
  SELECT
